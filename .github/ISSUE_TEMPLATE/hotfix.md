@@ -1,11 +1,17 @@
 ---
-name: hotfix about: bug code hotfix title: "[BE] fix: "
-labels: fix assignees: ''
+name: Hotfix
+about: bug code hotfix
+title: "[BE] Fix: "
+labels: fix
+assignees: ''
 
 ---
 
-# 수정할 내용
+# 버그 내용
 - 
 
-# 상세내용
+# 수정할 내용 
+- 
+
+# 수정 내용
 -

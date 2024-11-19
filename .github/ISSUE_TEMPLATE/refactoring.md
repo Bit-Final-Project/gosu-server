@@ -1,11 +1,14 @@
 ---
-name: Refactoring about: Refactoring Function title: "[BE] ref: "
-labels: ref assignees: ''
+name: Refactoring
+about: Refactoring Function
+title: "[BE] Ref: "
+labels: ref
+assignees: ''
 
 ---
 
-# 수정할 기능
+# 수정할 내용
 - 
 
-# 상세내용
+# 상세내용 
 -
