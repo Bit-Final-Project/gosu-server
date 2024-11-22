@@ -1,5 +1,6 @@
 package cancel.bean;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -14,7 +15,6 @@ import lombok.Data;
 import member.bean.Member;
 
 @Entity
-@Table(name="cancel")
 @Data
 public class Cancel {
 	
@@ -27,11 +27,11 @@ public class Cancel {
     @JoinColumn(name = "member_no", nullable = false)
     private Member memberNo;
 	
-	@Column(name ="reason", length = 3000)
+	@Column(length = 3000)
 	private String reason;
-	
+
 	@Column(name = "cancel_date")
-	private Date cancelDate;
+	private LocalDateTime cancelDate = LocalDateTime.now();
 	
 	
 }

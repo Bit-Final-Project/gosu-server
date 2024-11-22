@@ -13,17 +13,15 @@ import member.bean.Member;
 import pro.bean.Pro;
 
 @Entity
-@Table(name="favorite")
 @Data
 public class Favorite {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "favorite_no")
 	private Long favorite;
 
 	@ManyToOne // 여러개의 즐겨찾기를 한 사용자가 할수있음
-    @JoinColumn(name = "member_no", nullable = false)
+    @JoinColumn(name="member_no", nullable = false)
     private Member memberNo;
 	
 	@ManyToOne // 즐겨찾기에 여러명의 고수가 담길수있음

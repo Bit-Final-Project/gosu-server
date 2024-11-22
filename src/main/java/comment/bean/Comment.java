@@ -13,7 +13,6 @@ import lombok.Data;
 import member.bean.Member;
 
 @Entity
-@Table(name="comment")
 @Data
 public class Comment {
 
@@ -30,10 +29,9 @@ public class Comment {
     @JoinColumn(name = "member_no", nullable = false)
     private Member memberNo;
 	
-	@Column(name = "content", length = 5000)
+	@Column(length = 5000)
 	private String content;
-	
-	@Column(name = "lev")
+
 	private int lev;
 	
 }
