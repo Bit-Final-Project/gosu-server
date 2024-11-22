@@ -9,16 +9,16 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="category")
+@Table(name = "main_category")
 @Data
 public class MainCategory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="main_cate_no")
+	@Column(name = "main_cate_no")
 	private Long mainCateNo;
 	
-	@Column(name="main_cate_name", length = 200)
+	@Column(name = "main_cate_name", length = 200)
 	private String mainCateName;
 	
 }

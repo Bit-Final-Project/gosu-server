@@ -1,5 +1,6 @@
 package reserve.bean;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -14,29 +15,26 @@ import lombok.Data;
 import member.bean.Member;
 
 @Entity
-@Table(name="reserve_time")
+@Table(name = "reserve_time")
 @Data
 public class ReserveTime {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "reserve_time_no")
+    @Column(name = "reserve_time_no")
 	private Long reserveTimeNo;
 	
 	// 하나의 예약은 여러개의 시간을 선택할수있다.
     @ManyToOne
-    @JoinColumn(name = "reserve_no", nullable = false)
+    @JoinColumn(nullable = false)
     private Reserve reserve;
     // 한명의 사용자는 여러개의 예약을 할수있고, 여러개의 예약 시간을 선택할수있다.
     @ManyToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private Member member;
+    private Member memberNo;
 
     @Column(name = "start_time")
-    private Date startTime;
+    private LocalDateTime startTime;
 
     @Column(name = "end_time")
-    private Date endTime;
-	
-	
+    private LocalDateTime endTime;
 }

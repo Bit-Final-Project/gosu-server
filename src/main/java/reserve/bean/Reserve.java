@@ -12,7 +12,6 @@ import lombok.Data;
 import member.bean.Member;
 
 @Entity
-@Table(name = "reserve")
 @Data
 public class Reserve {
 	@Id
@@ -22,7 +21,6 @@ public class Reserve {
 	
 	// 여러 예약이 하나의 회원에 속할 수 있도록 다대일 관계 설정
     @ManyToOne
-    @JoinColumn(name = "member_no", referencedColumnName = "member_no", nullable = false)
+    @JoinColumn(name = "member_no", nullable = false)
     private Member memberNo;
-	// referencedColumnName 이건 참조하는 키가 기본키가 아닐때 사용하는거니까 다 필요없겠네 ? ? ? ? 
 }

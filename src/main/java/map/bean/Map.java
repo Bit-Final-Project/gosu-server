@@ -12,7 +12,6 @@ import lombok.Data;
 import member.bean.Member;
 
 @Entity
-@Table(name="map")
 @Data
 public class Map {
 	@Id
@@ -24,7 +23,6 @@ public class Map {
     @JoinColumn(name = "member_no", nullable = false)
     private Member memberNo;
 	
-	@Column(name="map_path", length = 3000)
+	@Column(name = "map_path", length = 3000)
 	private String mapPath;
-	
 }
