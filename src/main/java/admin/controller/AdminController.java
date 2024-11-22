@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("admin")
+@RequestMapping("/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -18,7 +18,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<String> adminLogin(RequestEntity<LoginRequest> requestEntity) {
 
         LoginRequest loginRequest = requestEntity.getBody();
@@ -29,9 +29,9 @@ public class AdminController {
         System.out.println(url);
         System.out.println(requestEntity.getBody().toString());
 
-        boolean isAuthenticated = adminService.adminLogin(loginRequest.getEmail(), loginRequest.getPassword());
+        String adminName = adminService.adminLogin(loginRequest.getEmail(), loginRequest.getPwd());
 
-        if (isAuthenticated) {
+        if (adminName != null) {
             return ResponseEntity.ok("인증성공");
         } else {
             return ResponseEntity.status(401).body("인증실패");
