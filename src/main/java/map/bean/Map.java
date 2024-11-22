@@ -1,6 +1,4 @@
-package cancel.entity;
-
-import java.util.Date;
+package map.bean;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,27 +9,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import member.entity.MemberEntity;
+import member.bean.Member;
 
 @Entity
-@Table(name="cancel")
 @Data
-public class cancelEntity {
-	
+public class Map {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "cancel_no")
-	private Long cancelNo;
+	@Column(name = "map_no")
+	private Long mapNo;
 	
 	@OneToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private MemberEntity memberNo;
+    private Member memberNo;
 	
-	@Column(name ="reason", length = 3000)
-	private String reason;
-	
-	@Column(name = "cancel_date")
-	private Date cancelDate;
-	
-	
+	@Column(name = "map_path", length = 3000)
+	private String mapPath;
 }
