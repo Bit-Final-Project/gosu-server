@@ -3,6 +3,7 @@ package pro.bean;
 import java.util.Date;
 
 import category.bean.MainCategory;
+import category.bean.SubCategory;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +30,11 @@ public class Pro {
     @JoinColumn(name = "main_cate_no", nullable = false)
     private MainCategory mainCateNo;
 
+	@ManyToOne // 고수는 여러개의 서브
+	@JoinColumn(name="sub_cate_no", nullable = false)
+	private SubCategory subCateNo;
+	
+	
 	@ManyToOne // 고수는 여러개의 예약신청을 받을수도 있고 예약을 못 받을수도있음 낫 널 뺌
     @JoinColumn(name = "reserve_no")
     private Reserve reserveNo;

@@ -1,10 +1,10 @@
-package com.main.moeego;
+package pro.service.test;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MoeegoApplicationTests {
+class ProServiceTest {
 
     @Test
     void contextLoads() {
