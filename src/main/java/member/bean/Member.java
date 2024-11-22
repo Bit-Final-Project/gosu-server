@@ -16,12 +16,14 @@ public class Member {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "member_no")
 	private Long memberNo;
 
 	@Column(unique = true)
 	private String email;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "member_status")
 	private MemberStatus memberStatus = MemberStatus.USER;
 
 	@Column(nullable = false)
