@@ -1,8 +1,8 @@
-package pro.review.entity;
+package pro.review.bean;
 
 import java.util.Date;
 
-import category.entity.MainCategoryEntity;
+import category.bean.MainCategory;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,13 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import member.entity.MemberEntity;
-import pro.article.entity.ProAticleEntity;
+import member.bean.Member;
+import pro.article.bean.ProAticle;
 
 @Entity
 @Table(name = "review")
 @Data
-public class reviewEntity {
+public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "review_no")
@@ -27,15 +27,15 @@ public class reviewEntity {
 
 	@ManyToOne // 한 고수게시판에는 여러개의 리뷰가 달릴수있음
 	@JoinColumn(name = "pro_article_no", nullable = false)
-	private ProAticleEntity proArticleNo;
+	private ProAticle proArticleNo;
 
 	@OneToOne // 해당 고수의 카테고리 전용 게시판이 존재함
 	@JoinColumn(name = "main_cate_no", nullable = false)
-	private MainCategoryEntity mainCateNo;
+	private MainCategory mainCateNo;
 
 	@ManyToOne // 고수 게시판에 사용자는 여러개의 리뷰를 작성할수있음
 	@JoinColumn(name = "member_no", nullable = false)
-	private MemberEntity memberNo;
+	private Member memberNo;
 
 	@Column(name = "like")
 	private float like;

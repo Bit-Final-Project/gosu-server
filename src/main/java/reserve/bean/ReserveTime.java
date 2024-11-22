@@ -1,4 +1,4 @@
-package reserve.entity;
+package reserve.bean;
 
 import java.util.Date;
 
@@ -11,12 +11,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import member.entity.MemberEntity;
+import member.bean.Member;
 
 @Entity
 @Table(name="reserve_time")
 @Data
-public class reserveTimeEmtity {
+public class ReserveTime {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +26,11 @@ public class reserveTimeEmtity {
 	// 하나의 예약은 여러개의 시간을 선택할수있다.
     @ManyToOne
     @JoinColumn(name = "reserve_no", nullable = false)
-    private reserveEntity reserve;
+    private Reserve reserve;
     // 한명의 사용자는 여러개의 예약을 할수있고, 여러개의 예약 시간을 선택할수있다.
     @ManyToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private MemberEntity member;
+    private Member member;
 
     @Column(name = "start_time")
     private Date startTime;
