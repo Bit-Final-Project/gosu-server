@@ -22,8 +22,8 @@ public class AdminController {
 @ResponseBody
     public String adminDashboard(){
         long userCount = adminService.getUserCount(MemberStatus.USER);
-        long masterCount = adminService.getUserCount(MemberStatus.MASTER);
-        long deactivatedCount = adminService.getUserCount(MemberStatus.DEACTIVATED);
+        long masterCount = adminService.getUserCount(MemberStatus.PRO);
+        long deactivatedCount = adminService.getUserCount(MemberStatus.CANCEL);
 
     System.out.println(userCount);
     System.out.println(masterCount);

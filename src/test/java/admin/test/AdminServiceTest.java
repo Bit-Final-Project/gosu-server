@@ -42,10 +42,10 @@ public class AdminServiceTest {
     public void testGetUserCountForMaster() {
 
         // given
-        when(adminMemberRepository.countByMemberStatus(MemberStatus.MASTER)).thenReturn(50L);
+        when(adminMemberRepository.countByMemberStatus(MemberStatus.PRO)).thenReturn(50L);
 
         // when
-        long masterCount = adminService.getUserCount(MemberStatus.MASTER);
+        long masterCount = adminService.getUserCount(MemberStatus.PRO);
 
         // then
         assertThat(masterCount).isEqualTo(50L);
@@ -55,10 +55,10 @@ public class AdminServiceTest {
     public void testGetUserCountForDeactivated() {
 
         // given
-        when(adminMemberRepository.countByMemberStatus(MemberStatus.DEACTIVATED)).thenReturn(10L);
+        when(adminMemberRepository.countByMemberStatus(MemberStatus.CANCEL)).thenReturn(10L);
 
         // when
-        long deactivatedCount = adminService.getUserCount(MemberStatus.DEACTIVATED);
+        long deactivatedCount = adminService.getUserCount(MemberStatus.CANCEL);
 
         // then
         assertThat(deactivatedCount).isEqualTo(10L);
