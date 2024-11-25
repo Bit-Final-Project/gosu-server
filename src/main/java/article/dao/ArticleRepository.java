@@ -2,6 +2,8 @@ package article.dao;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,23 +16,29 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 
 	
 	// 1번 (이벤트 게시글) 만 가져오기
-	List<Article> findAllByType(int num);
+	@Query("select t from Article t where t.type = :type")
+	List<Article> findAllByType(@Param("type") int type);
 	
 	// 아티클 넘버가 10번인 게시글 가져오기
 	@Query("select t from Article t where t.articleNo = :num")
 	Article findByArticleNo(@Param("num") int num);
 
-	// 검색한 게시글 조회
-	@Query("SELECT a FROM Article a WHERE a.subject LIKE :subject OR a.content LIKE :content")
+	// 제목 + 내용 검색한 게시글 조회
+	@Query("SELECT a FROM Article a WHERE a.subject LIKE CONCAT('%', :subject, '%') AND a.content LIKE CONCAT('%', :content, '%')")
 	List<Article> searchArticles(@Param("subject") String subject, @Param("content") String content);
 	
 	// 제목만 조회 
-	@Query("SELECT a FROM Article a WHERE a.subject LIKE :subject")
+	@Query("SELECT a FROM Article a WHERE a.subject LIKE CONCAT('%', :subject,'%')")
 	List<Article> searchSubjectArticles(@Param("subject") String subject);
 	
-	// 제목만 조회 
-	@Query("SELECT a FROM Article a WHERE a.subject LIKE :content")
+	// 내용만 조회 
+	@Query("SELECT a FROM Article a WHERE a.content LIKE CONCAT('%', :content,'%')")
 	List<Article> searchContentArticles(@Param("content") String content);
+	
+	//페이징
+	@Query("SELECT a FROM Article a ORDER BY a.articleNo DESC")
+	Page<Article> findAllWithPaging(Pageable pageable);
+	
 
 
 
