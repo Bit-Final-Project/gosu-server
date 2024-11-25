@@ -8,9 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.Data;
 import member.bean.Member;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -31,6 +32,9 @@ public class Comment {
 	
 	@Column(length = 5000)
 	private String content;
+
+	@Column(name="write_date")
+	private LocalDateTime writeDate = LocalDateTime.now();
 
 	private int lev;
 	
