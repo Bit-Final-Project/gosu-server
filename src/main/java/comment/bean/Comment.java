@@ -1,41 +1,46 @@
 package comment.bean;
 
 import article.bean.Article;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import member.bean.Member;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 public class Comment {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "comment_no")
-	private Long commentNo;
-	
-	@ManyToOne // 여러개의 댓글을 한 게시판에 작성할수있음
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_no")
+    private Long commentNo; // 댓글 ID
+
+    @ManyToOne
     @JoinColumn(name = "article_no", nullable = false)
-    private Article articleNo;
-	
-	@ManyToOne // 여러개의 댓글을 한 사용자가 작성할수있음
+    private Article article; // 게시글 참조
+
+    @ManyToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
-	
-	@Column(length = 5000)
-	private String content;
+    private Member member; // 작성자 참조
 
-	@Column(name="write_date")
-	private LocalDateTime writeDate = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Comment parent; // 부모 댓글 참조
 
-	private int lev;
-	
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>(); // 대댓글 리스트
+
+    @Column(length = 5000, nullable = false)
+    private String content; // 댓글 내용
+
+    @Column(name = "write_date", nullable = false)
+    private LocalDateTime writeDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.writeDate = LocalDateTime.now();
+    }
 }
