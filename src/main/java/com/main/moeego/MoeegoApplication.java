@@ -7,12 +7,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
-//@ComponentScan(basePackages = {"com.main.moeego", "admin","member"})
 @SpringBootApplication
-//@EnableJpaRepositories(basePackages = {"admin.repository"})
 @EntityScan(basePackages = {"article", "cancel", "category", "comment", "favorite", "image", "map", "member", "pro", "reserve"})
-@EnableJpaRepositories("member.dao")
-@ComponentScan(basePackages = {"member.service", "article", "cancel", "category", "comment", "favorite", "image", "map", "pro", "reserve"})
+@EnableJpaRepositories(basePackages = {"member.dao", "admin.repository"})
+@ComponentScan(basePackages = {"admin","member.service", "article", "cancel", "category", "comment", "favorite", "image", "map", "pro", "reserve"})
 public class MoeegoApplication {
 
     public static void main(String[] args) {

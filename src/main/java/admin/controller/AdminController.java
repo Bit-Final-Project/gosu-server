@@ -2,11 +2,11 @@ package admin.controller;
 
 import admin.dto.LoginRequest;
 import admin.service.AdminService;
+import member.bean.MemberStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin")
@@ -17,6 +17,23 @@ public class AdminController {
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
+
+@GetMapping
+@ResponseBody
+    public String adminDashboard(){
+        long userCount = adminService.getUserCount(MemberStatus.USER);
+        long masterCount = adminService.getUserCount(MemberStatus.PRO);
+        long deactivatedCount = adminService.getUserCount(MemberStatus.CANCEL);
+
+    System.out.println(userCount);
+    System.out.println(masterCount);
+    System.out.println(deactivatedCount);
+
+    return "DASHBOARD";
+
+
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<String> adminLogin(RequestEntity<LoginRequest> requestEntity) {
@@ -29,6 +46,7 @@ public class AdminController {
         System.out.println(url);
         System.out.println(requestEntity.getBody().toString());
 
+        assert loginRequest != null;
         String adminName = adminService.adminLogin(loginRequest.getEmail(), loginRequest.getPwd());
 
         if (adminName != null) {
@@ -39,6 +57,5 @@ public class AdminController {
 
 
     }
-
 
 }
