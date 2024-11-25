@@ -2,6 +2,7 @@ package admin.service.impl;
 
 import admin.repository.AdminMemberRepository;
 import admin.service.AdminService;
+import member.bean.MemberStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,5 +19,11 @@ public class AdminServiceImpl implements AdminService {
         System.out.println(email);
         System.out.println(pwd);
         return adminMemberRepository.adminLogin(email, pwd);
+    }
+
+    @Override
+    public long getUserCount(MemberStatus memberStatus) {
+        return adminMemberRepository.countByMemberStatus(memberStatus);
+
     }
 }
