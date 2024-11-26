@@ -24,29 +24,25 @@ public class CommentController {
         return ResponseEntity.ok(wrtitenComment);
 
     }
-/*
-    @PatchMapping("/update")
-    public ResponseEntity<Comment> updateComment(RequestEntity<Comment> requestEntity) {
 
-        //TODO
-        //사용자 검증 로직 추가 필요
-        //본인이 작성한 댓글만 수정 할 수 있게
-        //추후에 ss랑 jwt 완성되면 추가하는게 일 두번안할듯
-        //엔티티 수정 필요할듯? edited = 0 , 1
+    @PatchMapping("/update/{commentNo}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Long commentNo, @RequestBody String newContent) {
 
-        Comment updatedComment = commentService.updateComment(requestEntity.getBody());
+        //수정때 받아야할 데이터 : 수정할 댓글 Id, 수정할 댓글 content
+        //로직에서 자동으로 수정해야할 내용 : 댓글 상태 (DEFAULT -> EDITED)
+        //수정된 시간 << 필요? 필요하면 작성시간에 덮어씌우기 vs 새로운 컬럼 생성
+
+        Comment updatedComment = commentService.updateComment(commentNo, newContent);
         return ResponseEntity.ok(updatedComment);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Comment> deleteComment(RequestEntity<Comment> requestEntity) {
+    @PatchMapping("/delete/{commentNo}")
+    public ResponseEntity<Comment> deleteComment(@PathVariable Long commentNo) {
 
-        //TODO
-        //마찬가지로 검증 로직 추가 필요
-        //삭제한 댓글도 실무에선 DB에 남긴다고하는데 edited 말고 차라리 commentStatus로 DB에는 남기지만 출력만 안시키는 방식이 괜찮을듯?
-        // 0=일반댓글 1=수정된댓글 99=삭제된댓글
+        //삭제한 댓글도 실무에선 DB에 남긴다고하는데 edited 말고 차라리 comment_status로 DB에는 남기지만 출력만 안시키는 방식이 괜찮을듯?
+        //0=일반댓글 1=수정된댓글 99=삭제된댓글
 
-        Comment deletedComment = commentService.deleteComment(requestEntity.getBody());
+        Comment deletedComment = commentService.deleteComment(commentNo);
         return ResponseEntity.ok(deletedComment);
-    }*/
+    }
 }

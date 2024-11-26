@@ -1,8 +1,10 @@
 package comment.bean;
 
 import article.bean.Article;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import member.bean.Member;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Data
+@ToString
 public class Comment {
 
     @Id
@@ -28,9 +31,13 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @ToString.Exclude // 순환 참조 방지
+    @JsonIgnore
     private Comment parent; // 부모 댓글 참조
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // 순환 참조 방지
+    @JsonIgnore
     private List<Comment> children = new ArrayList<>(); // 대댓글 리스트
 
     @Column(length = 5000, nullable = false)
@@ -39,7 +46,7 @@ public class Comment {
     @Column(name = "write_date", nullable = false)
     private LocalDateTime writeDate;
 
-    @Column(name="comment_status")
+    @Column(name = "comment_status")
     @Enumerated(EnumType.STRING)
     private CommentStatus commentStatus = CommentStatus.DEFAULT;
 
@@ -47,4 +54,5 @@ public class Comment {
     public void prePersist() {
         this.writeDate = LocalDateTime.now();
     }
+
 }
