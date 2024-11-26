@@ -39,6 +39,10 @@ public class Comment {
     @Column(name = "write_date", nullable = false)
     private LocalDateTime writeDate;
 
+    @Column(name="comment_status")
+    @Enumerated(EnumType.STRING)
+    private CommentStatus commentStatus = CommentStatus.DEFAULT;
+
     @PrePersist
     public void prePersist() {
         this.writeDate = LocalDateTime.now();
