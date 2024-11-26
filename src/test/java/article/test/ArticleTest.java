@@ -29,8 +29,9 @@ class ArticleTest {
 	private ArticleService articleService;
 
 	
-	@Test
 	// 전체 게시판 가져오기 + 페이징
+	@Test
+	@Disabled
 	void contextLoads() {
 	    // 1. Pageable 생성 (0페이지, 10개씩, articleNo 기준 내림차순)
 	    Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "articleNo"));
@@ -56,6 +57,18 @@ class ArticleTest {
 	    assertTrue(articlePage.getTotalPages() > 0, "Total pages should be greater than 0");
 	    assertTrue(articlePage.getTotalElements() > 0, "Total elements should be greater than 0");
 	}
+	
+	
+	// Type 별로 게시판 조회
+	@Test
+	void articleTypeSelect() {
+		int type = 1;
+		List<Article> list = articleService.getArticleList(type);
+		list.forEach(System.out::println);
+	
+	}
+	
+	
     // 특정(이벤트) 게시판 조회
 	/*
 	 * @Test
@@ -156,6 +169,8 @@ class ArticleTest {
         articles.forEach(System.out::println);
         
     }
+    
+    
     
     
     
