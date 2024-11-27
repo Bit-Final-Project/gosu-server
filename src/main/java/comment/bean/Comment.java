@@ -1,7 +1,8 @@
 package comment.bean;
 
 import article.bean.Article;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -13,7 +14,6 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString
 public class Comment {
 
     @Id
@@ -32,12 +32,12 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     @ToString.Exclude // 순환 참조 방지
-    @JsonIgnore
+//  @JsonBackReference // 부모 필드는 직렬화에서 제외
     private Comment parent; // 부모 댓글 참조
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude // 순환 참조 방지
-    @JsonIgnore
+//  @JsonManagedReference // 자식 필드는 직렬화에 포함
     private List<Comment> children = new ArrayList<>(); // 대댓글 리스트
 
     @Column(length = 5000, nullable = false)
@@ -46,13 +46,15 @@ public class Comment {
     @Column(name = "write_date", nullable = false)
     private LocalDateTime writeDate;
 
-    @Column(name = "comment_status")
-    @Enumerated(EnumType.STRING)
-    private CommentStatus commentStatus = CommentStatus.DEFAULT;
-
     @PrePersist
     public void prePersist() {
         this.writeDate = LocalDateTime.now();
     }
+
+    @Column(name = "comment_status")
+    @Enumerated(EnumType.STRING)
+    private CommentStatus commentStatus = CommentStatus.DEFAULT;
+
+
 
 }

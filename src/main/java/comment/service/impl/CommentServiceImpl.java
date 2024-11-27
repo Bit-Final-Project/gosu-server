@@ -22,13 +22,8 @@ public class CommentServiceImpl implements CommentService {
     public Comment writeComment(Comment comment) {
 
         if (comment.getParent() != null) {
-            Comment parentComment = commentRepository.findById(comment.getParent().getCommentNo())
-                    .orElse(null);
-
-            if (parentComment == null) {
-                throw new IllegalArgumentException("Parent comment not found");
-
-            }
+            commentRepository.findById(comment.getParent().getCommentNo())
+                    .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
         }
 
         return commentRepository.save(comment);
@@ -38,10 +33,15 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public Comment updateComment(Long commentNo, String newContent) {
         Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("Comment not found : " + commentNo));
+
+        if (existingComment.getCommentStatus() == CommentStatus.DELETED) {
+            throw new IllegalArgumentException("Deleted comment");
+        }
+
         existingComment.setContent(newContent);
         existingComment.setCommentStatus(CommentStatus.EDITED);
 
-        log.debug("수정된 댓글: {}", existingComment);
+        log.debug("수정된 댓글: ID={}, Content={}", existingComment.getCommentNo(), existingComment.getContent());
 
         return existingComment;
 
@@ -53,9 +53,14 @@ public class CommentServiceImpl implements CommentService {
     public Comment deleteComment(Long commentNo) {
 
         Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("Comment not found : " + commentNo));
+
+        if (existingComment.getCommentStatus() == CommentStatus.DELETED) {
+            throw new IllegalArgumentException("Already deleted");
+        }
+
         existingComment.setCommentStatus(CommentStatus.DELETED);
 
-        log.debug("삭제된 댓글: {}", existingComment);
+        log.debug("삭제된 댓글: ID={}, Content={}", existingComment.getCommentNo(), existingComment.getContent());
         return existingComment;
     }
 }
