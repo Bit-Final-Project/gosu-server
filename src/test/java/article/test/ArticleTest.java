@@ -65,7 +65,6 @@ class ArticleTest {
 		int type = 1;
 		List<Article> list = articleService.getArticleList(type);
 		list.forEach(System.out::println);
-	
 	}
 	
 	
@@ -169,6 +168,8 @@ class ArticleTest {
         articles.forEach(System.out::println);
         
     }
+    
+
     
     
     

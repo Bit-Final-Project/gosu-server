@@ -3,6 +3,7 @@ package article.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import article.bean.Article;
+import article.bean.ArticleDTO;
 import article.bean.ArticlePaging;
-import article.dao.ArticleRepository;
+import article.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -91,6 +93,27 @@ public class ArticleServiceImpl implements ArticleService{
 	    map.put("articlePaging", articlePaging);
 	    
 	    return map;
+	}
+
+	@Override
+	public List<ArticleDTO> getArticleAllList() {
+	    // TODO Auto-generated method stub
+	    System.out.println("너 오냐?");
+	    
+	    List<Article> list = articleRepository.findAll();
+	    
+	    // 반환할 DTO 리스트로 변환
+	    return list.stream()
+	            .map(article -> new ArticleDTO(
+	                    article.getArticleNo(),
+	                    article.getSubject(),
+	                    article.getContent(),
+	                    article.getView(),
+	                    article.getType(),
+	                    article.getWriteDate(),
+	                    article.getMemberNo().getMemberNo() // Member 엔티티에서 memberNo 추출
+	                ))
+	            .collect(Collectors.toList());
 	}
 
 
