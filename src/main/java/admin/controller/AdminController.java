@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import member.bean.MemberStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
@@ -20,9 +22,8 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-@GetMapping
-@ResponseBody
-    public String adminDashboard(){
+    @GetMapping
+    public String adminDashboard() {
         long userCount = adminService.getUserCount(MemberStatus.USER);
         long proCount = adminService.getUserCount(MemberStatus.PRO);
         long cancelCount = adminService.getUserCount(MemberStatus.CANCEL);
@@ -31,8 +32,7 @@ public class AdminController {
         log.debug("ProCount:{}", proCount);
         log.debug("CancelCount:{}", cancelCount);
 
-    return "DASHBOARD";
-
+        return "DASHBOARD";
 
     }
 
@@ -55,7 +55,6 @@ public class AdminController {
         } else {
             return ResponseEntity.status(401).body("인증실패");
         }
-
 
     }
 

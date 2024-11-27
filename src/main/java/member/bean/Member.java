@@ -13,38 +13,38 @@ import map.bean.Map;
 @AllArgsConstructor
 @Builder
 public class Member {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "member_no")
-	private Long memberNo;
 
-	@Column(unique = true)
-	private String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_no")
+    private Long memberNo;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "member_status")
-	private MemberStatus memberStatus = MemberStatus.USER;
+    @Column(unique = true)
+    private String email;
 
-	@Column(nullable = false)
-	private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "member_status")
+    private MemberStatus memberStatus = MemberStatus.USER;
 
-	@Column(nullable = false)
-	private String pwd;
+    @Column(nullable = false)
+    private String name;
 
-	@Column(nullable = false)
-	private Integer gender;
+    @Column(nullable = false)
+    private String pwd;
 
-	@Column(nullable = false)
-	private String phone;
+    @Column(nullable = false)
+    private Integer gender;
 
-	@Column(nullable = false)
-	private String address;
+    @Column(nullable = false)
+    private String phone;
 
-	@Column(name = "profile_image")
-	private String profileImage;
+    @Column(nullable = false)
+    private String address;
 
-	@OneToOne(mappedBy = "memberNo", cascade = CascadeType.ALL)
-	private Map map;
+    @Column(name = "profile_image")
+    private String profileImage;
+
+    @OneToOne(mappedBy = "memberNo", cascade = CascadeType.ALL)
+    private Map map;
 
 }
