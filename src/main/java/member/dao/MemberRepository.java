@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Integer> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
     //email(id)로 회원 정보 출력
     @Query("select t.email from Member t where t.email like concat('%', :email, '%')")
     String findByEmailLike(@Param("email") String email);
