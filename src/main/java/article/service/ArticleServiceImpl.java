@@ -52,6 +52,7 @@ public class ArticleServiceImpl implements ArticleService{
 	// memberNo맞춰서 이름 가져오는 로직
 	private String getMemberNameByMemberNo(Long memberNo) {
         Optional<Member> member = memberRepository.findById(memberNo); // memberNo로 Member 조회
+        
         return member.map(Member::getName).orElse("Unknown"); // Member가 없으면 "Unknown" 반환
     }
 	
