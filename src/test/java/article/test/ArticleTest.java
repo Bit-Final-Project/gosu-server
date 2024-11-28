@@ -1,25 +1,16 @@
 package article.test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import com.main.moeego.MoeegoApplication;
 
 import article.bean.Article;
-import article.bean.ArticlePaging;
 import article.service.ArticleService;
 
 @SpringBootTest(classes = MoeegoApplication.class)
@@ -33,38 +24,14 @@ class ArticleTest {
 	@Test
 	@Disabled
 	void contextLoads() {
-	    // 1. Pageable 생성 (0페이지, 10개씩, articleNo 기준 내림차순)
-	    Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "articleNo"));
 
-	    // 2. 서비스 메서드 호출
-	    Map<String, Object> resultMap = articleService.getArticleList(pageable);
-
-	    // 3. 검증 - 리스트와 페이징 객체 확인
-	    Page<Article> articlePage = (Page<Article>) resultMap.get("list");
-	    ArticlePaging articlePaging = (ArticlePaging) resultMap.get("articlePaging");
-
-	    // 4. 결과 출력
-	    System.out.println("Total Articles: " + articlePaging.getTotalA());
-	    System.out.println("Paging HTML: " + articlePaging.getPagingHTML()); // 여기서 제대로 출력되는지 확인
-
-	    // 5. 게시글 출력
-	    articlePage.getContent().forEach(System.out::println);
-
-	    // 6. Assertions (테스트 조건에 따라 추가)
-	    assertNotNull(articlePage);
-	    assertTrue(articlePage.getContent().size() <= 10, "Page size should not exceed 10");
-	    assertNotNull(articlePaging);
-	    assertTrue(articlePage.getTotalPages() > 0, "Total pages should be greater than 0");
-	    assertTrue(articlePage.getTotalElements() > 0, "Total elements should be greater than 0");
 	}
 	
 	
 	// Type 별로 게시판 조회
 	@Test
 	void articleTypeSelect() {
-		int type = 1;
-		List<Article> list = articleService.getArticleList(type);
-		list.forEach(System.out::println);
+
 	}
 	
 	

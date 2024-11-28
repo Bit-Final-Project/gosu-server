@@ -19,25 +19,63 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
-	
-	// 전체 게시글
+
+	// 한 페이지에 출력할 게시글 수
+	private int pageSize = 10;
+
+	// 전체 게시글 목록
 	@GetMapping("/article")
-	public ResponseEntity<List<ArticleDTO>> getArticles() {
-	    
-		List<ArticleDTO> articleList = articleService.getArticleAllList();
-		
-	    return ResponseEntity.ok(articleList);
-	    
+	public ResponseEntity<List<ArticleDTO>> getArticles(@RequestParam(value = "pg", required = false, defaultValue = "1") int pg) { 
+
+		List<ArticleDTO> articleList = articleService.getArticleListByPage(pg, pageSize);
+
+		return ResponseEntity.ok(articleList);
+
 	}
 	
-	// 인기글 조회수별 정렬
+	// 타입별 게시글 목록
+	@GetMapping("/article/{type}")
+	public ResponseEntity<List<ArticleDTO>> getArticlesByType(
+	        @PathVariable("type") String type,
+	        @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+	    
+	    int typeCode;
+	    switch (type) {
+	        case "free":
+	            typeCode = 2;
+	            break;
+	        case "qna":
+	            typeCode = 3;
+	            break;
+	        case "pro":
+	            typeCode = 4;
+	            break;
+	        default:
+	            return ResponseEntity.badRequest().build(); // 잘못된 타입 처리
+	    }
+
+	    List<ArticleDTO> articleList = articleService.getTypeArticles(pg, pageSize, typeCode);
+	    return ResponseEntity.ok(articleList);
+	}
+	
+
+	// 인기글 좋아요 순 목록
 	@GetMapping("/article/hot")
-	public ResponseEntity<List<ArticleDTO>> getHotArticles() {
-	    
-		List<ArticleDTO> articleList = articleService.getHotArticle();
-		
-	    return ResponseEntity.ok(articleList);
-	    
+	public ResponseEntity<List<ArticleDTO>> getHotArticles(@RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+
+		List<ArticleDTO> articleList = articleService.getHotArticle(pg, pageSize);
+
+		return ResponseEntity.ok(articleList);
+
 	}
-	
+
+	// 게시글 상세보기
+	@GetMapping("/article/viewpage")
+	public ResponseEntity<ArticleDTO> getArticleView(@RequestParam("article_no") Long articleNo) {
+		
+		ArticleDTO article = articleService.getArticleViewById(articleNo);
+
+		return ResponseEntity.ok(article);
+	}
+
 }

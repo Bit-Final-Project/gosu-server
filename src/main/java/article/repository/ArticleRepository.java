@@ -3,6 +3,7 @@ package article.repository;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,13 +36,16 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 	@Query("SELECT a FROM Article a WHERE a.content LIKE CONCAT('%', :content,'%')")
 	List<Article> searchContentArticles(@Param("content") String content);
 	
-	//페이징
+	// 페이징
 	@Query("SELECT a FROM Article a ORDER BY a.articleNo DESC")
 	Page<Article> findAllWithPaging(Pageable pageable);
 
 	// 인기 게시글 조회
-	List<Article> findAllByOrderByLikesDesc();
-	
+	Page<Article> findAllByOrderByLikesDesc(PageRequest pageRequest);
+
+	// 타입별 게시판 조회
+	Page<Article> findByType(int type, PageRequest pageRequest);
+
 
 
 

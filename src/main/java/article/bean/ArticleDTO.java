@@ -14,6 +14,7 @@ public class ArticleDTO {
 	private int type;
 	private LocalDateTime writeDate;
 	private int likes;
+	private String elapsedTime; 
 
 	// 생성자 추가
 	public ArticleDTO(Long articleNo, String subject, String content, int view, int type, LocalDateTime writeDate,
@@ -26,6 +27,19 @@ public class ArticleDTO {
 		this.writeDate = writeDate;
 		this.memberNo = memberNo;
 		this.likes = likes;
+	}
+	// 날짜 계산 생성자
+	public ArticleDTO(Long articleNo, String subject, String content, int view, int type, LocalDateTime writeDate,
+			Long memberNo, int likes, String elapsedTime) {
+		this.articleNo = articleNo;
+		this.subject = subject;
+		this.content = content;
+		this.view = view;
+		this.type = type;
+		this.writeDate = writeDate;
+		this.memberNo = memberNo;
+		this.likes = likes;
+		this.elapsedTime = elapsedTime;
 	}
 
 }
