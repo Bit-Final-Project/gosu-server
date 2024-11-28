@@ -41,6 +41,12 @@ public class ArticleController {
 	    
 	    int typeCode;
 	    switch (type) {
+	    	case "notices":
+	            typeCode = 0;
+	            break;
+	    	case "event":
+	            typeCode = 1;
+	            break;
 	        case "free":
 	            typeCode = 2;
 	            break;
