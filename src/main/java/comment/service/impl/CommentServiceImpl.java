@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (newComment.getParent() != null) {
             Comment parentComment = commentRepository.findById(newComment.getParent().getCommentNo())
-                    .orElseThrow(() -> new IllegalArgumentException("부모 댓글을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
 
             if (parentComment.getCommentStatus() == CommentStatus.DELETED) {
                 throw new IllegalArgumentException("삭제된 댓글에 답글을 달수 없습니다.");
