@@ -3,7 +3,9 @@ package comment.service.impl;
 import article.bean.Article;
 import comment.bean.Comment;
 import comment.bean.CommentStatus;
-import comment.dto.CommentDTO;
+import comment.dto.CommentRequest;
+import comment.dto.CommentResponse;
+import comment.dto.MemberCommentResponse;
 import comment.repository.CommentRepository;
 import comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +13,8 @@ import member.bean.Member;
 import member.dao.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,10 +28,11 @@ public class CommentServiceImpl implements CommentService {
         this.memberRepository = memberRepository;
     }
 
+    //댓글 작성
     @Override
-    public CommentDTO writeComment(CommentDTO commentDTO) {
+    public CommentResponse writeComment(CommentRequest writeRequest) {
 
-        Comment newComment = toEntity(commentDTO);
+        Comment newComment = toEntity(writeRequest);
 
         if (newComment.getParent() != null) {
             commentRepository.findById(newComment.getParent().getCommentNo())
@@ -41,9 +45,10 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    //댓글 수정
     @Override
     @Transactional
-    public CommentDTO updateComment(Long commentNo, String newContent) {
+    public CommentResponse updateComment(Long commentNo, String newContent) {
         Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("Comment not found : " + commentNo));
 
         if (existingComment.getCommentStatus() == CommentStatus.DELETED) {
@@ -59,10 +64,10 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
-
+    //댓글 삭제
     @Override
     @Transactional
-    public CommentDTO deleteComment(Long commentNo) {
+    public CommentResponse deleteComment(Long commentNo) {
 
         Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("Comment not found : " + commentNo));
 
@@ -77,61 +82,83 @@ public class CommentServiceImpl implements CommentService {
         return toDTO(existingComment);
     }
 
-    public Comment toEntity(CommentDTO dto) {
+    //회원 ID로 댓글 조회
+    @Override
+    public List<MemberCommentResponse> findCommentsByMember(Long memberNo) {
+        return commentRepository.findByMember_MemberNo(memberNo);
+    }
 
-        Comment comment = new Comment();
+    @Override
+    public List<CommentResponse> findCommentsByArticle(Long articleNo) {
+        List<Comment> commentList = commentRepository.findByArticle_ArticleNo(articleNo);
 
-        comment.setContent(dto.getContent());
-
-        Article article = new Article();
-        article.setArticleNo(dto.getArticleNo());
-        comment.setArticle(article);
-
-        Member member = new Member();
-        member.setMemberNo(dto.getMemberNo());
-        comment.setMember(member);
-
-        if (dto.getParentCommentNo() != 0) {
-            Comment parent = new Comment();
-            parent.setCommentNo(dto.getParentCommentNo());
-            comment.setParent(parent);
-        }
-
-        comment.setChildren(new ArrayList<>());
-        for (CommentDTO child : dto.getChildren()) {
-            comment.getChildren().add(toEntity(child));
-        }
-
-        return comment;
+        return commentList.stream()
+                .filter(comment -> comment.getParent() ==null)
+                .map(this::toDTO)
+                .toList();
     }
 
 
-    public CommentDTO toDTO(Comment comment) {
+    public CommentResponse toDTO(Comment comment) {
 
-        CommentDTO dto = new CommentDTO();
+        CommentResponse response = new CommentResponse();
 
-        dto.setCommentNo(comment.getCommentNo());
-        dto.setArticleNo(comment.getArticle().getArticleNo());
-        dto.setMemberNo(comment.getMember().getMemberNo());
-        dto.setContent(comment.getContent());
-        dto.setCommentStatus(comment.getCommentStatus());
-        dto.setWriteDate(comment.getWriteDate());
+        response.setCommentNo(comment.getCommentNo());
+        response.setArticleNo(comment.getArticle().getArticleNo());
+        response.setMemberNo(comment.getMember().getMemberNo());
+        response.setContent(comment.getContent());
+        response.setCommentStatus(comment.getCommentStatus());
+        response.setWriteDate(comment.getWriteDate());
 
-        dto.setParentCommentNo(
+        response.setParentCommentNo(
                 comment.getParent() != null ? comment.getParent().getCommentNo() : 0
         );
 
         //재귀
         for (Comment child : comment.getChildren()) {
-            dto.getChildren().add(toDTO(child));
+            response.getChildren().add(toDTO(child));
         }
 
-        dto.setMemberName(getMemberName(comment.getMember().getMemberNo()));
-        dto.setMemberProfileImage(getMemberProfileImage(comment.getMember().getMemberNo()));
+        response.setMemberName(getMemberName(comment.getMember().getMemberNo()));
+        response.setMemberProfileImage(getMemberProfileImage(comment.getMember().getMemberNo()));
 
-        return dto;
+        return response;
 
     }
+
+    public Comment toEntity(CommentRequest request) {
+
+        Comment comment = new Comment();
+
+        comment.setContent(request.getContent());
+
+        Article article = new Article();
+        article.setArticleNo(request.getArticleNo());
+        comment.setArticle(article);
+
+        Member member = new Member();
+        member.setMemberNo(request.getMemberNo());
+        comment.setMember(member);
+
+        if (request.getParentCommentNo() != 0) {
+            Comment parent = new Comment();
+            parent.setCommentNo(request.getParentCommentNo());
+            comment.setParent(parent);
+        }
+
+        /*
+        dto->entity 전환시에는 이 요소가 필요없는거 같아서 일단 주석처리
+
+        comment.setChildren(new ArrayList<>());
+        for (CommentDTO child : request.getChildren()) {
+            comment.getChildren().add(toEntity(child));
+        }
+
+        */
+
+        return comment;
+    }
+
 
     public String getMemberName(Long memberNo) {
         Member member = memberRepository.findById(memberNo)
