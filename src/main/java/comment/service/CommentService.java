@@ -1,13 +1,13 @@
 package comment.service;
 
-import comment.bean.Comment;
+import comment.dto.CommentDTO;
 
 public interface CommentService {
 
-    Comment writeComment(Comment comment);
+    CommentDTO writeComment(CommentDTO commentDTO);
 
-    Comment updateComment(Long commentNo, String newContent);
+    CommentDTO updateComment(Long commentNo, String newContent);
 
-    Comment deleteComment(Long commentNo);
+    CommentDTO deleteComment(Long commentNo);
 
 }

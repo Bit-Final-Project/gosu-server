@@ -30,14 +30,14 @@ public class Comment {
     private Member member; // 작성자 참조
 
     @ManyToOne
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_id")/*
     @ToString.Exclude // 순환 참조 방지
-    @JsonIgnore
+    @JsonBackReference // 부모 필드는 직렬화에서 제외*/
     private Comment parent; // 부모 댓글 참조
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude // 순환 참조 방지
-    @JsonIgnore
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    /*@ToString.Exclude // 순환 참조 방지
+    @JsonManagedReference // 자식 필드는 직렬화에 포함*/
     private List<Comment> children = new ArrayList<>(); // 대댓글 리스트
 
     @Column(length = 5000, nullable = false)
