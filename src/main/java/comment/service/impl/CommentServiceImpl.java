@@ -33,10 +33,13 @@ public class CommentServiceImpl implements CommentService {
         Comment newComment = commentMapper.toEntity(writeRequest);
 
         if (newComment.getParent() != null) {
-            commentRepository.findById(newComment.getParent().getCommentNo())
-                    .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
-        }
+            Comment parentComment = commentRepository.findById(newComment.getParent().getCommentNo())
+                    .orElseThrow(() -> new IllegalArgumentException("부모 댓글을 찾을 수 없습니다."));
 
+            if (parentComment.getCommentStatus() == CommentStatus.DELETED) {
+                throw new IllegalArgumentException("삭제된 댓글에 답글을 달수 없습니다.");
+            }
+        }
         commentRepository.save(newComment);
 
         return commentMapper.toDTO(newComment);
@@ -47,10 +50,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentResponse updateComment(Long commentNo, String newContent) {
-        Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("Comment not found : " + commentNo));
+        Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("수정하려는 댓글을 찾을 수 없습니다. : " + commentNo));
 
         if (existingComment.getCommentStatus() == CommentStatus.DELETED) {
-            throw new IllegalArgumentException("Deleted comment");
+            throw new IllegalArgumentException("이미 삭제된 댓글입니다.");
         }
 
         existingComment.setContent(newContent);
@@ -67,10 +70,10 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public CommentResponse deleteComment(Long commentNo) {
 
-        Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("Comment not found : " + commentNo));
+        Comment existingComment = commentRepository.findById(commentNo).orElseThrow(() -> new IllegalArgumentException("삭제하려는 댓글을 찾을 수 없습니다. : " + commentNo));
 
         if (existingComment.getCommentStatus() == CommentStatus.DELETED) {
-            throw new IllegalArgumentException("Already deleted");
+            throw new IllegalArgumentException("이미 삭제된 댓글입니다.");
         }
 
         existingComment.setCommentStatus(CommentStatus.DELETED);

@@ -49,6 +49,6 @@ public class Comment {
         if (this.commentStatus == null) {
             this.commentStatus = CommentStatus.DEFAULT;
         }
-    } // 자동으로 작성 시간 입력
+    } // 자동으로 입력
 
 }
