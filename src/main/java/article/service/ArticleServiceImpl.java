@@ -187,7 +187,7 @@ public class ArticleServiceImpl implements ArticleService{
 
 	    // 게시글이 존재하면 ArticleDTO로 변환하여 반환
 	    Article article = list.get();
-	    
+	    String elapsedTime = ArticleRegistDate(article.getWriteDate());
 		return new ArticleDTO(
 	            article.getArticleNo(),
 	            article.getSubject(),
@@ -196,7 +196,8 @@ public class ArticleServiceImpl implements ArticleService{
 	            article.getType(),
 	            article.getWriteDate(),
 	            article.getMemberNo().getMemberNo(),
-	            article.getLikes()
+	            article.getLikes(),
+	            elapsedTime
 	    );
 		
 	}
