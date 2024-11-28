@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString
 public class CommentRequest {
 
+    private Long commentNo;
     private Long memberNo;
     private Long articleNo;
     private String content;
