@@ -38,6 +38,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 	//페이징
 	@Query("SELECT a FROM Article a ORDER BY a.articleNo DESC")
 	Page<Article> findAllWithPaging(Pageable pageable);
+
+	// 인기 게시글 조회
+	List<Article> findAllByOrderByLikesDesc();
 	
 
 

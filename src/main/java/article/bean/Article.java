@@ -28,6 +28,9 @@ public class Article {
     private int view;
 
     private int type;
+    
+    @Column(nullable = false) // NULL 값 허용 안 함
+    private int likes = 0; // 기본값 설정
 
     @Column(name = "write_date")
     private LocalDateTime writeDate = LocalDateTime.now();
@@ -42,6 +45,7 @@ public class Article {
                 ", view=" + view +
                 ", type=" + type +
                 ", writeDate=" + writeDate +
+                ", likes=" + likes +
                 '}';
     }
 
