@@ -1,7 +1,6 @@
 package comment.bean;
 
 import article.bean.Article;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -30,29 +29,25 @@ public class Comment {
     private Member member; // 작성자 참조
 
     @ManyToOne
-    @JoinColumn(name = "parent_id")/*
-    @ToString.Exclude // 순환 참조 방지
-    @JsonBackReference // 부모 필드는 직렬화에서 제외*/
+    @JoinColumn(name = "parent_id")
     private Comment parent; // 부모 댓글 참조
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    /*@ToString.Exclude // 순환 참조 방지
-    @JsonManagedReference // 자식 필드는 직렬화에 포함*/
     private List<Comment> children = new ArrayList<>(); // 대댓글 리스트
 
     @Column(length = 5000, nullable = false)
     private String content; // 댓글 내용
 
-    @Column(name = "write_date", nullable = false)
-    private LocalDateTime writeDate;
-
     @Column(name = "comment_status")
     @Enumerated(EnumType.STRING)
-    private CommentStatus commentStatus = CommentStatus.DEFAULT;
+    private CommentStatus commentStatus = CommentStatus.DEFAULT; // 댓글 상태
+
+    @Column(name = "write_date", nullable = false)
+    private LocalDateTime writeDate; //댓글 작성 시간
 
     @PrePersist
     public void prePersist() {
         this.writeDate = LocalDateTime.now();
-    }
+    } // 자동으로 작성 시간 입력
 
 }

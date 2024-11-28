@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class CommentDTO {
+public class CommentResponse {
 
     private long commentNo;
     private long articleNo;
@@ -23,6 +23,6 @@ public class CommentDTO {
     private CommentStatus commentStatus;
     private LocalDateTime writeDate;
     private long parentCommentNo;
-    private List<CommentDTO> children = new ArrayList<>(); // 대댓글 리스트
+    private List<CommentResponse> children = new ArrayList<>(); // 대댓글 리스트
 
 }
