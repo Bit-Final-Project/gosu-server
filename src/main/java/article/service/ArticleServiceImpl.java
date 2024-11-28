@@ -36,7 +36,6 @@ public class ArticleServiceImpl implements ArticleService{
 
 	@Override
 	public Article getEventList(int num) {
-		
 		return articleRepository.findByArticleNo(num);
 	}
 
