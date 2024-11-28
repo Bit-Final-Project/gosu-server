@@ -1,8 +1,10 @@
 package comment.bean;
 
 import article.bean.Article;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import member.bean.Member;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Data
+@ToString
 public class Comment {
 
     @Id

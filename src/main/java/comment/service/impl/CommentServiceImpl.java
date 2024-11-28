@@ -11,7 +11,6 @@ import member.bean.Member;
 import member.dao.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 
 @Slf4j

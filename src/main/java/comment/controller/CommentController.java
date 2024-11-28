@@ -50,6 +50,8 @@ public class CommentController {
         //0=일반댓글 1=수정된댓글 99=삭제된댓글 - enum 처리
 
         CommentDTO deletedComment = commentService.deleteComment(commentNo);
+
+   
         return ResponseEntity.ok(deletedComment);
     }
 }
