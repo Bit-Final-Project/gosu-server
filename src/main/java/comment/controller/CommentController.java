@@ -2,10 +2,13 @@ package comment.controller;
 
 import comment.dto.CommentRequest;
 import comment.dto.CommentResponse;
+import comment.dto.MemberCommentResponse;
 import comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -33,7 +36,6 @@ public class CommentController {
 
     }
 
-
     @PatchMapping("/update")
     public ResponseEntity<CommentResponse> updateComment(@RequestBody CommentRequest updateRequest) {
 
@@ -57,4 +59,16 @@ public class CommentController {
 
         return ResponseEntity.ok(deletedComment);
     }
+
+    @GetMapping("/myPage")
+    public List<MemberCommentResponse> myPage(@RequestParam Long memberNo) {
+        return commentService.findCommentsByMember(memberNo);
+
+    }
+
+    @GetMapping("/article")
+    public List<CommentResponse> article(@RequestParam Long articleNo) {
+        return commentService.findCommentsByArticle(articleNo);
+    }
+
 }

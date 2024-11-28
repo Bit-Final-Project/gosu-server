@@ -5,6 +5,7 @@ import comment.bean.Comment;
 import comment.bean.CommentStatus;
 import comment.dto.CommentRequest;
 import comment.dto.CommentResponse;
+import comment.dto.MemberCommentResponse;
 import comment.repository.CommentRepository;
 import comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import member.bean.Member;
 import member.dao.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
         this.memberRepository = memberRepository;
     }
 
+    //댓글 작성
     @Override
     public CommentResponse writeComment(CommentRequest writeRequest) {
 
@@ -41,6 +45,7 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    //댓글 수정
     @Override
     @Transactional
     public CommentResponse updateComment(Long commentNo, String newContent) {
@@ -59,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
-
+    //댓글 삭제
     @Override
     @Transactional
     public CommentResponse deleteComment(Long commentNo) {
@@ -76,6 +81,23 @@ public class CommentServiceImpl implements CommentService {
 
         return toDTO(existingComment);
     }
+
+    //회원 ID로 댓글 조회
+    @Override
+    public List<MemberCommentResponse> findCommentsByMember(Long memberNo) {
+        return commentRepository.findByMember_MemberNo(memberNo);
+    }
+
+    @Override
+    public List<CommentResponse> findCommentsByArticle(Long articleNo) {
+        List<Comment> commentList = commentRepository.findByArticle_ArticleNo(articleNo);
+
+        return commentList.stream()
+                .filter(comment -> comment.getParent() ==null)
+                .map(this::toDTO)
+                .toList();
+    }
+
 
     public CommentResponse toDTO(Comment comment) {
 

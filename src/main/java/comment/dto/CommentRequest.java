@@ -13,6 +13,6 @@ public class CommentRequest {
     private Long memberNo;
     private Long articleNo;
     private String content;
-    private Long parentCommentNo;
+    private Long parentCommentNo; //없으면 0
 
 }
