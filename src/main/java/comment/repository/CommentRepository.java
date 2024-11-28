@@ -1,7 +1,6 @@
 package comment.repository;
 
 import comment.bean.Comment;
-import comment.dto.CommentResponse;
 import comment.dto.MemberCommentResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
