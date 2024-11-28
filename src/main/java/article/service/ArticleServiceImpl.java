@@ -27,6 +27,7 @@ public class ArticleServiceImpl implements ArticleService{
 	private final MemberRepository memberRepository;
 	
 	
+	// 현재시간 - 게시글 등록시간 로직 -> ~~~분 전
 	public String ArticleRegistDate(LocalDateTime writeDate) {
 		LocalDateTime now = LocalDateTime.now();
 
@@ -48,6 +49,7 @@ public class ArticleServiceImpl implements ArticleService{
         }
 	}
 	
+	// memberNo맞춰서 이름 가져오는 로직
 	private String getMemberNameByMemberNo(Long memberNo) {
         Optional<Member> member = memberRepository.findById(memberNo); // memberNo로 Member 조회
         return member.map(Member::getName).orElse("Unknown"); // Member가 없으면 "Unknown" 반환
@@ -149,8 +151,7 @@ public class ArticleServiceImpl implements ArticleService{
 	                        article.getMemberNo().getMemberNo(),
 	                        article.getLikes(),
 	                        elapsedTime,
-	                        memberName
-	                        
+	                        memberName        
 	                );
 	            })
 	            .collect(Collectors.toList());
