@@ -1,4 +1,4 @@
-package article.service.impl;
+package article.service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,6 @@ import article.bean.Article;
 import article.bean.ArticleDTO;
 import article.bean.ArticlePaging;
 import article.repository.ArticleRepository;
-import article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 
 @Service
