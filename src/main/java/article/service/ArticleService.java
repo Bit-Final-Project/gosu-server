@@ -23,5 +23,6 @@ public interface ArticleService {
 	public Map<String , Object> getArticleList(Pageable pageable);
 	
 	public List<ArticleDTO> getArticleAllList();
+	public List<ArticleDTO> getHotArticle();
 	
 }

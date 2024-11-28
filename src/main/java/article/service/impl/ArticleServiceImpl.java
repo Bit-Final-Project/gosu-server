@@ -1,4 +1,4 @@
-package article.service;
+package article.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import article.bean.Article;
 import article.bean.ArticleDTO;
 import article.bean.ArticlePaging;
 import article.repository.ArticleRepository;
+import article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -95,14 +95,14 @@ public class ArticleServiceImpl implements ArticleService{
 	    return map;
 	}
 
+	
+	// 전체 게시글 조회
 	@Override
 	public List<ArticleDTO> getArticleAllList() {
 	    // TODO Auto-generated method stub
-	    System.out.println("너 오냐?");
 	    
 	    List<Article> list = articleRepository.findAll();
 	    
-	    // 반환할 DTO 리스트로 변환
 	    return list.stream()
 	            .map(article -> new ArticleDTO(
 	                    article.getArticleNo(),
@@ -111,9 +111,31 @@ public class ArticleServiceImpl implements ArticleService{
 	                    article.getView(),
 	                    article.getType(),
 	                    article.getWriteDate(),
-	                    article.getMemberNo().getMemberNo() // Member 엔티티에서 memberNo 추출
+	                    article.getMemberNo().getMemberNo(), // Member 엔티티에서 memberNo 추출
+	                    article.getLikes() 
 	                ))
 	            .collect(Collectors.toList());
+	}
+
+	// 좋아요 순으로 조회(인기 게시글)
+	@Override
+	public List<ArticleDTO> getHotArticle() {
+		
+		List<Article> list = articleRepository.findAllByOrderByLikesDesc();
+		
+	    return list.stream()
+	            .map(article -> new ArticleDTO(
+	                    article.getArticleNo(),
+	                    article.getSubject(),
+	                    article.getContent(),
+	                    article.getView(),
+	                    article.getType(),
+	                    article.getWriteDate(),
+	                    article.getMemberNo().getMemberNo(),
+	                    article.getLikes() 
+	            ))
+	            .collect(Collectors.toList());
+		
 	}
 
 
