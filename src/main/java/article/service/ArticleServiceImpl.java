@@ -97,18 +97,22 @@ public class ArticleServiceImpl implements ArticleService{
 
 		 Page<Article> list = articleRepository.findAllByOrderByLikesDesc(pageRequest);
 		
-	    return list.stream()
-	            .map(article -> new ArticleDTO(
-	                    article.getArticleNo(),
-	                    article.getSubject(),
-	                    article.getContent(),
-	                    article.getView(),
-	                    article.getType(),
-	                    article.getWriteDate(),
-	                    article.getMemberNo().getMemberNo(),
-	                    article.getLikes() 
-	            ))
-	            .collect(Collectors.toList());
+		    return list.getContent().stream()
+		            .map(article -> {
+		                String elapsedTime = ArticleRegistDate(article.getWriteDate());
+		                return new ArticleDTO(
+		                        article.getArticleNo(),
+		                        article.getSubject(),
+		                        article.getContent(),
+		                        article.getView(),
+		                        article.getType(),
+		                        article.getWriteDate(),
+		                        article.getMemberNo().getMemberNo(),
+		                        article.getLikes(),
+		                        elapsedTime // 추가된 필드
+		                );
+		            })
+		            .collect(Collectors.toList());
 		
 	}
 
