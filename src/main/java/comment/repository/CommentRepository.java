@@ -25,7 +25,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             FROM Comment c
             WHERE c.member.memberNo = :memberNo
             """)
-    Page<MemberCommentResponse> findByMember_MemberNo(Long memberNo, Pageable pageable);
+    Page<MemberCommentResponse> findByMember_MemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
 
     List<Comment> findByArticle_ArticleNo(Long articleNo);
 
