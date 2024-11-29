@@ -1,116 +1,45 @@
 package member.config;
 
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
-import java.io.IOException;
-import java.util.Collections;
-
-@EnableWebSecurity
 @Configuration
-@RequiredArgsConstructor
+@EnableWebSecurity
 public class SecurityConfig {
-    private final JWTUtil jwtUtil;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final RefreshTokenService refreshTokenService;
-    private final RefreshRepository refreshRepository;
-
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler(){
-        return new AuthenticationFailureHandler() {
-            @Override
-            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                System.out.println("exception = " + exception);
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            }
-        };
-    }
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // disable
+        //csrf disable
         http
-                .httpBasic((basic) -> basic.disable())
-                .csrf((csrf) -> csrf.disable());
+                .csrf((auth) -> auth.disable());
 
-        // form
+        //From 로그인 방식 disable
         http
-                .formLogin((form) -> form.loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .successHandler(new CustomFormSuccessHandler(jwtUtil, refreshTokenService))
-                        .failureHandler(authenticationFailureHandler())
-                        .permitAll());
+                .formLogin((auth) -> auth.disable());
 
-        // oauth2
+        //http basic 인증 방식 disable
         http
-                .oauth2Login((oauth2) -> oauth2
-                        .loginPage("/login")
-                        .userInfoEndpoint((userinfo) -> userinfo
-                                .userService(customOAuth2UserService))
-                        .successHandler(new CustomOAuth2SuccessHandler(jwtUtil, refreshTokenService))
-                        .failureHandler(authenticationFailureHandler())
-                        .permitAll());
+                .httpBasic((auth) -> auth.disable());
 
-        // logout
+        //경로별 인가 작업
         http
-                .logout((auth) -> auth
-                        .logoutSuccessUrl("/")
-                        .permitAll());
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/login", "/", "/join").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .anyRequest().authenticated());
 
-        // cors
-        http
-                .cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000/"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        configuration.setExposedHeaders(Collections.singletonList("access"));
-
-                        return configuration;
-                    }
-                }));
-
-        // authorization
-        http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login", "/join", "/logout", "/oauth2-jwt-header").permitAll()
-                .requestMatchers("/admin").hasRole("ADMIN")
-                .anyRequest().authenticated());
-
-        // 인가되지 않은 사용자에 대한 exception -> 프론트엔드로 코드 응답
-        http.exceptionHandling((exception) ->
-                exception
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        }));
-
-        // jwt filter
-        http
-                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-        // custom logout filter 등록
-        http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
-
-        // session stateless
+        //세션 설정
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

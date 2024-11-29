@@ -3,12 +3,7 @@ package comment.bean;
 import article.bean.Article;
 import jakarta.persistence.*;
 import lombok.Data;
-<<<<<<< HEAD
 import member.bean.MemberEntity;
-=======
-import member.bean.Member;
->>>>>>> d183ca18c11b7325bacf0217fd58edd250aeda5d
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
