@@ -63,7 +63,7 @@ public class CommentController {
     }
 
     @GetMapping("/myPage")
-    public ResponseEntity<?> myPage(@RequestParam Long memberNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+    public ResponseEntity<?> myPage(@RequestParam(value = "member_no") Long memberNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
         int pageSize = 10;
         Page<MemberCommentResponse> commentPage = commentService.findCommentsByMember(memberNo, pg, pageSize);
 
