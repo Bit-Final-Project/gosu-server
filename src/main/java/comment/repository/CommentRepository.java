@@ -2,8 +2,11 @@ package comment.repository;
 
 import comment.bean.Comment;
 import comment.dto.MemberCommentResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,4 +28,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<MemberCommentResponse> findByMember_MemberNo(Long memberNo);
 
     List<Comment> findByArticle_ArticleNo(Long articleNo);
+
+    @Query("""
+            SELECT c
+            FROM Comment c
+            WHERE c.article.articleNo = :articleNo AND c.parent IS NULL
+            """)
+    Page<Comment> findParentCommentsByArticle(@Param("articleNo") Long articleNo, Pageable pageable);
 }

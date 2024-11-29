@@ -5,10 +5,13 @@ import comment.dto.CommentResponse;
 import comment.dto.MemberCommentResponse;
 import comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -67,8 +70,21 @@ public class CommentController {
     }
 
     @GetMapping("/article")
-    public List<CommentResponse> article(@RequestParam Long articleNo) {
-        return commentService.findCommentsByArticle(articleNo);
+    public ResponseEntity<?> article(@RequestParam Long articleNo, @RequestParam int page) {
+        int pageSize = 5;
+
+        // Page<CommentResponse> 가져오기
+        Page<CommentResponse> commentPage = commentService.findPagedCommentsByArticle(articleNo, page, pageSize);
+
+        // JSON 구조 직접 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", commentPage.getContent());
+        response.put("totalPages", commentPage.getTotalPages());
+        response.put("totalElements", commentPage.getTotalElements());
+        response.put("currentPage", commentPage.getNumber());
+
+        return ResponseEntity.ok(response);
     }
+
 
 }
