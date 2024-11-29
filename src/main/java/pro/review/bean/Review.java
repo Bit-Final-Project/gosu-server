@@ -3,7 +3,7 @@ package pro.review.bean;
 import category.bean.MainCategory;
 import jakarta.persistence.*;
 import lombok.Data;
-import member.bean.Member;
+import member.bean.MemberEntity;
 import pro.article.bean.ProArticle;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ public class Review {
 
 	@ManyToOne // 고수 게시판에 사용자는 여러개의 리뷰를 작성할수있음
 	@JoinColumn(name = "member_no", nullable = false)
-	private Member memberNo;
+	private MemberEntity memberNo;
 
 	private float star;
 

@@ -1,7 +1,7 @@
 package member.service;
 
 import lombok.RequiredArgsConstructor;
-import member.bean.Member;
+import member.bean.MemberEntity;
 import member.dao.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,21 +19,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public boolean write(Member member) {
-        Member savedMember = memberRepository.save(member);
+    public boolean write(MemberEntity member) {
+        MemberEntity savedMember = memberRepository.save(member);
         return savedMember != null && savedMember.getEmail() != null ? true : false;
     }
 
     @Override
     public boolean login(String email, String pwd) {
-        Member member = memberRepository.login(email, pwd);
+        MemberEntity member = memberRepository.login(email, pwd);
         return member != null && member.getEmail() != null ? true : false;
     }
 
     @Override
     @Transactional
-    public boolean delete(Member member) {
-        Member getMember = memberRepository.login(member.getEmail(), member.getPwd());
+    public boolean delete(MemberEntity member) {
+        MemberEntity getMember = memberRepository.login(member.getEmail(), member.getPwd());
         if (getMember != null && getMember.getEmail() != null) {
             memberRepository.delete(member);
             return true;

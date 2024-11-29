@@ -9,7 +9,7 @@ import comment.dto.MemberCommentResponse;
 import comment.repository.CommentRepository;
 import comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
-import member.bean.Member;
+import member.bean.MemberEntity;
 import member.dao.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -136,7 +136,7 @@ public class CommentServiceImpl implements CommentService {
         article.setArticleNo(request.getArticleNo());
         comment.setArticle(article);
 
-        Member member = new Member();
+        MemberEntity member = new MemberEntity();
         member.setMemberNo(request.getMemberNo());
         comment.setMember(member);
 
@@ -161,13 +161,13 @@ public class CommentServiceImpl implements CommentService {
 
 
     public String getMemberName(Long memberNo) {
-        Member member = memberRepository.findById(memberNo)
+        MemberEntity member = memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
         return member.getName();
     }
 
     public String getMemberProfileImage(Long memberNo) {
-        Member member = memberRepository.findById(memberNo)
+        MemberEntity member = memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
         return member.getProfileImage();
     }

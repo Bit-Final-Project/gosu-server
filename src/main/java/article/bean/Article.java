@@ -2,7 +2,7 @@ package article.bean;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import member.bean.Member;
+import member.bean.MemberEntity;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +17,7 @@ public class Article {
 
     @ManyToOne(fetch = FetchType.LAZY) // 여러개의 게시판을 한명의 사용자가 작성할수있음
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private MemberEntity memberNo;
 
     @Column(length = 3000)
     private String subject;

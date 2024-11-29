@@ -12,7 +12,7 @@ import map.bean.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Member {
+public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,7 @@
 package member.test;
 
 import com.main.moeego.MoeegoApplication;
-import member.bean.Member;
+import member.bean.MemberEntity;
 import member.bean.MemberStatus;
 import member.service.MemberService;
 import org.junit.jupiter.api.Disabled;
@@ -23,7 +23,7 @@ class MemberServiceTest {
 
     @Test
     void signUpTest() {
-        Member member = new Member();
+        MemberEntity member = new MemberEntity();
         member.setEmail("test");
         member.setPwd("test");
         member.setName("테스트");
@@ -37,7 +37,7 @@ class MemberServiceTest {
 
     @Test
     void signOutTest() {
-        Member member = new Member();
+        MemberEntity member = new MemberEntity();
         member.setEmail("test");
         member.setPwd("test");
         boolean check = memberService.delete(member);
@@ -46,7 +46,7 @@ class MemberServiceTest {
 
     @Test
     void login() {
-        Member member = new Member();
+        MemberEntity member = new MemberEntity();
         member.setEmail("test");
         member.setPwd("test");
         boolean check = memberService.login("test", "test");

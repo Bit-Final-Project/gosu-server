@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import member.bean.Member;
+import member.bean.MemberEntity;
 
 @Entity
 @Table(name = "pro_article")
@@ -33,5 +33,5 @@ public class ProArticle {
 
 	@ManyToOne // 고수 게시판에 사용자는 여러개의 게시글을 작성할수있음
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private MemberEntity memberNo;
 }
