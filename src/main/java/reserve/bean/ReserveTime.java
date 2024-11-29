@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import member.bean.MemberEntity;
+import member.entity.Member;
 
 @Entity
 @Table(name = "reserve_time")
@@ -29,7 +29,7 @@ public class ReserveTime {
     // 한명의 사용자는 여러개의 예약을 할수있고, 여러개의 예약 시간을 선택할수있다.
     @ManyToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private MemberEntity memberNo;
+    private Member memberNo;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;

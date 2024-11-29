@@ -1,16 +1,11 @@
 package member.service;
 
-import member.bean.MemberEntity;
+import member.bean.JoinDTO;
+import member.entity.Member;
 
 public interface MemberService {
-    String isExistEmail(String email);
-    boolean write(MemberEntity member);
-    boolean delete(MemberEntity member);
-    boolean login(String email, String pwd);
-
-    MemberEntity getMemberById(Long memberNo);
-
+    boolean write(JoinDTO joinDTO);
+    Member getMemberById(Long memberNo);
     String getMemberName(Long memberNo);
-
     String getMemberProfileImage(Long memberNo);
 }

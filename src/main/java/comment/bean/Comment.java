@@ -3,7 +3,7 @@ package comment.bean;
 import article.bean.Article;
 import jakarta.persistence.*;
 import lombok.Data;
-import member.bean.MemberEntity;
+import member.entity.Member;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private MemberEntity member; // 작성자 참조
+    private Member member; // 작성자 참조
 
     @ManyToOne
     @JoinColumn(name = "parent_id")

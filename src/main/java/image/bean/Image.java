@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
-import member.bean.MemberEntity;
+import member.entity.Member;
 import pro.article.bean.ProArticle;
 import pro.review.bean.Review;
 
@@ -35,7 +35,7 @@ public class Image {
 	
 	@ManyToOne // 여러개의 이미지를 사용자가 넣을수있음
 	@JoinColumn(name="member_no", nullable = false)
-	private MemberEntity memberNo;
+	private Member memberNo;
 	
 	@Column(length = 3000)
 	private String imageName;

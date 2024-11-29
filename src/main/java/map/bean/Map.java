@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
-import member.bean.MemberEntity;
+import member.entity.Member;
 
 @Entity
 @Data
@@ -20,7 +20,7 @@ public class Map {
 	
 	@OneToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private MemberEntity memberNo;
+    private Member memberNo;
 	
 	@Column(name = "map_path", length = 3000)
 	private String mapPath;

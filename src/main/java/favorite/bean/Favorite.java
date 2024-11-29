@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
-import member.bean.MemberEntity;
+import member.entity.Member;
 import pro.bean.Pro;
 
 @Entity
@@ -20,7 +20,7 @@ public class Favorite {
 
 	@ManyToOne // 여러개의 즐겨찾기를 한 사용자가 할수있음
     @JoinColumn(name="member_no", nullable = false)
-    private MemberEntity memberNo;
+    private Member memberNo;
 	
 	@ManyToOne // 즐겨찾기에 여러명의 고수가 담길수있음
     @JoinColumn(name = "pro_no", nullable = false)

@@ -11,8 +11,8 @@ import comment.repository.CommentRepository;
 import comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import member.bean.MemberEntity;
-import member.dao.MemberRepository;
+import member.entity.Member;
+import member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,7 +138,7 @@ public class CommentServiceImpl implements CommentService {
         article.setArticleNo(request.getArticleNo());
         comment.setArticle(article);
 
-        MemberEntity member = new MemberEntity();
+        Member member = new Member();
         member.setMemberNo(request.getMemberNo());
         comment.setMember(member);
 
@@ -163,13 +163,13 @@ public class CommentServiceImpl implements CommentService {
 
 
     public String getMemberName(Long memberNo) {
-        MemberEntity member = memberRepository.findById(memberNo)
+        Member member = memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
         return member.getName();
     }
 
     public String getMemberProfileImage(Long memberNo) {
-        MemberEntity member = memberRepository.findById(memberNo)
+        Member member = memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
         return member.getProfileImage();
     }

@@ -1,12 +1,12 @@
-package member.bean;
+package member.entity;
 
 public enum MemberStatus {
-    ADMIN(0, "관리자"),
-    USER(1, "일반 사용자"),
-    PRO(2, "달인"),
-    PEND_PRO(3, "달인 미승인"),
-    CANCEL_PRO(4, "달인 박탈"),
-    CANCEL(99, "회원 탈퇴");
+    ROLE_ADMIN(0, "관리자"),
+    ROLE_USER(1, "일반 사용자"),
+    ROLE_PRO(2, "달인"),
+    ROLE_PEND_PRO(3, "달인 미승인"),
+    ROLE_CANCEL_PRO(4, "달인 박탈"),
+    ROLE_CANCEL(99, "회원 탈퇴");
 
     private final int code;
     private final String description;

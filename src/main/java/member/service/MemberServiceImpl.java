@@ -1,37 +1,49 @@
 package member.service;
 
 import lombok.RequiredArgsConstructor;
-import member.bean.MemberEntity;
-import member.dao.MemberRepository;
+import member.bean.JoinDTO;
+import member.entity.Member;
+import member.bean.MemberDetails;
+import member.entity.MemberStatus;
+import member.repository.MemberRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService {
+public class MemberServiceImpl implements MemberService, UserDetailsService {
     private final MemberRepository memberRepository;
-
-    @Override
-    public String isExistEmail(String email) {
-        String getEmail = memberRepository.findByEmailLike(email);
-        return getEmail != null ? "exist" : "non_exist";
-    }
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     @Transactional
-    public boolean write(MemberEntity member) {
-        MemberEntity savedMember = memberRepository.save(member);
-        return savedMember != null && savedMember.getEmail() != null ? true : false;
+    public boolean write(JoinDTO joinDTO) {
+        String email = joinDTO.getEmail();
+        String pwd = joinDTO.getPwd();
+
+        Boolean isExist = memberRepository.existsByEmail(email);
+        if(isExist) return false;
+
+        Member data = new Member();
+
+        data.setEmail(email);
+        data.setName(joinDTO.getName());
+        data.setPwd(bCryptPasswordEncoder.encode(pwd));
+        data.setAddress(joinDTO.getAddress());
+        data.setPhone(joinDTO.getPhone());
+        data.setGender(joinDTO.getGender());
+        data.setMemberStatus(MemberStatus.ROLE_USER);
+
+        memberRepository.save(data);
+        return true;
     }
 
     @Override
-    public boolean login(String email, String pwd) {
-        MemberEntity member = memberRepository.login(email, pwd);
-        return member != null && member.getEmail() != null ? true : false;
-    }
-
-    @Override
-    public MemberEntity getMemberById(Long memberNo) {
+    public Member getMemberById(Long memberNo) {
         return memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
     }
@@ -47,13 +59,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    @Transactional
-    public boolean delete(MemberEntity member) {
-        MemberEntity getMember = memberRepository.login(member.getEmail(), member.getPwd());
-        if (getMember != null && getMember.getEmail() != null) {
-            memberRepository.delete(member);
-            return true;
-        } else return false;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member memberData = memberRepository.findByEmail(username);
+
+        if (memberData != null) {
+            //UserDetails에 담아서 return하면 AutneticationManager가 검증 함
+            return new MemberDetails(memberData);
+        }
+
+        return null;
     }
+
 
 }

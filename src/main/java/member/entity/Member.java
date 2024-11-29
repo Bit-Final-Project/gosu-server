@@ -1,4 +1,4 @@
-package member.bean;
+package member.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import map.bean.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberEntity {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class MemberEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "member_status")
-    private MemberStatus memberStatus = MemberStatus.USER;
+    private MemberStatus memberStatus = MemberStatus.ROLE_USER;
 
     @Column(nullable = false)
     private String name;
@@ -33,7 +33,7 @@ public class MemberEntity {
     private String pwd;
 
     @Column(nullable = false)
-    private Integer gender;
+    private Integer gender = 1;
 
     @Column(nullable = false)
     private String phone;

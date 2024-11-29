@@ -4,7 +4,7 @@ import article.bean.Article;
 import comment.bean.Comment;
 import comment.dto.CommentRequest;
 import comment.dto.CommentResponse;
-import member.bean.MemberEntity;
+import member.entity.Member;
 import member.service.MemberServiceImpl;
 import org.springframework.stereotype.Component;
 
@@ -53,7 +53,7 @@ public class CommentMapper {
         article.setArticleNo(request.getArticleNo());
         comment.setArticle(article);
 
-        MemberEntity member = new MemberEntity();
+        Member member = new Member();
         member.setMemberNo(request.getMemberNo());
         comment.setMember(member);
 
