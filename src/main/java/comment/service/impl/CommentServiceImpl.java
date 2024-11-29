@@ -89,8 +89,9 @@ public class CommentServiceImpl implements CommentService {
 
     //회원 ID로 댓글 조회
     @Override
-    public List<MemberCommentResponse> findCommentsByMember(Long memberNo) {
-        return commentRepository.findByMember_MemberNo(memberNo);
+    public Page<MemberCommentResponse> findCommentsByMember(Long memberNo, int pg, int pageSize) {
+        Pageable pageable = PageRequest.of(pg-1, pageSize, Sort.by("writeDate").ascending());
+        return commentRepository.findByMember_MemberNo(memberNo, pageable);
     }
 
     //게시물 ID로 댓글 조회
@@ -106,9 +107,9 @@ public class CommentServiceImpl implements CommentService {
 
     //게시물 ID로 페이징된 댓글 조회
     @Override
-    public Page<CommentResponse> findPagedCommentsByArticle(Long articleNo, int page, int size) {
+    public Page<CommentResponse> findPagedCommentsByArticle(Long articleNo, int pg, int pagesize) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("writeDate").ascending());
+        Pageable pageable = PageRequest.of(pg-1, pagesize, Sort.by("writeDate").ascending());
 
         Page<Comment> commentList = commentRepository.findParentCommentsByArticle(articleNo, pageable);
 

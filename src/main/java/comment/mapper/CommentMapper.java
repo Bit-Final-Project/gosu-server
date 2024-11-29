@@ -20,7 +20,6 @@ public class CommentMapper {
     public CommentResponse toDTO(Comment comment) {
         CommentResponse response = new CommentResponse();
 
-
         response.setCommentNo(comment.getCommentNo());
         response.setArticleNo(comment.getArticle().getArticleNo());
         response.setMemberNo(comment.getMember().getMemberNo());
