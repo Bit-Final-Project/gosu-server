@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -64,24 +63,34 @@ public class CommentController {
     }
 
     @GetMapping("/myPage")
-    public List<MemberCommentResponse> myPage(@RequestParam Long memberNo) {
-        return commentService.findCommentsByMember(memberNo);
-
-    }
-
-    @GetMapping("/article")
-    public ResponseEntity<?> article(@RequestParam Long articleNo, @RequestParam int page) {
-        int pageSize = 5;
-
-        // Page<CommentResponse> 가져오기
-        Page<CommentResponse> commentPage = commentService.findPagedCommentsByArticle(articleNo, page, pageSize);
+    public ResponseEntity<?> myPage(@RequestParam(value = "member_no") Long memberNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+        int pageSize = 10;
+        Page<MemberCommentResponse> commentPage = commentService.findCommentsByMember(memberNo, pg, pageSize);
 
         // JSON 구조 직접 생성
         Map<String, Object> response = new HashMap<>();
         response.put("content", commentPage.getContent());
         response.put("totalPages", commentPage.getTotalPages());
-        response.put("totalElements", commentPage.getTotalElements());
         response.put("currentPage", commentPage.getNumber());
+        response.put("totalElements", commentPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+
+    }
+
+    @GetMapping("/article")
+    public ResponseEntity<?> article(@RequestParam(value = "article_no") Long articleNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+        int pageSize = 5;
+
+        // Page<CommentResponse> 가져오기
+        Page<CommentResponse> commentPage = commentService.findPagedCommentsByArticle(articleNo, pg, pageSize);
+
+        // JSON 구조 직접 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", commentPage.getContent());
+        response.put("totalPages", commentPage.getTotalPages());
+        response.put("currentPage", commentPage.getNumber());
+        response.put("totalElements", commentPage.getTotalElements());
 
         return ResponseEntity.ok(response);
     }
