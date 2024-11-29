@@ -9,6 +9,10 @@ import comment.mapper.CommentMapper;
 import comment.repository.CommentRepository;
 import comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,5 +103,18 @@ public class CommentServiceImpl implements CommentService {
                 .map(commentMapper::toDTO)
                 .toList();
     }
+
+    //게시물 ID로 페이징된 댓글 조회
+    @Override
+    public Page<CommentResponse> findPagedCommentsByArticle(Long articleNo, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("writeDate").ascending());
+
+        Page<Comment> commentList = commentRepository.findParentCommentsByArticle(articleNo, pageable);
+
+        // Comment -> CommentResponse로 변환
+        return commentList.map(commentMapper::toDTO);
+    }
+
 
 }
