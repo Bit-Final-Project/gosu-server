@@ -35,4 +35,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             WHERE c.article.articleNo = :articleNo AND c.parent IS NULL
             """)
     Page<Comment> findParentCommentsByArticle(@Param("articleNo") Long articleNo, Pageable pageable);
+
 }
