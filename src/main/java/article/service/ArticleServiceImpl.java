@@ -16,15 +16,18 @@ import article.bean.Article;
 import article.bean.ArticleDTO;
 import article.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
+import member.bean.Member;
+import member.dao.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService{
 	
 	private final ArticleRepository articleRepository;
+	private final MemberRepository memberRepository;
 	
 	
-	
+	// 현재시간 - 게시글 등록시간 로직 -> ~~~분 전
 	public String ArticleRegistDate(LocalDateTime writeDate) {
 		LocalDateTime now = LocalDateTime.now();
 
@@ -45,6 +48,13 @@ public class ArticleServiceImpl implements ArticleService{
             return writeDate.format(formatter);
         }
 	}
+	
+	// memberNo맞춰서 이름 가져오는 로직
+	private String getMemberNameByMemberNo(Long memberNo) {
+        Optional<Member> member = memberRepository.findById(memberNo); // memberNo로 Member 조회
+        
+        return member.map(Member::getName).orElse("Unknown"); // Member가 없으면 "Unknown" 반환
+    }
 	
 	@Override
 	public List<Article> getArticleList(int type) {
@@ -100,6 +110,7 @@ public class ArticleServiceImpl implements ArticleService{
 		    return list.getContent().stream()
 		            .map(article -> {
 		                String elapsedTime = ArticleRegistDate(article.getWriteDate());
+		                String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
 		                return new ArticleDTO(
 		                        article.getArticleNo(),
 		                        article.getSubject(),
@@ -109,7 +120,8 @@ public class ArticleServiceImpl implements ArticleService{
 		                        article.getWriteDate(),
 		                        article.getMemberNo().getMemberNo(),
 		                        article.getLikes(),
-		                        elapsedTime // 추가된 필드
+		                        elapsedTime,
+		                        memberName
 		                );
 		            })
 		            .collect(Collectors.toList());
@@ -129,6 +141,7 @@ public class ArticleServiceImpl implements ArticleService{
 	    return articlePage.getContent().stream()
 	            .map(article -> {
 	                String elapsedTime = ArticleRegistDate(article.getWriteDate());
+	                String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
 	                return new ArticleDTO(
 	                        article.getArticleNo(),
 	                        article.getSubject(),
@@ -138,7 +151,8 @@ public class ArticleServiceImpl implements ArticleService{
 	                        article.getWriteDate(),
 	                        article.getMemberNo().getMemberNo(),
 	                        article.getLikes(),
-	                        elapsedTime // 추가된 필드
+	                        elapsedTime,
+	                        memberName        
 	                );
 	            })
 	            .collect(Collectors.toList());
@@ -160,6 +174,7 @@ public class ArticleServiceImpl implements ArticleService{
 	    return articlePage.getContent().stream()
 	            .map(article -> {
 	                String elapsedTime = ArticleRegistDate(article.getWriteDate());
+	                String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
 	                return new ArticleDTO(
 	                        article.getArticleNo(),
 	                        article.getSubject(),
@@ -169,7 +184,8 @@ public class ArticleServiceImpl implements ArticleService{
 	                        article.getWriteDate(),
 	                        article.getMemberNo().getMemberNo(),
 	                        article.getLikes(),
-	                        elapsedTime // 추가된 필드
+	                        elapsedTime,
+	                        memberName
 	                );
 	            })
 	            .collect(Collectors.toList());
@@ -187,7 +203,8 @@ public class ArticleServiceImpl implements ArticleService{
 
 	    // 게시글이 존재하면 ArticleDTO로 변환하여 반환
 	    Article article = list.get();
-	    
+	    String elapsedTime = ArticleRegistDate(article.getWriteDate());
+	    String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
 		return new ArticleDTO(
 	            article.getArticleNo(),
 	            article.getSubject(),
@@ -196,7 +213,9 @@ public class ArticleServiceImpl implements ArticleService{
 	            article.getType(),
 	            article.getWriteDate(),
 	            article.getMemberNo().getMemberNo(),
-	            article.getLikes()
+	            article.getLikes(),
+	            elapsedTime,
+	            memberName 
 	    );
 		
 	}

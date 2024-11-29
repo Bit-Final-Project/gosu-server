@@ -31,6 +31,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberEntity getMemberById(Long memberNo) {
+        return memberRepository.findById(memberNo)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
+    }
+
+    @Override
+    public String getMemberName(Long memberNo) {
+        return getMemberById(memberNo).getName();
+    }
+
+    @Override
+    public String getMemberProfileImage(Long memberNo) {
+        return getMemberById(memberNo).getProfileImage();
+    }
+
+    @Override
     @Transactional
     public boolean delete(MemberEntity member) {
         MemberEntity getMember = memberRepository.login(member.getEmail(), member.getPwd());

@@ -7,4 +7,10 @@ public interface MemberService {
     boolean write(MemberEntity member);
     boolean delete(MemberEntity member);
     boolean login(String email, String pwd);
+
+    MemberEntity getMemberById(Long memberNo);
+
+    String getMemberName(Long memberNo);
+
+    String getMemberProfileImage(Long memberNo);
 }
