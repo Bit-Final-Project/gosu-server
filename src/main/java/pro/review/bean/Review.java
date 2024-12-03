@@ -1,12 +1,13 @@
 package pro.review.bean;
 
-import category.bean.MainCategory;
 import jakarta.persistence.*;
 import lombok.Data;
 import member.bean.Member;
 import pro.article.bean.ProArticle;
 
 import java.time.LocalDateTime;
+
+import category.bean.MainCategory;
 
 @Entity
 @Data
