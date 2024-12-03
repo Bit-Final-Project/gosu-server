@@ -24,4 +24,7 @@ public class SubCategory {
 	@JoinColumn(name = "main_cate_no", nullable = false)
 	private MainCategory mainCateNo;
 
+	@Column(name = "sub_cate_name", nullable = false, length = 100)
+    private String subCateName;
+	
 }
