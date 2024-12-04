@@ -20,7 +20,7 @@ public class SubCategoryController {
 	private final SubCategoryService subCategoryService;
 
 	
-    @GetMapping("/subcategory/{mainCateNo}")
+    @GetMapping("/sub_category/{mainCateNo}")
     public ResponseEntity<List<SubCategoryDTO>> getSubCategoriesByMainCategory(
             @PathVariable("mainCateNo") Long mainCateNo) {
         
