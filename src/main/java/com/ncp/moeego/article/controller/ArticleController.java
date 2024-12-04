@@ -61,7 +61,7 @@ public class ArticleController {
 	        case "qna":
 	            typeCode = 3;
 	            break;
-	        case "com/ncp/moeego/pro":
+	        case "pro":
 	            typeCode = 4;
 	            break;
 	        default:
