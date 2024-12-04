@@ -1,9 +1,9 @@
 package com.ncp.moeego.pro.review.bean;
 
+import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.pro.article.bean.ProArticle;
 import jakarta.persistence.*;
 import lombok.Data;
-import com.ncp.moeego.member.entity.Member;
 
 import java.time.LocalDateTime;
 

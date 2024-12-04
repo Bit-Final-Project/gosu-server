@@ -15,7 +15,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("""
-            SELECT new com.ncp.moeego.comment.dto.MemberCommentResponse(
+            SELECT new com.ncp.moeego.comment.dto.MemberCommentResponse (
                 c.commentNo,
                 c.article.articleNo,
                 c.article.subject,

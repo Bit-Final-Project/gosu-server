@@ -2,6 +2,7 @@ package com.ncp.moeego.pro.article.bean;
 
 import com.ncp.moeego.category.bean.MainCategory;
 import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +13,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import com.ncp.moeego.member.entity.Member;
 
 @Entity
 @Table(name = "pro_article")

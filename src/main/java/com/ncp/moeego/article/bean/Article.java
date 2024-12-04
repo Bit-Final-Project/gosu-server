@@ -1,8 +1,8 @@
 package com.ncp.moeego.article.bean;
 
+import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
-import com.ncp.moeego.member.entity.Member;
 
 import java.time.LocalDateTime;
 
