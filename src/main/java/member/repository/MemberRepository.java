@@ -2,7 +2,6 @@ package member.repository;
 
 import member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
     //email(id)로 중복 확인
-    boolean existsByEmail(@Param("email") String email);
+    boolean existsByEmail(String email);
 
     //이름으로 전체 회원 검색
     List<Member> findAllByNameContaining(String name);

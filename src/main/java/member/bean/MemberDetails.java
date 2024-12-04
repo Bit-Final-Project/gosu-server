@@ -1,5 +1,6 @@
 package member.bean;
 
+import lombok.RequiredArgsConstructor;
 import member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,13 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@RequiredArgsConstructor
 public class MemberDetails implements UserDetails {
     private final Member member;
-
-    public MemberDetails(Member member) {
-        this.member = member;
-    }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -37,6 +34,10 @@ public class MemberDetails implements UserDetails {
     @Override
     public String getUsername() {
         return member.getEmail();
+    }
+
+    public String getName() {
+        return member.getName();
     }
 
     @Override

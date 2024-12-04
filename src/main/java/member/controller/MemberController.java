@@ -21,8 +21,7 @@ public class MemberController {
 
     @PostMapping("/join")
     public ResponseEntity joinProcess(@RequestBody JoinDTO joinDTO) {
-
-        System.out.println(joinDTO.getEmail());
+        joinDTO.setGender(3);   //추후 수정
         boolean check = memberService.write(joinDTO);
         if(check) return ResponseEntity.ok("ok");
         else return  ResponseEntity.badRequest().body("값이 잘못 되었습니다");
