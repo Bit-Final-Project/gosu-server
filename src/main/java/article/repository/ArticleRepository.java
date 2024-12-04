@@ -41,10 +41,14 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 	Page<Article> findAllWithPaging(Pageable pageable);
 
 	// 인기 게시글 조회
-	Page<Article> findAllByOrderByLikesDesc(PageRequest pageRequest);
-
+    Page<Article> findAllByOrderByLikesDesc(Pageable pageable);
+	
 	// 타입별 게시판 조회
 	Page<Article> findByType(int type, PageRequest pageRequest);
+
+	// 내가 작성한 게시글 목록
+	@Query("SELECT a FROM Article a WHERE a.memberNo.memberNo = :memberNo")
+	Page<Article> findByMemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
 
 
 

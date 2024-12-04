@@ -18,7 +18,7 @@ public class MainCategoryController {
 
 	private final MainCategoryService mainCategoryService;
 
-	@GetMapping("/maincategory")
+	@GetMapping("/main_category")
 	public ResponseEntity<List<MainCategoryDTO>> getMainCategory() {
 
 		List<MainCategoryDTO> mainCategoryList = mainCategoryService.getMainCategoryList();
