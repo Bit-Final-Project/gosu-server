@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EntityScan(basePackages = {"article", "cancel", "category", "comment", "favorite", "image", "map", "member", "pro", "reserve"})
-@EnableJpaRepositories(basePackages = {"member.repository", "article.repository", "comment.repository"})
+@EnableJpaRepositories(basePackages = {"member.repository", "article.repository", "comment.repository","category.repository"})
 @ComponentScan(basePackages = {"member.*", "article.*", "cancel.*", "category.*", "comment.*", "favorite.*", "image.*", "map.*", "pro.*", "reserve.*"})
 public class MoeegoApplication {
 

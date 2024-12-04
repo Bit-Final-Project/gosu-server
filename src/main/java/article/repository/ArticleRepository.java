@@ -15,7 +15,6 @@ import article.bean.Article;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long>{
 
-	
 	// 1번 (이벤트 게시글) 만 가져오기
 	@Query("select t from Article t where t.type = :type")
 	List<Article> findAllByType(@Param("type") int type);
@@ -41,23 +40,13 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 	Page<Article> findAllWithPaging(Pageable pageable);
 
 	// 인기 게시글 조회
-	Page<Article> findAllByOrderByLikesDesc(PageRequest pageRequest);
-
+    Page<Article> findAllByOrderByLikesDesc(Pageable pageable);
+	
 	// 타입별 게시판 조회
 	Page<Article> findByType(int type, PageRequest pageRequest);
 
+	// 내가 작성한 게시글 목록
+	@Query("SELECT a FROM Article a WHERE a.memberNo.memberNo = :memberNo")
+	Page<Article> findByMemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
 
-
-
-
-
-
-
-
-
-
-	
-
-	
-	
 }

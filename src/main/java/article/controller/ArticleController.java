@@ -1,7 +1,10 @@
 package article.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,28 +26,34 @@ public class ArticleController {
 	// 한 페이지에 출력할 게시글 수
 	private int pageSize = 10;
 
-	// 전체 게시글 목록
+
+	// 전체 게시글 조회 페이징
 	@GetMapping("/article")
-	public ResponseEntity<List<ArticleDTO>> getArticles(@RequestParam(value = "pg", required = false, defaultValue = "1") int pg) { 
+	public ResponseEntity<Map<String, Object>> getArticles(@RequestParam(value = "pg", required = false, defaultValue = "1") int pg) { 
 
-		List<ArticleDTO> articleList = articleService.getArticleListByPage(pg, pageSize);
+	    Page<ArticleDTO> articlePage = articleService.getArticleListByPage(pg, pageSize);
 
-		return ResponseEntity.ok(articleList);
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("content", articlePage.getContent());  // 현재 페이지의 콘텐츠 (게시글 목록)
+	    response.put("totalPages", articlePage.getTotalPages());  // 전체 페이지 수
+	    response.put("currentPage", articlePage.getNumber() + 1);  // 현재 페이지 번호 (0부터 시작하므로 +1)
+	    response.put("totalElements", articlePage.getTotalElements());  // 전체 게시글 수
 
+	    return ResponseEntity.ok(response);
 	}
 	
 	// 타입별 게시글 목록
 	@GetMapping("/article/{type}")
-	public ResponseEntity<List<ArticleDTO>> getArticlesByType(
+	public ResponseEntity<Map<String, Object>> getArticlesByType(
 	        @PathVariable("type") String type,
 	        @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
-	    
+
 	    int typeCode;
 	    switch (type) {
-	    	case "notices":
+	        case "notices":
 	            typeCode = 0;
 	            break;
-	    	case "event":
+	        case "event":
 	            typeCode = 1;
 	            break;
 	        case "free":
@@ -57,22 +66,34 @@ public class ArticleController {
 	            typeCode = 4;
 	            break;
 	        default:
-	            return ResponseEntity.badRequest().build(); // 잘못된 타입 처리
+	            return ResponseEntity.badRequest().build(); 
 	    }
 
-	    List<ArticleDTO> articleList = articleService.getTypeArticles(pg, pageSize, typeCode);
-	    return ResponseEntity.ok(articleList);
+	    Page<ArticleDTO> articlePage = articleService.getTypeArticles(pg, pageSize, typeCode);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("content", articlePage.getContent());  // 현재 페이지의 콘텐츠 (게시글 목록)
+	    response.put("totalPages", articlePage.getTotalPages());  // 전체 페이지 수
+	    response.put("currentPage", articlePage.getNumber() + 1);  // 현재 페이지 번호 (0부터 시작하므로 +1)
+	    response.put("totalElements", articlePage.getTotalElements());  // 전체 게시글 수
+
+	    return ResponseEntity.ok(response);
 	}
 	
 
-	// 인기글 좋아요 순 목록
+	// 인기글 좋아요 순 목록 페이징
 	@GetMapping("/article/hot")
-	public ResponseEntity<List<ArticleDTO>> getHotArticles(@RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+	public ResponseEntity<Map<String, Object>> getHotArticles(@RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
 
-		List<ArticleDTO> articleList = articleService.getHotArticle(pg, pageSize);
+	    Page<ArticleDTO> articlePage = articleService.getHotArticleByPage(pg, pageSize);
 
-		return ResponseEntity.ok(articleList);
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("content", articlePage.getContent());  // 현재 페이지의 콘텐츠 (게시글 목록)
+	    response.put("totalPages", articlePage.getTotalPages());  // 전체 페이지 수
+	    response.put("currentPage", articlePage.getNumber() + 1);  // 현재 페이지 번호 (0부터 시작하므로 +1)
+	    response.put("totalElements", articlePage.getTotalElements());  // 전체 게시글 수
 
+	    return ResponseEntity.ok(response);
 	}
 
 	// 게시글 상세보기
@@ -83,5 +104,21 @@ public class ArticleController {
 
 		return ResponseEntity.ok(article);
 	}
+	
+	// 마이페이지 작성한 게시글 보기
+	@GetMapping("/article/myPage")
+	public ResponseEntity<Map<String, Object>> getMyArticles( @RequestParam(name = "member_no") Long member_no,
+	        											   @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+	   
+		Page<ArticleDTO> articleList = articleService.getMyArticles(member_no, pg, pageSize);
 
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", articleList.getContent());  // 현재 페이지의 콘텐츠 (게시글 목록)
+	    response.put("totalPages", articleList.getTotalPages());  // 전체 페이지 수
+	    response.put("currentPage", articleList.getNumber() + 1);  // 현재 페이지 번호 (0부터 시작하므로 +1)
+	    response.put("totalElements", articleList.getTotalElements());  // 전체 게시글 수
+
+	    return ResponseEntity.ok(response);
+	}
+	
 }

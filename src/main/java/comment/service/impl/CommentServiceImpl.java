@@ -1,6 +1,5 @@
 package comment.service.impl;
 
-import article.bean.Article;
 import comment.bean.Comment;
 import comment.bean.CommentStatus;
 import comment.dto.CommentRequest;
@@ -11,8 +10,10 @@ import comment.repository.CommentRepository;
 import comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import member.entity.Member;
-import member.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,6 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
-    private final MemberRepository memberRepository;
 
     //댓글 작성
     @Override
@@ -86,8 +86,9 @@ public class CommentServiceImpl implements CommentService {
 
     //회원 ID로 댓글 조회
     @Override
-    public List<MemberCommentResponse> findCommentsByMember(Long memberNo) {
-        return commentRepository.findByMember_MemberNo(memberNo);
+    public Page<MemberCommentResponse> findCommentsByMember(Long memberNo, int pg, int pageSize) {
+        Pageable pageable = PageRequest.of(pg-1, pageSize, Sort.by("writeDate").ascending());
+        return commentRepository.findByMember_MemberNo(memberNo, pageable);
     }
 
     //게시물 ID로 댓글 조회
@@ -101,77 +102,16 @@ public class CommentServiceImpl implements CommentService {
                 .toList();
     }
 
-    public CommentResponse toDTO(Comment comment) {
+    //게시물 ID로 페이징된 댓글 조회
+    @Override
+    public Page<CommentResponse> findPagedCommentsByArticle(Long articleNo, int pg, int pagesize) {
 
-        CommentResponse response = new CommentResponse();
+        Pageable pageable = PageRequest.of(pg-1, pagesize, Sort.by("writeDate").ascending());
 
-        response.setCommentNo(comment.getCommentNo());
-        response.setArticleNo(comment.getArticle().getArticleNo());
-        response.setMemberNo(comment.getMember().getMemberNo());
-        response.setContent(comment.getContent());
-        response.setCommentStatus(comment.getCommentStatus());
-        response.setWriteDate(comment.getWriteDate());
+        Page<Comment> commentList = commentRepository.findParentCommentsByArticle(articleNo, pageable);
 
-        response.setParentCommentNo(
-                comment.getParent() != null ? comment.getParent().getCommentNo() : 0
-        );
-
-        //재귀
-        for (Comment child : comment.getChildren()) {
-            response.getChildren().add(toDTO(child));
-        }
-
-        response.setMemberName(getMemberName(comment.getMember().getMemberNo()));
-        response.setMemberProfileImage(getMemberProfileImage(comment.getMember().getMemberNo()));
-
-        return response;
-
-    }
-
-    public Comment toEntity(CommentRequest request) {
-
-        Comment comment = new Comment();
-
-        comment.setContent(request.getContent());
-
-        Article article = new Article();
-        article.setArticleNo(request.getArticleNo());
-        comment.setArticle(article);
-
-        Member member = new Member();
-        member.setMemberNo(request.getMemberNo());
-        comment.setMember(member);
-
-        if (request.getParentCommentNo() != 0) {
-            Comment parent = new Comment();
-            parent.setCommentNo(request.getParentCommentNo());
-            comment.setParent(parent);
-        }
-
-        /*
-        dto->entity 전환시에는 이 요소가 필요없는거 같아서 일단 주석처리
-
-        comment.setChildren(new ArrayList<>());
-        for (CommentDTO child : request.getChildren()) {
-            comment.getChildren().add(toEntity(child));
-        }
-
-        */
-
-        return comment;
-    }
-
-
-    public String getMemberName(Long memberNo) {
-        Member member = memberRepository.findById(memberNo)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
-        return member.getName();
-    }
-
-    public String getMemberProfileImage(Long memberNo) {
-        Member member = memberRepository.findById(memberNo)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
-        return member.getProfileImage();
+        // Comment -> CommentResponse로 변환
+        return commentList.map(commentMapper::toDTO);
     }
 
 }

@@ -26,4 +26,5 @@ public class MemberCommentResponse {
         this.commentStatus = status;
         this.writeDate = writeDate;
     }
+
 }

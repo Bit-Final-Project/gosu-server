@@ -8,6 +8,7 @@ import member.entity.Member;
 import member.repository.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,95 +99,82 @@ public class ArticleServiceImpl implements ArticleService{
 
 	// 좋아요 순으로 조회(인기 게시글)
 	@Override
-	public List<ArticleDTO> getHotArticle(int page, int pageSize) {
-		
-		
-		 PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-
-		 Page<Article> list = articleRepository.findAllByOrderByLikesDesc(pageRequest);
-		
-		    return list.getContent().stream()
-		            .map(article -> {
-		                String elapsedTime = ArticleRegistDate(article.getWriteDate());
-		                String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
-		                return new ArticleDTO(
-		                        article.getArticleNo(),
-		                        article.getSubject(),
-		                        article.getContent(),
-		                        article.getView(),
-		                        article.getType(),
-		                        article.getWriteDate(),
-		                        article.getMemberNo().getMemberNo(),
-		                        article.getLikes(),
-		                        elapsedTime,
-		                        memberName
-		                );
-		            })
-		            .collect(Collectors.toList());
-		
+	public Page<ArticleDTO> getHotArticleByPage(int pg, int pageSize) {
+	    // Pageable 객체 생성: likes 기준 내림차순 정렬
+	    Pageable pageable = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("likes")));
+	    
+	    // ArticleRepository에서 좋아요 순으로 페이징 처리된 결과 조회
+	    Page<Article> articlePage = articleRepository.findAll(pageable);
+	    
+	    // Article 객체를 ArticleDTO로 변환하여 반환
+	    return articlePage.map(article -> {
+	        String elapsedTime = ArticleRegistDate(article.getWriteDate());  // 경과 시간 계산
+	        String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());  // 회원 이름 가져오기
+	        return new ArticleDTO(
+	            article.getArticleNo(),
+	            article.getSubject(),
+	            article.getContent(),
+	            article.getView(),
+	            article.getType(),
+	            article.getWriteDate(),
+	            article.getMemberNo().getMemberNo(),
+	            article.getLikes(),
+	            elapsedTime,
+	            memberName
+	        );
+	    });
 	}
 
-	// 전체 게시글 조회 /article?pg=1,2,3,4 ~~~
+	// 전체 게시글 조회 페이징
 	@Override
-	public List<ArticleDTO> getArticleListByPage(int page, int pageSize) {
-	    // 페이지 번호는 0부터 시작하므로 -1
-	    PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
+	public Page<ArticleDTO> getArticleListByPage(int pg, int pageSize) {
+	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
 	    
-	    // 페이지 처리된 결과를 가져옴
 	    Page<Article> articlePage = articleRepository.findAll(pageRequest);
 	    
-	    // Article 엔티티를 ArticleDTO로 변환하여 리스트로 반환
-	    return articlePage.getContent().stream()
-	            .map(article -> {
-	                String elapsedTime = ArticleRegistDate(article.getWriteDate());
-	                String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
-	                return new ArticleDTO(
-	                        article.getArticleNo(),
-	                        article.getSubject(),
-	                        article.getContent(),
-	                        article.getView(),
-	                        article.getType(),
-	                        article.getWriteDate(),
-	                        article.getMemberNo().getMemberNo(),
-	                        article.getLikes(),
-	                        elapsedTime,
-	                        memberName        
-	                );
-	            })
-	            .collect(Collectors.toList());
+	    // Article 객체를 ArticleDTO로 변환하여 Page<ArticleDTO>로 반환
+	    return articlePage.map(article -> {
+	        String elapsedTime = ArticleRegistDate(article.getWriteDate());
+	        String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+	        return new ArticleDTO(
+	            article.getArticleNo(),
+	            article.getSubject(),
+	            article.getContent(),
+	            article.getView(),
+	            article.getType(),
+	            article.getWriteDate(),
+	            article.getMemberNo().getMemberNo(),
+	            article.getLikes(),
+	            elapsedTime,
+	            memberName
+	        );
+	    });
 	}
-
 	
 	
 	// Type 별 게시판 조회
 	@Override
-	public List<ArticleDTO> getTypeArticles(int pg, int pageSize, int type) {
-	    // 페이지 번호는 0부터 시작하므로 -1
+	public Page<ArticleDTO> getTypeArticles(int pg, int pageSize, int type) {
 	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
 
-	    Page<Article> articlePage;
+	    Page<Article> articlePage = articleRepository.findByType(type, pageRequest);
 
-	    articlePage = articleRepository.findByType(type, pageRequest);
-
-
-	    return articlePage.getContent().stream()
-	            .map(article -> {
-	                String elapsedTime = ArticleRegistDate(article.getWriteDate());
-	                String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
-	                return new ArticleDTO(
-	                        article.getArticleNo(),
-	                        article.getSubject(),
-	                        article.getContent(),
-	                        article.getView(),
-	                        article.getType(),
-	                        article.getWriteDate(),
-	                        article.getMemberNo().getMemberNo(),
-	                        article.getLikes(),
-	                        elapsedTime,
-	                        memberName
-	                );
-	            })
-	            .collect(Collectors.toList());
+	    return articlePage.map(article -> {
+	        String elapsedTime = ArticleRegistDate(article.getWriteDate());
+	        String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+	        return new ArticleDTO(
+	            article.getArticleNo(),
+	            article.getSubject(),
+	            article.getContent(),
+	            article.getView(),
+	            article.getType(),
+	            article.getWriteDate(),
+	            article.getMemberNo().getMemberNo(),
+	            article.getLikes(),
+	            elapsedTime,
+	            memberName
+	        );
+	    });
 	}
 	
 	// 게시글 상세 조회
@@ -218,6 +205,34 @@ public class ArticleServiceImpl implements ArticleService{
 	    );
 		
 	}
+
+	// 마이페이지 작성한 게시글 조회
+	@Override
+	public Page<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize) {
+	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
+
+	    Page<Article> articlePage = articleRepository.findByMemberNo(member_no, pageRequest);
+
+	    return articlePage.map(article -> {
+	        String elapsedTime = ArticleRegistDate(article.getWriteDate());
+	        String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+	        return new ArticleDTO(
+	            article.getArticleNo(),
+	            article.getSubject(),
+	            article.getContent(),
+	            article.getView(),
+	            article.getType(),
+	            article.getWriteDate(),
+	            article.getMemberNo().getMemberNo(),
+	            article.getLikes(),
+	            elapsedTime,
+	            memberName
+	        );
+	    });
+	}
+
+
+	
 
 
 	

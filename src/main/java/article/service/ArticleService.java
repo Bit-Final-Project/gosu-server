@@ -27,14 +27,22 @@ public interface ArticleService {
 	public List<Article> searchSubjectArticles(String keyword);
 	public List<Article> searchContentArticles(String keyword);
 		
-	public List<ArticleDTO> getHotArticle(int pg, int pageSize);
-	public List<ArticleDTO> getArticleListByPage(int page, int pageSize);
-
+	// 인기 게시글
+	public Page<ArticleDTO> getHotArticleByPage(int pg, int pageSize);
+	// 전체 게시글 조회 페이징
+	public Page<ArticleDTO> getArticleListByPage(int pg, int pageSize);
 
 	// 게시글 상세 조회
 	public ArticleDTO getArticleViewById(Long articleNo);
 
 	// Type 별 게시판 조회
-	public List<ArticleDTO> getTypeArticles(int pg, int pageSize, int type);
+	public Page<ArticleDTO> getTypeArticles(int pg, int pageSize, int type);
+
+
+	public Page<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize);
+
+
+
+
 
 }
