@@ -107,12 +107,18 @@ public class ArticleController {
 	
 	// 마이페이지 작성한 게시글 보기
 	@GetMapping("/article/myPage")
-	public ResponseEntity<List<ArticleDTO>> getMyArticles( @RequestParam(name = "member_no") Long member_no,
+	public ResponseEntity<Map<String, Object>> getMyArticles( @RequestParam(name = "member_no") Long member_no,
 	        											   @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
 	   
-	    List<ArticleDTO> articleList = articleService.getMyArticles(member_no, pg, pageSize);
+		Page<ArticleDTO> articleList = articleService.getMyArticles(member_no, pg, pageSize);
 
-	    return ResponseEntity.ok(articleList);
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", articleList.getContent());  // 현재 페이지의 콘텐츠 (게시글 목록)
+	    response.put("totalPages", articleList.getTotalPages());  // 전체 페이지 수
+	    response.put("currentPage", articleList.getNumber() + 1);  // 현재 페이지 번호 (0부터 시작하므로 +1)
+	    response.put("totalElements", articleList.getTotalElements());  // 전체 게시글 수
+
+	    return ResponseEntity.ok(response);
 	}
 	
 }
