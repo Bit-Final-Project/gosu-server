@@ -39,7 +39,7 @@ public interface ArticleService {
 	public Page<ArticleDTO> getTypeArticles(int pg, int pageSize, int type);
 
 
-	public List<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize);
+	public Page<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize);
 
 
 

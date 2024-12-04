@@ -210,32 +210,27 @@ public class ArticleServiceImpl implements ArticleService{
 
 	// 마이페이지 작성한 게시글 조회
 	@Override
-	public List<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize) {
-	    // 페이지 요청 객체 생성
+	public Page<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize) {
 	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
 
-	    // member_no에 맞는 게시글 조회
 	    Page<Article> articlePage = articleRepository.findByMemberNo(member_no, pageRequest);
 
-	    // 게시글을 DTO로 변환
-	    return articlePage.getContent().stream()
-	        .map(article -> {
-	            String elapsedTime = ArticleRegistDate(article.getWriteDate());
-	            String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
-	            return new ArticleDTO(
-	                article.getArticleNo(),
-	                article.getSubject(),
-	                article.getContent(),
-	                article.getView(),
-	                article.getType(),
-	                article.getWriteDate(),
-	                article.getMemberNo().getMemberNo(),
-	                article.getLikes(),
-	                elapsedTime,
-	                memberName
-	            );
-	        })
-	        .collect(Collectors.toList());
+	    return articlePage.map(article -> {
+	        String elapsedTime = ArticleRegistDate(article.getWriteDate());
+	        String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+	        return new ArticleDTO(
+	            article.getArticleNo(),
+	            article.getSubject(),
+	            article.getContent(),
+	            article.getView(),
+	            article.getType(),
+	            article.getWriteDate(),
+	            article.getMemberNo().getMemberNo(),
+	            article.getLikes(),
+	            elapsedTime,
+	            memberName
+	        );
+	    });
 	}
 
 
