@@ -6,8 +6,12 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -106,8 +110,8 @@ public class ArticleController {
 	
 	// 마이페이지 작성한 게시글 보기
 	@GetMapping("/article/myPage")
-	public ResponseEntity<Map<String, Object>> getMyArticles( @RequestParam(name = "member_no") Long member_no,
-	        											   @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+	public ResponseEntity<Map<String, Object>> getMyArticles(@RequestParam(name = "member_no") Long member_no,
+	        											     @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
 	   
 		Page<ArticleDTO> articleList = articleService.getMyArticles(member_no, pg, pageSize);
 
@@ -118,6 +122,42 @@ public class ArticleController {
 	    response.put("totalElements", articleList.getTotalElements());  // 전체 게시글 수
 
 	    return ResponseEntity.ok(response);
+	}
+	
+	// 게시글 작성
+	@PostMapping("/article/write")
+	public ResponseEntity<String> writeArticle(@RequestBody ArticleDTO articleDTO) {
+	    boolean result = articleService.writeArticle(articleDTO);
+
+	    if (result) {
+	        return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
+	    } else {
+	        return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+	    }
+	}
+	
+	// 게시글 수정
+	@PutMapping("/article/update/{articleNo}")
+	public ResponseEntity<String> updateArticle(@PathVariable("articleNo") Long articleNo, @RequestBody ArticleDTO articleDTO) {
+	    boolean result = articleService.updateArticle(articleNo, articleDTO);
+
+	    if (result) {
+	        return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
+	    } else {
+	        return ResponseEntity.badRequest().body("게시글 수정 중 오류가 발생했습니다.");
+	    }
+	}
+	
+	// 게시글 삭제
+	@DeleteMapping("/article/delete/{articleNo}")
+	public ResponseEntity<String> deleteArticle(@PathVariable("articleNo") Long articleNo) {
+	    boolean result = articleService.deleteArticle(articleNo);
+
+	    if (result) {
+	        return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
+	    } else {
+	        return ResponseEntity.badRequest().body("게시글 삭제 중 오류가 발생했습니다.");
+	    }
 	}
 	
 }
