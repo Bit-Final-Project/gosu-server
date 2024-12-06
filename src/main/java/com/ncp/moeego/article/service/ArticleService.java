@@ -38,6 +38,15 @@ public interface ArticleService {
 
 	public Page<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize);
 
+	// 게시글 작성
+	public boolean writeArticle(ArticleDTO articleDTO);
+
+	// 게시글 수정
+	public boolean updateArticle(Long articleNo, ArticleDTO articleDTO);
+
+	// 게시글 삭제
+	public boolean deleteArticle(Long articleNo);
+
 
 
 
