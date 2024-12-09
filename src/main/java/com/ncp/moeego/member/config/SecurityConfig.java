@@ -28,6 +28,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -95,7 +96,10 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000/"));
+                        configuration.setAllowedOrigins(Arrays.asList(
+                                "http://localhost:5173",
+                                "http://127.0.0.1:5173"
+                        ));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -110,7 +114,7 @@ public class SecurityConfig {
         // authorization
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/login", "/join", "/logout", "/oauth2-jwt-header", "/**").permitAll()    //개발 진행을 위한 전체 권한 허용/추후 나누기("/**")
-                .requestMatchers("/admin").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());
 
         // 인가되지 않은 사용자에 대한 exception -> 프론트엔드로 코드 응답

@@ -45,6 +45,7 @@ public class CustomFormSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         // json 을 ObjectMapper 로 직렬화하여 전달
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("name", name);
+        responseData.put("email", email);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         new ObjectMapper().writeValue(response.getWriter(), responseData);
