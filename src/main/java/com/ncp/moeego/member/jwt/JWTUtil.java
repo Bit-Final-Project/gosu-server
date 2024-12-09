@@ -39,6 +39,10 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("phone", String.class);
     }
 
+    public String getProfileImage(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("profileImage", String.class);
+    }
+
     public String getMemberStatus(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberStatus", String.class);
     }
@@ -59,6 +63,7 @@ public class JWTUtil {
                 .claim("memberNo", jwtDTO.getMemberNo())
                 .claim("address", jwtDTO.getAddress())
                 .claim("phone", jwtDTO.getPhone())
+                .claim("profileImage", jwtDTO.getProfileImage())
                 .claim("memberStatus", memberStutus)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))

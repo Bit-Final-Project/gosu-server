@@ -52,10 +52,11 @@ public class ReissueService {
         String name = jwtUtil.getName(refresh);
         String address = jwtUtil.getAddress(refresh);
         Long memberNo = jwtUtil.getMemberNo(refresh);
+        String profileImage = jwtUtil.getProfileImage(refresh);
         String phone = jwtUtil.getPhone(refresh);
         String memberStatus = jwtUtil.getMemberStatus(refresh);
 
-        JwtDTO jwtDTO = new JwtDTO(memberNo, email, name, address, phone, MemberStatus.valueOf(memberStatus));
+        JwtDTO jwtDTO = new JwtDTO(memberNo, email, name, address, profileImage, phone, MemberStatus.valueOf(memberStatus));
 
         // refresh DB 조회
         Boolean isExist = refreshRepository.existsByRefresh(refresh);

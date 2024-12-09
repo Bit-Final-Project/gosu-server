@@ -14,6 +14,7 @@ public class JwtDTO {
     private String email;
     private String name;
     private String address;
+    private String profileImage;
     private String phone;
     private MemberStatus memberStatus;
 
@@ -22,6 +23,7 @@ public class JwtDTO {
         this.email = member.getEmail();
         this.name = member.getName();
         this.address = member.getAddress();
+        this.profileImage = member.getProfileImage();
         this.phone = member.getPhone();
         this.memberStatus = member.getMemberStatus();
     }
