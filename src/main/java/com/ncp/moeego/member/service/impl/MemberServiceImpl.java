@@ -1,10 +1,11 @@
-package com.ncp.moeego.member.service;
+package com.ncp.moeego.member.service.impl;
 
 import com.ncp.moeego.member.bean.JwtDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.repository.MemberRepository;
+import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import com.ncp.moeego.member.bean.JoinDTO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
