@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.ncp.moeego.map.bean.Map;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -43,6 +45,9 @@ public class Member {
 
     @Column(name = "profile_image")
     private String profileImage;
+
+    @Column(name = "join_date")
+    private LocalDateTime joinDate = LocalDateTime.now();
 
     @OneToOne(mappedBy = "memberNo", cascade = CascadeType.ALL)
     private Map map;
