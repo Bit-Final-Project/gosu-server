@@ -1,6 +1,9 @@
 package com.ncp.moeego.member.oauth2;
 
+import com.ncp.moeego.member.bean.JwtDTO;
 import com.ncp.moeego.member.bean.oauth2.OAuth2Member;
+import com.ncp.moeego.member.service.MemberInfoProvider;
+import com.ncp.moeego.member.service.MemberService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,22 +21,24 @@ import java.net.URLEncoder;
 public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JWTUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final MemberInfoProvider memberInfoProvider;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         //OAuth2User
         OAuth2Member customOAuth2User = (OAuth2Member) authentication.getPrincipal();
 
-        String email = customOAuth2User.getEmail(); // DB 저장용 식별자
-        String name = customOAuth2User.getName();
+        String detailsEmail = customOAuth2User.getEmail(); // DB 저장용 식별자
         String memberStatus = authentication.getAuthorities().iterator().next().getAuthority();
 
+        JwtDTO jwtDTO = memberInfoProvider.getJwtDtoByEmail(detailsEmail);
+
         Integer expireS = 24 * 60 * 60;
-        String access = jwtUtil.createJwt("access", email, name, memberStatus, 60 * 10 * 1000L);
-        String refresh = jwtUtil.createJwt("refresh", email, name, memberStatus, expireS * 1000L);
+        String access = jwtUtil.createJwt("access", jwtDTO, memberStatus, 60 * 10 * 1000L);
+        String refresh = jwtUtil.createJwt("refresh", jwtDTO, memberStatus, expireS * 1000L);
 
         // refresh 토큰 DB 저장
-        refreshTokenService.saveRefresh(email, name, expireS, refresh);
+        refreshTokenService.saveRefresh(jwtDTO.getEmail(), jwtDTO.getName(), expireS, refresh);
 
         response.addCookie(CookieUtil.createCookie("access", access, 60 * 10));
         response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
@@ -49,7 +54,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         }
 
         // redirect query param 인코딩 후 전달
-        String encodedName = URLEncoder.encode(name, "UTF-8");
+        String encodedName = URLEncoder.encode(jwtDTO.getName(), "UTF-8");
         response.sendRedirect(origin + "/oauth2-jwt-header?name=" + encodedName);
     }
 

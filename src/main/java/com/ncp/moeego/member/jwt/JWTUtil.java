@@ -1,5 +1,6 @@
 package com.ncp.moeego.member.jwt;
 
+import com.ncp.moeego.member.bean.JwtDTO;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,17 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
     }
 
+    public Long getMemberNo(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberNo", Long.class);
+    }
+
+    public String getAddress(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("address", String.class);
+    }
+
+    public String getPhone(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("phone", String.class);
+    }
 
     public String getMemberStatus(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberStatus", String.class);
@@ -39,12 +51,15 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
-    public String createJwt(String category, String email, String name, String memberStatus, Long expiredMs) {
+    public String createJwt(String category, JwtDTO jwtDTO, String memberStutus, Long expiredMs) {
         return Jwts.builder()
                 .claim("category", category)
-                .claim("email", email)
-                .claim("name", name)
-                .claim("memberStatus", memberStatus)
+                .claim("email", jwtDTO.getEmail())
+                .claim("name", jwtDTO.getName())
+                .claim("memberNo", jwtDTO.getMemberNo())
+                .claim("address", jwtDTO.getAddress())
+                .claim("phone", jwtDTO.getPhone())
+                .claim("memberStatus", memberStutus)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

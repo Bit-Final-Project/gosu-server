@@ -5,14 +5,15 @@ import com.ncp.moeego.comment.bean.Comment;
 import com.ncp.moeego.comment.dto.CommentRequest;
 import com.ncp.moeego.comment.dto.CommentResponse;
 import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.member.service.MemberServiceImpl;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CommentMapper {
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
 
-    public CommentMapper(MemberServiceImpl memberService) {
+    public CommentMapper(MemberService memberService) {
         this.memberService = memberService;
     }
 

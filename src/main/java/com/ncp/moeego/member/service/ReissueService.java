@@ -1,5 +1,7 @@
 package com.ncp.moeego.member.service;
 
+import com.ncp.moeego.member.bean.JwtDTO;
+import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.repository.RefreshRepository;
 import com.ncp.moeego.member.util.CookieUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -48,7 +50,12 @@ public class ReissueService {
 
         String email = jwtUtil.getEmail(refresh);
         String name = jwtUtil.getName(refresh);
+        String address = jwtUtil.getAddress(refresh);
+        Long memberNo = jwtUtil.getMemberNo(refresh);
+        String phone = jwtUtil.getPhone(refresh);
         String memberStatus = jwtUtil.getMemberStatus(refresh);
+
+        JwtDTO jwtDTO = new JwtDTO(memberNo, email, name, address, phone, MemberStatus.valueOf(memberStatus));
 
         // refresh DB 조회
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
@@ -60,8 +67,8 @@ public class ReissueService {
 
         Integer expiredS = 60 * 60 * 24;
         // new tokens
-        String newAccess = jwtUtil.createJwt("access", email, name, memberStatus, 60 * 10 * 1000L);
-        String newRefresh = jwtUtil.createJwt("refresh", email, name, memberStatus, expiredS * 1000L);
+        String newAccess = jwtUtil.createJwt("access", jwtDTO, memberStatus, 60 * 10 * 1000L);
+        String newRefresh = jwtUtil.createJwt("refresh", jwtDTO, memberStatus, expiredS * 1000L);
 
         // 기존 refresh DB 삭제, 새로운 refresh 저장
         refreshRepository.deleteByRefresh(refresh);

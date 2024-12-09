@@ -6,6 +6,8 @@ import com.ncp.moeego.member.oauth2.CustomFormSuccessHandler;
 import com.ncp.moeego.member.oauth2.CustomLogoutFilter;
 import com.ncp.moeego.member.oauth2.CustomOAuth2SuccessHandler;
 import com.ncp.moeego.member.repository.RefreshRepository;
+import com.ncp.moeego.member.service.MemberInfoProvider;
+import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.member.service.RefreshTokenService;
 import com.ncp.moeego.member.service.oauth2.OAuth2MemberService;
 import jakarta.servlet.ServletException;
@@ -40,6 +42,7 @@ public class SecurityConfig {
     private final OAuth2MemberService oAuth2MemberService;
     private final RefreshTokenService refreshTokenService;
     private final RefreshRepository refreshRepository;
+    private final MemberInfoProvider memberInfoProvider;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -70,7 +73,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("email") // `email` 필드를 `username`으로 매핑
                         .passwordParameter("pwd")
-                        .successHandler(new CustomFormSuccessHandler(jwtUtil, refreshTokenService))
+                        .successHandler(new CustomFormSuccessHandler(jwtUtil, refreshTokenService, memberInfoProvider))
                         .failureHandler(authenticationFailureHandler())
                         .permitAll());
 
@@ -80,7 +83,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .userInfoEndpoint((userinfo) -> userinfo
                                 .userService(oAuth2MemberService))
-                        .successHandler(new CustomOAuth2SuccessHandler(jwtUtil, refreshTokenService))
+                        .successHandler(new CustomOAuth2SuccessHandler(jwtUtil, refreshTokenService, memberInfoProvider))
                         .failureHandler(authenticationFailureHandler())
                         .permitAll());
 
