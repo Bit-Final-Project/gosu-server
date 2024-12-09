@@ -6,6 +6,7 @@ import com.ncp.moeego.comment.dto.MemberCommentResponse;
 import com.ncp.moeego.comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,6 +85,12 @@ public class CommentController {
 
         // Page<CommentResponse> 가져오기
         Page<CommentResponse> commentPage = commentService.findPagedCommentsByArticle(articleNo, pg, pageSize);
+
+        // 댓글이 없을 경우 예외 처리
+        if (commentPage.isEmpty()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponse); // 204 코드
+        }
 
         // JSON 구조 직접 생성
         Map<String, Object> response = new HashMap<>();
