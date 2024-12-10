@@ -1,13 +1,12 @@
-package com.ncp.moeego.comment.service.impl;
+package com.ncp.moeego.comment.service;
 
-import com.ncp.moeego.comment.bean.Comment;
-import com.ncp.moeego.comment.bean.CommentStatus;
+import com.ncp.moeego.comment.entity.Comment;
+import com.ncp.moeego.comment.entity.CommentStatus;
 import com.ncp.moeego.comment.dto.CommentRequest;
 import com.ncp.moeego.comment.dto.CommentResponse;
 import com.ncp.moeego.comment.dto.MemberCommentResponse;
 import com.ncp.moeego.comment.mapper.CommentMapper;
 import com.ncp.moeego.comment.repository.CommentRepository;
-import com.ncp.moeego.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

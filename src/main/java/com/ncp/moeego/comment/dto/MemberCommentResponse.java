@@ -1,6 +1,6 @@
 package com.ncp.moeego.comment.dto;
 
-import com.ncp.moeego.comment.bean.CommentStatus;
+import com.ncp.moeego.comment.entity.CommentStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

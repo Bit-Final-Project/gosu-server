@@ -1,4 +1,4 @@
-package com.ncp.moeego.comment.bean;
+package com.ncp.moeego.comment.entity;
 
 import com.ncp.moeego.article.bean.Article;
 import jakarta.persistence.*;
