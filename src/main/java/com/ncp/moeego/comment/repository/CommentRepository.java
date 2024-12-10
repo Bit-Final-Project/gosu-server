@@ -1,6 +1,6 @@
 package com.ncp.moeego.comment.repository;
 
-import com.ncp.moeego.comment.bean.Comment;
+import com.ncp.moeego.comment.entity.Comment;
 import com.ncp.moeego.comment.dto.MemberCommentResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,9 +1,10 @@
 package com.ncp.moeego.comment.mapper;
 
 import com.ncp.moeego.article.bean.Article;
-import com.ncp.moeego.comment.bean.Comment;
 import com.ncp.moeego.comment.dto.CommentRequest;
 import com.ncp.moeego.comment.dto.CommentResponse;
+import com.ncp.moeego.comment.entity.Comment;
+import com.ncp.moeego.common.Date;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 import org.springframework.stereotype.Component;
@@ -14,38 +15,13 @@ public class CommentMapper {
 
     public CommentMapper(MemberService memberService) {
         this.memberService = memberService;
+
     }
 
-
-    public CommentResponse toDTO(Comment comment) {
-        CommentResponse response = new CommentResponse();
-
-        response.setCommentNo(comment.getCommentNo());
-        response.setArticleNo(comment.getArticle().getArticleNo());
-        response.setMemberNo(comment.getMember().getMemberNo());
-        response.setContent(comment.getContent());
-        response.setCommentStatus(comment.getCommentStatus());
-        response.setWriteDate(comment.getWriteDate());
-
-        response.setParentCommentNo(
-                comment.getParent() != null ? comment.getParent().getCommentNo() : 0
-        );
-
-        //재귀
-        for (Comment child : comment.getChildren()) {
-            response.getChildren().add(toDTO(child));
-        }
-
-        response.setMemberName(memberService.getMemberName(comment.getMember().getMemberNo()));
-        response.setMemberProfileImage(memberService.getMemberProfileImage(comment.getMember().getMemberNo()));
-
-        return response;
-    }
 
     public Comment toEntity(CommentRequest request) {
 
         Comment comment = new Comment();
-
         comment.setContent(request.getContent());
 
         Article article = new Article();
@@ -62,16 +38,32 @@ public class CommentMapper {
             comment.setParent(parent);
         }
 
-        /*
-        dto->entity 전환시에는 이 요소가 필요없는거 같아서 일단 주석처리
+        return comment;
+    }
 
-        comment.setChildren(new ArrayList<>());
-        for (CommentDTO child : request.getChildren()) {
-            comment.getChildren().add(toEntity(child));
+
+    public CommentResponse toDTO(Comment comment) {
+        CommentResponse response = new CommentResponse();
+
+        response.setCommentNo(comment.getCommentNo());
+        response.setArticleNo(comment.getArticle().getArticleNo());
+        response.setMemberNo(comment.getMember().getMemberNo());
+        response.setContent(comment.getContent());
+        response.setCommentStatus(comment.getCommentStatus());
+        response.setWriteDate(comment.getWriteDate());
+        response.setElapsedTime(Date.calculateDate(comment.getWriteDate()));
+        response.setParentCommentNo(
+                comment.getParent() != null ? comment.getParent().getCommentNo() : 0
+        );
+
+        //재귀
+        for (Comment child : comment.getChildren()) {
+            response.getChildren().add(toDTO(child));
         }
 
-        */
+        response.setMemberName(memberService.getMemberName(comment.getMember().getMemberNo()));
+        response.setMemberProfileImage(memberService.getMemberProfileImage(comment.getMember().getMemberNo()));
 
-        return comment;
+        return response;
     }
 }

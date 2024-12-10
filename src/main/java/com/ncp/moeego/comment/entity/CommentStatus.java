@@ -1,4 +1,4 @@
-package com.ncp.moeego.comment.bean;
+package com.ncp.moeego.comment.entity;
 
 public enum CommentStatus {
     DEFAULT(0, "일반 댓글"),
