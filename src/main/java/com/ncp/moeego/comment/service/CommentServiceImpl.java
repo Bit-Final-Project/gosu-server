@@ -86,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
     //회원 ID로 댓글 조회
     @Override
     public Page<MemberCommentResponse> findCommentsByMember(Long memberNo, int pg, int pageSize) {
-        Pageable pageable = PageRequest.of(pg-1, pageSize, Sort.by("writeDate").ascending());
+        Pageable pageable = PageRequest.of(pg-1, pageSize);
         return commentRepository.findByMember_MemberNo(memberNo, pageable);
     }
 
@@ -105,7 +105,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Page<CommentResponse> findPagedCommentsByArticle(Long articleNo, int pg, int pagesize) {
 
-        Pageable pageable = PageRequest.of(pg-1, pagesize, Sort.by("writeDate").ascending());
+        Pageable pageable = PageRequest.of(pg-1, pagesize);
 
         Page<Comment> commentList = commentRepository.findParentCommentsByArticle(articleNo, pageable);
 
