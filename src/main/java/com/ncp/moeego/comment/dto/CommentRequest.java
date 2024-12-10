@@ -14,5 +14,9 @@ public class CommentRequest {
     private Long articleNo;
     private String content;
     private Long parentCommentNo; //없으면 0
+/*
+    public Long getParentCommentNo() {
+        return (parentCommentNo == null) ? 0L : parentCommentNo;
+    }*/
 
 }

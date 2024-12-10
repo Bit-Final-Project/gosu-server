@@ -56,7 +56,7 @@ public class CommentMapper {
         member.setMemberNo(request.getMemberNo());
         comment.setMember(member);
 
-        if (request.getParentCommentNo() != 0) {
+        if (request.getParentCommentNo() != null && request.getParentCommentNo() != 0) {
             Comment parent = new Comment();
             parent.setCommentNo(request.getParentCommentNo());
             comment.setParent(parent);
