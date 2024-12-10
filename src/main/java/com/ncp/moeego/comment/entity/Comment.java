@@ -1,15 +1,22 @@
 package com.ncp.moeego.comment.entity;
 
 import com.ncp.moeego.article.bean.Article;
+import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
-import com.ncp.moeego.member.entity.Member;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@Table(
+        name = "comment",
+        indexes = {
+                @Index(name = "idx_article_write_date", columnList = "article_no, write_date")
+        }
+)
 public class Comment {
 
     @Id
