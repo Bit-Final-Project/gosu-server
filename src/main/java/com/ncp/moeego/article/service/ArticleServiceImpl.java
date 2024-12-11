@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.ncp.moeego.article.bean.Article;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.repository.ArticleRepository;
+import com.ncp.moeego.comment.repository.CommentRepository;
 import com.ncp.moeego.common.Date;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
@@ -25,7 +26,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
-   
+    private final CommentRepository commentRepository;
     // memberNo맞춰서 이름 가져오는 로직
     public String getMemberNameByMemberNo(Long memberNo) {
         Optional<Member> member = memberRepository.findById(memberNo); // memberNo로 Member 조회
@@ -240,8 +241,9 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setService(article.getService());
         articleDTO.setArea(article.getArea());
         
-        // 댓글 개수 설정
-        articleDTO.setCommentCount(article.getComments().size());
+        // 댓글 수 설정 (쿼리에서 가져온 값 사용)
+        Long commentCount = commentRepository.countNonDeletedCommentsByArticleNo(articleNo);
+        articleDTO.setCommentCount(commentCount.intValue());
 
         return articleDTO;
 
