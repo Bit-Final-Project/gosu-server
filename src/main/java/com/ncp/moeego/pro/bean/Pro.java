@@ -1,7 +1,6 @@
 package com.ncp.moeego.pro.bean;
 
 import com.ncp.moeego.category.bean.MainCategory;
-import com.ncp.moeego.category.bean.SubCategory;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.reserve.bean.Reserve;
 import jakarta.persistence.*;
