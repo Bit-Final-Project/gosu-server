@@ -6,7 +6,7 @@ import lombok.Data;
 public class ProJoinRequest {
 
     private Long mainCateNo;
-    private Long subCateNo;
+    private String subCategories;
     private String oneIntro;
     private String intro;
 
