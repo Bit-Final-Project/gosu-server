@@ -32,6 +32,7 @@ public class MemberServiceImpl implements MemberService {
         data.setEmail(email);
         data.setName(joinDTO.getName());
         data.setPwd(bCryptPasswordEncoder.encode(pwd));
+        data.setGender(joinDTO.getGender());
         data.setAddress(joinDTO.getAddress());
         data.setPhone(joinDTO.getPhone());
         data.setGender(joinDTO.getGender());

@@ -1,5 +1,6 @@
 package com.ncp.moeego.member.service.oauth2;
 
+import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
 import com.ncp.moeego.member.bean.oauth2.OAuth2Member;
 import com.ncp.moeego.member.bean.oauth2.OAuth2Response;
@@ -14,6 +15,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -63,26 +66,21 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         // DB 조회
         Member existData = memberRepository.findByEmail(naverId);
 
-        System.out.println("member id : " + naverId);
-
         if (existData != null) {
-            System.out.println("member not null id : " + response.getName());
             existData.setEmail(naverId);
             existData.setName(response.getName());
-            existData.setAddress("");
-            existData.setPhone("");
-            existData.setGender(3);
+            existData.setGender(response.getGender().equals("M") ? 1 : 2);
             memberRepository.save(existData);
         } else {
-            System.out.println("member null id : " + response.getName());
             Member member = Member.builder()
                     .email(naverId)
                     .name(response.getName())
                     .pwd("OAuth2-password")
-                    .address("")
-                    .phone("")
-                    .gender(3)
+                    .address("OAuth2-address")
+                    .phone("OAuth2-phone")
+                    .gender(response.getGender().equals("M") ? 1 : 2)
                     .memberStatus(MemberStatus.valueOf(memberStatus))
+                    .joinDate(LocalDateTime.now())
                     .build();
             memberRepository.save(member);
         }
