@@ -48,4 +48,15 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 	@Query("SELECT a FROM Article a WHERE a.memberNo.memberNo = :memberNo")
 	Page<Article> findByMemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
 
+	// 댓글 수 가져오는 쿼리
+	@Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo GROUP BY a.articleNo")
+	Page<Object[]> findArticlesWithCommentCount(Pageable pageable);
+	
+	// 타입별 댓글 수 가져오는 쿼리
+	@Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo WHERE a.type = :type GROUP BY a")
+	Page<Object[]> findTypeArticlesWithCommentCount(@Param("type") int type, Pageable pageable);
+
+	// 내가 작성한 글 댓글 수 가져오는 쿼리
+	@Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo WHERE a.memberNo.memberNo = :memberNo GROUP BY a")
+	Page<Object[]> findMyArticlesWithCommentCount(@Param("memberNo") Long memberNo, Pageable pageable);
 }
