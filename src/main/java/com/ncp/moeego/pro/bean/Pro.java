@@ -1,5 +1,6 @@
 package com.ncp.moeego.pro.bean;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.ncp.moeego.category.bean.MainCategory;
@@ -39,10 +40,10 @@ public class Pro {
     private Reserve reserveNo;
 
 	@Column(name = "deprive_date")
-	private Date depriveDate;
+	private LocalDateTime depriveDate;
 
 	@Column(name = "access_date")
-	private Date accessDate;
+	private LocalDateTime accessDate;
 
 	private float star;
 	
@@ -51,4 +52,5 @@ public class Pro {
 	
 	@Column(length = 3000)
 	private String intro; // 서비스 소개
+
 }

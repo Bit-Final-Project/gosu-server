@@ -25,5 +25,10 @@ public class MemberController {
         if(check) return ResponseEntity.ok("ok");
         else return  ResponseEntity.badRequest().body("값이 잘못 되었습니다");
     }
+
+    @PostMapping("/join/exist")
+    public boolean isExistEmail(String email) {
+        return memberService.isExist(email);
+    }
     
 }
