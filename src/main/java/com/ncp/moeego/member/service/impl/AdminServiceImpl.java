@@ -39,6 +39,28 @@ public class AdminServiceImpl implements AdminService {
         return memberRepository.findMemberSummaryByStatus(MemberStatus.ROLE_PEND_PRO);
     }
 
+	@Override
+	public boolean approveMember(Long member_no) {
+		Member member = memberRepository.findById(member_no).orElse(null);
+        if (member != null && member.getMemberStatus() == MemberStatus.ROLE_PEND_PRO) {
+            member.setMemberStatus(MemberStatus.ROLE_PRO);
+            memberRepository.save(member);
+            return true;
+        }
+        return false;
+	}
+	
+	@Override
+	public boolean cancelMember(Long member_no) {
+	    Member member = memberRepository.findById(member_no).orElse(null);
+	    if (member != null && member.getMemberStatus() == MemberStatus.ROLE_PEND_PRO) {
+	        member.setMemberStatus(MemberStatus.ROLE_USER);  // 예: ROLE_USER로 변경
+	        memberRepository.save(member);
+	        return true;
+	    }
+	    return false;
+	}
+
 	
 	
 	

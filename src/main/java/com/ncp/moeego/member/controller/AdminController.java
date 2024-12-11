@@ -2,10 +2,13 @@ package com.ncp.moeego.member.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ncp.moeego.member.entity.Member;
@@ -67,8 +70,27 @@ public class AdminController {
     }
     
     
+    // 고수 승인 버튼 클릭 시
+    @PostMapping("/admin/pro/approve/{member_no}")
+    public ResponseEntity<String> approveMember(@PathVariable("member_no") long member_no) {
+        boolean result = adminService.approveMember(member_no);
+        if (result) {
+            return ResponseEntity.ok("고수 승인 완료");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("승인 실패");
+        }
+    }
     
-    
+    // 고수 취소 버튼 클릭시
+    @PostMapping("/admin/pro/cancel/{member_no}")
+    public ResponseEntity<String> cancelMember(@PathVariable("member_no") long member_no) {
+        boolean result = adminService.cancelMember(member_no);
+        if (result) {
+            return ResponseEntity.ok("고수 취소 완료");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("취소 실패");
+        }
+    }
     
     
 }

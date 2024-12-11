@@ -15,6 +15,9 @@ public interface AdminService {
 	int getRoleProCount();
 
 	List<MemberSummaryDTO> getPendingProMembers();
-	
+
+	boolean approveMember(Long id);
+
+	boolean cancelMember(Long id);
 	
 }

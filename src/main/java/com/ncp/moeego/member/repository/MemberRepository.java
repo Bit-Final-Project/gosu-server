@@ -28,12 +28,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 상태별 회원 리스트 반환
     @Query("SELECT new com.ncp.moeego.member.bean.MemberSummaryDTO(" +
-            "m.memberNo, m.name, p.oneIntro, COUNT(p.depriveDate)) " +
+            "m.memberNo, m.name, m.memberStatus, p.oneIntro, COUNT(p.depriveDate)) " +  
             "FROM Member m " +
-            "LEFT JOIN m.pro p " +
+            "LEFT JOIN Pro p ON p.member = m " +
             "WHERE m.memberStatus = :status " +
-            "GROUP BY m.memberNo, m.name, p.oneIntro")
-    List<MemberSummaryDTO> findMemberSummaryByStatus(MemberStatus status);
+            "GROUP BY m.memberNo, m.name, m.memberStatus, p.oneIntro")
+    List<MemberSummaryDTO> findMemberSummaryByStatus(@Param("status") MemberStatus status);
+    
+    
+    
+
 
     
     

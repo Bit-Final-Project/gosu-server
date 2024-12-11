@@ -1,18 +1,23 @@
 package com.ncp.moeego.member.bean;
 
+import com.ncp.moeego.member.entity.MemberStatus;
+
 import lombok.Data;
 
 @Data
 public class MemberSummaryDTO {
-	private Long member_no;
+	private Long memberNo;
     private String name;
+    private MemberStatus memberStatus;
     private String oneIntro;
-    private Long depriveDateCount;
+    private Long count;
 
-    public MemberSummaryDTO(Long member_no, String name, String oneIntro, Long depriveDateCount) {
-        this.member_no = member_no;
+    public MemberSummaryDTO(Long memberNo, String name, MemberStatus memberStatus, String oneIntro, Long count) {
+        this.memberNo = memberNo;
         this.name = name;
+        this.memberStatus = memberStatus;
         this.oneIntro = oneIntro;
-        this.depriveDateCount = depriveDateCount;
+        this.count = count;
     }
+
 }
