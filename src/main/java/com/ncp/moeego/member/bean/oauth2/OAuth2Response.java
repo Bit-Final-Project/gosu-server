@@ -13,4 +13,6 @@ public interface OAuth2Response {
     String getGender();
     //사용자 프로필사진
     String getProfileImage();
+    //사용자 핸드폰
+    String getPhone();
 }
