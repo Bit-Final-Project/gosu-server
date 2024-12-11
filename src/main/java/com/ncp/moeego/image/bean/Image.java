@@ -40,4 +40,9 @@ public class Image {
 	@Column(length = 3000)
 	private String imageName;
 	
+	@Column(length = 3000)
+	private String imageUuidName;
+	
+	
+	
 }
