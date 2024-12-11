@@ -1,22 +1,23 @@
 package com.ncp.moeego.article.service;
 
-import com.ncp.moeego.article.bean.Article;
-import com.ncp.moeego.article.bean.ArticleDTO;
-import com.ncp.moeego.article.repository.ArticleRepository;
-import com.ncp.moeego.comment.repository.CommentRepository;
-import com.ncp.moeego.common.Date;
-import com.ncp.moeego.member.entity.Member;
-import com.ncp.moeego.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.ncp.moeego.article.bean.Article;
+import com.ncp.moeego.article.bean.ArticleDTO;
+import com.ncp.moeego.article.repository.ArticleRepository;
+import com.ncp.moeego.common.Date;
+import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.repository.MemberRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +78,8 @@ public class ArticleServiceImpl implements ArticleService {
     // 좋아요 순으로 조회(인기 게시글)
     @Override
     public Page<ArticleDTO> getHotArticleByPage(int pg, int pageSize) {
-        // Pageable 객체 생성: likes 기준 내림차순 정렬
+        
+    	// Pageable 객체 생성: likes 기준 내림차순 정렬
         Pageable pageable = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("likes")));
 
         // 단일 쿼리로 게시글과 댓글 수를 함께 조회
@@ -242,6 +244,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setCommentCount(article.getComments().size());
 
         return articleDTO;
+
     }
     
 

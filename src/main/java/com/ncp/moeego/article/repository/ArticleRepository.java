@@ -1,6 +1,7 @@
 package com.ncp.moeego.article.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,6 +51,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 	Page<Article> findByMemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
 
 	// 댓글 수 가져오는 쿼리
+
 	@Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo " +
 		       "WHERE a.type NOT IN (0, 1) GROUP BY a.articleNo")
 	Page<Object[]> findArticlesWithCommentCount(Pageable pageable);
@@ -61,6 +63,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 	// 내가 작성한 글 댓글 수 가져오는 쿼리
 	@Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus != 'DELETED' WHERE a.memberNo.memberNo = :memberNo GROUP BY a")
 	Page<Object[]> findMyArticlesWithCommentCount(@Param("memberNo") Long memberNo, Pageable pageable);
+
 
 	// 좋아요 순 댓글 수 가져오는 쿼리
 	@Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus != 'DELETED' GROUP BY a ORDER BY a.likes DESC")
