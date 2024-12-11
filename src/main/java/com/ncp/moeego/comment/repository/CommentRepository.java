@@ -37,5 +37,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             ORDER BY c.writeDate ASC
             """)
     Page<Comment> findParentCommentsByArticle(@Param("articleNo") Long articleNo, Pageable pageable);
+
+    // 상세 게시글 댓글 수 카운트
+    @Query("SELECT COUNT(c) FROM Comment c WHERE c.article.articleNo = :articleNo AND c.commentStatus != 'DELETED'")
+    Long countNonDeletedCommentsByArticleNo(@Param("articleNo") Long articleNo);
     
 }

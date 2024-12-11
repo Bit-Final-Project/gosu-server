@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import com.ncp.moeego.article.bean.Article;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.repository.ArticleRepository;
+import com.ncp.moeego.comment.repository.CommentRepository;
 import com.ncp.moeego.common.Date;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
+import com.ncp.moeego.ncp.service.ObjectStorageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +27,15 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
-   
+    private final CommentRepository commentRepository;
+    
+    // 네이버 클라우드
+    private ObjectStorageService objectStorageService;
+    
+    private String bucketName = "moeego";
+    
+    
+    
     // memberNo맞춰서 이름 가져오는 로직
     public String getMemberNameByMemberNo(Long memberNo) {
         Optional<Member> member = memberRepository.findById(memberNo); // memberNo로 Member 조회
@@ -214,38 +224,41 @@ public class ArticleServiceImpl implements ArticleService {
     // 게시글 상세 조회
     @Override
     public ArticleDTO getArticleViewById(Long articleNo) {
-        // 단일 쿼리로 게시글과 댓글 수를 함께 조회
-        Optional<Object[]> result = articleRepository.findArticleWithCommentCount(articleNo);
+        // 게시글을 조회할 repository 호출 (예시: ArticleRepository)
+        Article article = articleRepository.findById(articleNo)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 번호입니다."));
 
-        // 게시글이 없으면 null 반환
-        if (!result.isPresent()) {
-            return null;
-        }
-
-        Object[] data = result.get();
-        Article article = (Article) data[0];
-        Long commentCount = (Long) data[1];
-
-        // 게시글이 존재하면 ArticleDTO로 변환하여 반환
+        // 조회된 Article 엔티티를 ArticleDTO로 변환하여 반환
+        ArticleDTO articleDTO = new ArticleDTO();
+        articleDTO.setArticleNo(article.getArticleNo());
+        articleDTO.setMemberNo(article.getMemberNo().getMemberNo());
+        articleDTO.setSubject(article.getSubject());
+        articleDTO.setContent(article.getContent());
+        articleDTO.setView(article.getView());
+        articleDTO.setType(article.getType());
+        articleDTO.setWriteDate(article.getWriteDate());
+        articleDTO.setLikes(article.getLikes());
+        
         String elapsedTime = Date.calculateDate(article.getWriteDate());
         String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+     
+        // 시간을 포맷하여 변환
+        articleDTO.setElapsedTime(elapsedTime);
         
-        return new ArticleDTO(
-            article.getArticleNo(),
-            article.getSubject(),
-            article.getContent(),
-            article.getView(),
-            article.getType(),
-            article.getWriteDate(),
-            article.getMemberNo().getMemberNo(),
-            article.getLikes(),
-            elapsedTime,
-            memberName,
-            article.getService(),
-            article.getArea(),
-            commentCount.intValue()
-        );
+        // 작성자 이름, 서비스, 지역 등의 추가 정보를 설정
+        articleDTO.setMemberName(memberName);
+        articleDTO.setService(article.getService());
+        articleDTO.setArea(article.getArea());
+        
+        // 댓글 수 설정 (쿼리에서 가져온 값 사용)
+        Long commentCount = commentRepository.countNonDeletedCommentsByArticleNo(articleNo);
+        articleDTO.setCommentCount(commentCount.intValue());
+
+
+        return articleDTO;
+
     }
+    
 
     // 마이페이지 작성한 게시글 조회
     @Override
