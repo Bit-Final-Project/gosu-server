@@ -66,10 +66,14 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         // DB 조회
         Member existData = memberRepository.findByEmail(naverId);
 
+        System.out.println(response.getProfileImage());
+
         if (existData != null) {
             existData.setEmail(naverId);
             existData.setName(response.getName());
-            existData.setGender(response.getGender().equals("M") ? 1 : 2);
+            existData.setPhone(response.getPhone() == null ? existData.getPhone() : response.getPhone());
+            existData.setProfileImage(response.getProfileImage() == null ? existData.getProfileImage() : response.getProfileImage());
+            existData.setGender(response.getGender() == null ? 3 : response.getGender().equals("M") ? 1 : 2);
             memberRepository.save(existData);
         } else {
             Member member = Member.builder()
@@ -77,8 +81,9 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .name(response.getName())
                     .pwd("OAuth2-password")
                     .address("OAuth2-address")
-                    .phone("OAuth2-phone")
-                    .gender(response.getGender().equals("M") ? 1 : 2)
+                    .phone(response.getPhone() == null ? "OAuth2-phone" : response.getPhone())
+                    .gender(response.getGender() == null ? 3 : response.getGender().equals("M") ? 1 : 2)
+                    .profileImage(response.getProfileImage())
                     .memberStatus(MemberStatus.valueOf(memberStatus))
                     .joinDate(LocalDateTime.now())
                     .build();
