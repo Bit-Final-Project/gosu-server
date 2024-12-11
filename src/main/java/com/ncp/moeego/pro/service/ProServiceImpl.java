@@ -9,9 +9,13 @@ import com.ncp.moeego.pro.bean.Pro;
 import com.ncp.moeego.pro.dto.ProApplyRequest;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.repository.ProRepository;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.swing.text.html.parser.Entity;
 
 @Service
 @Slf4j
@@ -53,6 +57,7 @@ public class ProServiceImpl implements ProService {
     @Override
     public String proApply(ProApplyRequest request) {
         Pro pro = new Pro();
+        pro.setMember(memberService.getMemberById(request.getMemberNo()));
         pro.setMainCateNo(mainCategoryRepository.findById(request.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("Invalid MainCateNo")));
         pro.setSubCateNo(subCategoryRepository.findById(request.getSubCateNo()).orElseThrow(() -> new IllegalArgumentException("Invalid SubCateNo")));
         pro.setOneIntro(request.getOneIntro());
