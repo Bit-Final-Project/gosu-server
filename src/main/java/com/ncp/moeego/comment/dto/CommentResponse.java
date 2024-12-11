@@ -1,6 +1,6 @@
 package com.ncp.moeego.comment.dto;
 
-import com.ncp.moeego.comment.bean.CommentStatus;
+import com.ncp.moeego.comment.entity.CommentStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,6 +22,7 @@ public class CommentResponse {
     private String content;
     private CommentStatus commentStatus;
     private LocalDateTime writeDate;
+    private String elapsedTime;
     private long parentCommentNo;
     private List<CommentResponse> children = new ArrayList<>(); // 대댓글 리스트
 

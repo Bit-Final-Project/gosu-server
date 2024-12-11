@@ -1,6 +1,6 @@
 package com.ncp.moeego.comment.repository;
 
-import com.ncp.moeego.comment.bean.Comment;
+import com.ncp.moeego.comment.entity.Comment;
 import com.ncp.moeego.comment.dto.MemberCommentResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                 c.writeDate)
             FROM Comment c
             WHERE c.member.memberNo = :memberNo
+            ORDER BY c.writeDate ASC
             """)
     Page<MemberCommentResponse> findByMember_MemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
 
@@ -33,6 +34,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             SELECT c
             FROM Comment c
             WHERE c.article.articleNo = :articleNo AND c.parent IS NULL
+            ORDER BY c.writeDate ASC
             """)
     Page<Comment> findParentCommentsByArticle(@Param("articleNo") Long articleNo, Pageable pageable);
 
