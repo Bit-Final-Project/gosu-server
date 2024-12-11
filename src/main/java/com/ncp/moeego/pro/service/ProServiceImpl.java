@@ -1,7 +1,6 @@
 package com.ncp.moeego.pro.service;
 
 import com.ncp.moeego.category.repository.MainCategoryRepository;
-import com.ncp.moeego.category.repository.SubCategoryRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
@@ -9,13 +8,9 @@ import com.ncp.moeego.pro.bean.Pro;
 import com.ncp.moeego.pro.dto.ProApplyRequest;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.repository.ProRepository;
-import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.text.html.parser.Entity;
 
 @Service
 @Slf4j
@@ -24,13 +19,11 @@ public class ProServiceImpl implements ProService {
     private final MemberServiceImpl memberService;
     private final ProRepository proRepository;
     private final MainCategoryRepository mainCategoryRepository;
-    private final SubCategoryRepository subCategoryRepository;
 
-    public ProServiceImpl(MemberServiceImpl memberService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, SubCategoryRepository subCategoryRepository) {
+    public ProServiceImpl(MemberServiceImpl memberService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository) {
         this.memberService = memberService;
         this.proRepository = proRepository;
         this.mainCategoryRepository = mainCategoryRepository;
-        this.subCategoryRepository = subCategoryRepository;
     }
 
     @Transactional
@@ -59,7 +52,7 @@ public class ProServiceImpl implements ProService {
         Pro pro = new Pro();
         pro.setMember(memberService.getMemberById(request.getMemberNo()));
         pro.setMainCateNo(mainCategoryRepository.findById(request.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("Invalid MainCateNo")));
-        pro.setSubCateNo(subCategoryRepository.findById(request.getSubCateNo()).orElseThrow(() -> new IllegalArgumentException("Invalid SubCateNo")));
+        pro.setSubCategories(request.getSubCategories());
         pro.setOneIntro(request.getOneIntro());
         pro.setIntro(request.getIntro());
         proRepository.save(pro);

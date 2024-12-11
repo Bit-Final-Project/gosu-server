@@ -9,7 +9,7 @@ public class ProApplyRequest {
 
     private Long memberNo;
     private Long mainCateNo;
-    private Long subCateNo;
+    private String subCategories;
     private String oneIntro;
     private String intro;
     private Date depriveDate;
@@ -19,7 +19,7 @@ public class ProApplyRequest {
 
     public ProApplyRequest(ProJoinRequest request) {
         this.mainCateNo = request.getMainCateNo();
-        this.subCateNo = request.getSubCateNo();
+        this.subCategories = request.getSubCategories();
         this.oneIntro = request.getOneIntro();
         this.intro = request.getIntro();
     }
