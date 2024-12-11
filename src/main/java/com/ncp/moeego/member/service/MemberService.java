@@ -10,6 +10,6 @@ public interface MemberService {
     Member getMemberById(Long memberNo);
     String getMemberName(Long memberNo);
     String getMemberProfileImage(Long memberNo);
-
+    boolean isExist(String email);
 
 }

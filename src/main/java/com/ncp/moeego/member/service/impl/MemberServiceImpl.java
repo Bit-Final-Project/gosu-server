@@ -8,10 +8,12 @@ import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import com.ncp.moeego.member.bean.JoinDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -23,9 +25,6 @@ public class MemberServiceImpl implements MemberService {
     public boolean write(JoinDTO joinDTO) {
         String email = joinDTO.getEmail();
         String pwd = joinDTO.getPwd();
-
-        Boolean isExist = memberRepository.existsByEmail(email);
-        if(isExist) return false;
 
         Member data = new Member();
 
@@ -40,6 +39,11 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(data);
         return true;
+    }
+
+    @Override
+    public boolean isExist(String email){
+        return memberRepository.existsByEmail(email);
     }
 
     @Override
@@ -58,5 +62,17 @@ public class MemberServiceImpl implements MemberService {
         return getMemberById(memberNo).getProfileImage();
     }
 
+    public Long getMemberNo(String email) {
+        log.info(memberRepository.findByEmail(email).getMemberNo().toString());
+        return memberRepository.findByEmail(email).getMemberNo();
+
+    }
+
+    @Transactional
+    public void setMemberStatus(Long memberNo, MemberStatus memberStatus) {
+        Member member = memberRepository.findById(memberNo).orElseThrow(()-> new IllegalArgumentException("Invalid memberNo"));
+        member.setMemberStatus(memberStatus);
+        log.debug("MemberNo: {}, MemberStatus: {}", member.getMemberNo(), member.getMemberStatus());
+    }
 
 }

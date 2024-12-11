@@ -17,6 +17,7 @@ import com.ncp.moeego.comment.repository.CommentRepository;
 import com.ncp.moeego.common.Date;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
+import com.ncp.moeego.ncp.service.ObjectStorageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +28,14 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+    
+    // 네이버 클라우드
+    private ObjectStorageService objectStorageService;
+    
+    private String bucketName = "moeego";
+    
+    
+    
     // memberNo맞춰서 이름 가져오는 로직
     public String getMemberNameByMemberNo(Long memberNo) {
         Optional<Member> member = memberRepository.findById(memberNo); // memberNo로 Member 조회
