@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
@@ -27,7 +29,8 @@ public class MemberController {
     }
 
     @PostMapping("/join/exist")
-    public boolean isExistEmail(@RequestBody String email) {
+    public boolean isExistEmail(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
         return memberService.isExist(email);
     }
     
