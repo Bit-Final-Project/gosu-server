@@ -5,7 +5,12 @@ import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.service.ProServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pro")
@@ -31,9 +36,9 @@ public class ProController {
     }
 
     @PostMapping("/join/exist")
-    public boolean isExistingEmail(@RequestBody String email) {
+    public boolean isExistingEmail(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
         return memberService.isExist(email);
-
     }
 
 
