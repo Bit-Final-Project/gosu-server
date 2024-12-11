@@ -10,4 +10,6 @@ public class AdminController {
     public ResponseEntity adminP() {
         return ResponseEntity.ok("admin");
     }
+    
+    
 }
