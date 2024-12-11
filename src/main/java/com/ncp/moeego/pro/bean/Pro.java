@@ -1,5 +1,6 @@
 package com.ncp.moeego.pro.bean;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.ncp.moeego.category.bean.MainCategory;
@@ -36,14 +37,14 @@ public class Pro {
 	private SubCategory subCateNo;
 
 	@ManyToOne // 고수는 여러개의 예약신청을 받을수도 있고 예약을 못 받을수도있음
-	@JoinColumn(name = "reserve_no")
+	@JoinColumn(name = "reserve_no", nullable = true)
     private Reserve reserveNo;
 
 	@Column(name = "deprive_date")
-	private Date depriveDate;
+	private LocalDateTime depriveDate;
 
 	@Column(name = "access_date")
-	private Date accessDate;
+	private LocalDateTime accessDate;
 
 	private float star;
 
@@ -56,4 +57,5 @@ public class Pro {
 	
 	@Column(length = 3000)
 	private String intro; // 서비스 소개
+
 }

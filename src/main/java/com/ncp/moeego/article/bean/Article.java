@@ -1,13 +1,10 @@
 package com.ncp.moeego.article.bean;
 
-import com.ncp.moeego.comment.entity.Comment;
 import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -43,11 +40,6 @@ public class Article {
     
     @Column(length = 200)
     private String area;
-    
-    // 댓글 목록을 추가하여 양방향 관계 설정
-    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>(); // 댓글 리스트 추가
-    
 
     @Override
     public String toString() {
