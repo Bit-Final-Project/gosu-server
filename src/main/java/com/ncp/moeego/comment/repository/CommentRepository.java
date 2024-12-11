@@ -38,8 +38,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             """)
     Page<Comment> findParentCommentsByArticle(@Param("articleNo") Long articleNo, Pageable pageable);
     
-    // 상세조회 댓글 수 조회 쿼리
-    @Query("SELECT COUNT(c) FROM Comment c WHERE c.article.articleNo = :articleNo")
-    public int countByArticleNo(@Param("articleNo") Long articleNo);
-
 }
