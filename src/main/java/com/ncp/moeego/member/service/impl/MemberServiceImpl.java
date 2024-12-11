@@ -58,4 +58,5 @@ public class MemberServiceImpl implements MemberService {
         return getMemberById(memberNo).getProfileImage();
     }
 
+
 }
