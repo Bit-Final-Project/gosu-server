@@ -106,10 +106,11 @@ public class ArticleController {
 		ArticleDTO article = articleService.getArticleViewById(articleNo);
 
 		return ResponseEntity.ok(article);
+		
 	}
 	
 	// 마이페이지 작성한 게시글 보기
-	@GetMapping("/article/myPage")
+	@GetMapping("/article/mypage")
 	public ResponseEntity<Map<String, Object>> getMyArticles(@RequestParam(name = "member_no") Long member_no,
 	        											     @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
 	   

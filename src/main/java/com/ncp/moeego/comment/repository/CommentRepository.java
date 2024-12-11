@@ -37,5 +37,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             ORDER BY c.writeDate ASC
             """)
     Page<Comment> findParentCommentsByArticle(@Param("articleNo") Long articleNo, Pageable pageable);
-
+    
 }

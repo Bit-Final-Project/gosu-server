@@ -35,6 +35,11 @@ public class Article {
     @Column(name = "write_date")
     private LocalDateTime writeDate = LocalDateTime.now();
 
+    @Column(length = 200)
+    private String service;
+    
+    @Column(length = 200)
+    private String area;
 
     @Override
     public String toString() {
@@ -46,6 +51,8 @@ public class Article {
                 ", type=" + type +
                 ", writeDate=" + writeDate +
                 ", likes=" + likes +
+                ", service" + service +
+                ", area" + area +
                 '}';
     }
 
