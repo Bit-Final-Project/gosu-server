@@ -11,4 +11,5 @@ public interface MemberService {
     String getMemberName(Long memberNo);
     String getMemberProfileImage(Long memberNo);
 
+
 }
