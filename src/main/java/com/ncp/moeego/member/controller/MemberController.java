@@ -27,7 +27,7 @@ public class MemberController {
     }
 
     @PostMapping("/join/exist")
-    public boolean isExistEmail(String email) {
+    public boolean isExistEmail(@RequestBody String email) {
         return memberService.isExist(email);
     }
     
