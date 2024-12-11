@@ -31,7 +31,7 @@ public class ProController {
     }
 
     @PostMapping("/join/exist")
-    public boolean isExistingEmail(@RequestParam String email) {
+    public boolean isExistingEmail(@RequestBody String email) {
         return memberService.isExist(email);
 
     }
