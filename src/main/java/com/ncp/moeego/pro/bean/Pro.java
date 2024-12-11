@@ -5,7 +5,6 @@ import java.util.Date;
 
 import com.ncp.moeego.category.bean.MainCategory;
 import com.ncp.moeego.category.bean.SubCategory;
-import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +36,7 @@ public class Pro {
 	private SubCategory subCateNo;
 
 	@ManyToOne // 고수는 여러개의 예약신청을 받을수도 있고 예약을 못 받을수도있음
-	@JoinColumn(name = "reserve_no")
+	@JoinColumn(name = "reserve_no", nullable = false)
     private Reserve reserveNo;
 
 	@Column(name = "deprive_date")
@@ -47,10 +46,6 @@ public class Pro {
 	private LocalDateTime accessDate;
 
 	private float star;
-
-	@OneToOne
-	@JoinColumn(name = "member_no", nullable = false)
-	private Member member;
 	
 	@Column(name = "one_intro", length = 1000)
 	private String oneIntro; // 한줄소개
