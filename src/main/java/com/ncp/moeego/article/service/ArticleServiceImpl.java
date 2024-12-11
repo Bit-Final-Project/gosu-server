@@ -245,6 +245,7 @@ public class ArticleServiceImpl implements ArticleService {
         Long commentCount = commentRepository.countNonDeletedCommentsByArticleNo(articleNo);
         articleDTO.setCommentCount(commentCount.intValue());
 
+
         return articleDTO;
 
     }
