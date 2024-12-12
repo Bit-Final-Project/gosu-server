@@ -4,7 +4,7 @@ import com.ncp.moeego.article.bean.Article;
 import com.ncp.moeego.comment.dto.CommentRequest;
 import com.ncp.moeego.comment.dto.CommentResponse;
 import com.ncp.moeego.comment.entity.Comment;
-import com.ncp.moeego.common.Date;
+import com.ncp.moeego.common.ConvertDate;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 import org.springframework.stereotype.Component;
@@ -51,7 +51,7 @@ public class CommentMapper {
         response.setContent(comment.getContent());
         response.setCommentStatus(comment.getCommentStatus());
         response.setWriteDate(comment.getWriteDate());
-        response.setElapsedTime(Date.calculateDate(comment.getWriteDate()));
+        response.setElapsedTime(ConvertDate.calculateDate(comment.getWriteDate()));
         response.setParentCommentNo(
                 comment.getParent() != null ? comment.getParent().getCommentNo() : 0
         );
