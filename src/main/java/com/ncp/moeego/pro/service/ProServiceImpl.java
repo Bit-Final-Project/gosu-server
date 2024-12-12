@@ -86,4 +86,18 @@ public class ProServiceImpl implements ProService {
         return proRepository.findByProNoIn(proNoList, pageable);
     }
 
+    @Transactional
+    @Override
+    public String deleteFavorites(Long memberNo, List<Long> proNo) {
+        log.debug("deleteFavorites : {}, {}", memberNo, proNo.toString());
+        int deletedRows = favoriteRepository.deleteFavorite(memberNo, proNo);
+
+        if (deletedRows > 0) {
+            return "delete";
+        } else {
+            return "fail";
+        }
+
+    }
+
 }

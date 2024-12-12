@@ -26,4 +26,5 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
                     """
     )
     Page<FavoriteResponse> findByProNoIn(@Param("proNo") List<Long> proNo, Pageable pageable);
+
 }
