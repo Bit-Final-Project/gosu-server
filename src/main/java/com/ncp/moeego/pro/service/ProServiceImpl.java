@@ -4,7 +4,7 @@ import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
-import com.ncp.moeego.pro.bean.Pro;
+import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.dto.ProApplyRequest;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.repository.ProRepository;

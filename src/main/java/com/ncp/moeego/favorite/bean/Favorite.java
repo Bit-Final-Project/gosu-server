@@ -8,7 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import com.ncp.moeego.member.entity.Member;
-import com.ncp.moeego.pro.bean.Pro;
+import com.ncp.moeego.pro.entity.Pro;
 
 @Entity
 @Data
