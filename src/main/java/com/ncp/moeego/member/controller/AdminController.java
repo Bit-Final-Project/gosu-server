@@ -30,7 +30,7 @@ public class AdminController {
     }
     
     // 전체 회원(ROLE_USER) 수 ( 관리자 페이지 차트 데이터화 활용 )
-    @GetMapping("/admin/all")
+    @GetMapping("/admin/member")
     public ResponseEntity<Integer> all() {
     	int count = adminService.getRoleUserCount();
     	return ResponseEntity.ok(count);
@@ -43,7 +43,7 @@ public class AdminController {
     	return ResponseEntity.ok(count);
     }
     
-    // 전체 탈퇴 회원(ROLE_CANCEL) 수 ( 관리자 페이지 차트 데이터화 활용 )
+    // 탈퇴 회원(ROLE_CANCEL) 수 ( 관리자 페이지 차트 데이터화 활용 )
     @GetMapping("/admin/leave")
     public ResponseEntity<Integer> leave(){
     	int count = adminService.getRoleCancelCount();
@@ -79,8 +79,6 @@ public class AdminController {
         List<Map<String, Object>> result = adminService.getCancelledMemberData(startDateTime, endDateTime);
         return ResponseEntity.ok(result);
     }
-    
-    
     
     
     //고수 권한 페이지
