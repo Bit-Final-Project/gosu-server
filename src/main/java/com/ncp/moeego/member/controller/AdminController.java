@@ -10,14 +10,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
-
 import com.ncp.moeego.member.service.AdminService;
-import com.ncp.moeego.pro.entity.Pro;
 
 import lombok.RequiredArgsConstructor;
 
