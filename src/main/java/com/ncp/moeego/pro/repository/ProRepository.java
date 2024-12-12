@@ -1,5 +1,6 @@
 package com.ncp.moeego.pro.repository;
 
+import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.pro.dto.FavoriteResponse;
 import com.ncp.moeego.pro.entity.Pro;
 import org.springframework.data.domain.Page;
@@ -26,5 +27,7 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
                     """
     )
     Page<FavoriteResponse> findByProNoIn(@Param("proNo") List<Long> proNo, Pageable pageable);
+
+	Pro findByMember(Member member);
 
 }
