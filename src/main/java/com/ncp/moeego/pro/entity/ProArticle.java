@@ -1,4 +1,4 @@
-package com.ncp.moeego.pro.article.bean;
+package com.ncp.moeego.pro.entity;
 
 import com.ncp.moeego.category.bean.MainCategory;
 import com.ncp.moeego.category.bean.SubCategory;

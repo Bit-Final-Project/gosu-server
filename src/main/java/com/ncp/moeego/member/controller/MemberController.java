@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
@@ -24,6 +26,12 @@ public class MemberController {
         boolean check = memberService.write(joinDTO);
         if(check) return ResponseEntity.ok("ok");
         else return  ResponseEntity.badRequest().body("값이 잘못 되었습니다");
+    }
+
+    @PostMapping("/join/exist")
+    public boolean isExistEmail(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        return memberService.isExist(email);
     }
     
 }

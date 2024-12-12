@@ -18,7 +18,6 @@ import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.comment.repository.CommentRepository;
 import com.ncp.moeego.common.Date;
 import com.ncp.moeego.image.bean.Image;
-import com.ncp.moeego.image.bean.ImageDTO;
 import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;

@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ncp.moeego.category.bean.SubCategory;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> {
 
 
