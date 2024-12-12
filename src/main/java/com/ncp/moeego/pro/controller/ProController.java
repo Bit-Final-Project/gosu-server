@@ -1,6 +1,7 @@
 package com.ncp.moeego.pro.controller;
 
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
+import com.ncp.moeego.pro.dto.FavoriteDeleteRequest;
 import com.ncp.moeego.pro.dto.FavoriteResponse;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.service.ProServiceImpl;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -60,6 +62,17 @@ public class ProController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+        @DeleteMapping("/favorite")
+        public ResponseEntity<?> deleteFavorites(@RequestBody FavoriteDeleteRequest favoriteDeleteRequest) {
+            log.debug(favoriteDeleteRequest.toString());
+            String response = proService.deleteFavorites(favoriteDeleteRequest.getMemberNo(), favoriteDeleteRequest.getProNo());
+
+            if (response.equals("fail")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid request");
+            }
+            return ResponseEntity.ok("delete success");
+        }
 
 
 }
