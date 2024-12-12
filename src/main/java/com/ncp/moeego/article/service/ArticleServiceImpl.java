@@ -3,20 +3,26 @@ package com.ncp.moeego.article.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ncp.moeego.article.bean.Article;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.comment.repository.CommentRepository;
 import com.ncp.moeego.common.ConvertDate;
+import com.ncp.moeego.image.bean.Image;
+import com.ncp.moeego.image.repository.ImageRepository;
+
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
+import com.ncp.moeego.ncp.service.ObjectStorageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +33,16 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-
+    
+    
+    private final ImageRepository imageRepository;
+    
+    // 네이버 클라우드
+    private final ObjectStorageService objectStorageService;
+    
+    private String bucketName = "moeego";
+    
+    
     
     // memberNo맞춰서 이름 가져오는 로직
     public String getMemberNameByMemberNo(Long memberNo) {
@@ -202,6 +217,7 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getContent(),
                 article.getView(),
                 article.getType(),
+                
                 article.getWriteDate(),
                 article.getMemberNo().getMemberNo(),
                 article.getLikes(),
@@ -286,39 +302,58 @@ public class ArticleServiceImpl implements ArticleService {
         });
     }
 
-    // 게시글 작성
+    // NCP 이미지 추가 해서 게시글 등록
     @Override
     public boolean writeArticle(ArticleDTO articleDTO) {
-
         try {
-
-            // ArticleDTO를 Article 엔티티로 변환
+            // ArticleDTO → Article 변환
             Article article = new Article();
             article.setSubject(articleDTO.getSubject());
             article.setContent(articleDTO.getContent());
             article.setView(0); // 초기 조회수는 0
             article.setLikes(0); // 초기 좋아요는 0
-            article.setWriteDate(LocalDateTime.now()); // 현재 시간
+            article.setWriteDate(LocalDateTime.now());
             article.setType(articleDTO.getType());
             article.setService(articleDTO.getService());
             article.setArea(articleDTO.getArea());
 
-            // 작성자 member_no
+            // Member 조회 및 설정
             Optional<Member> member = memberRepository.findById(articleDTO.getMemberNo());
             if (member.isPresent()) {
                 article.setMemberNo(member.get());
             } else {
-                return false;
+                return false; // Member가 없으면 실패 처리
             }
 
-            // 게시글 저장
-            articleRepository.save(article);
-            return true;
+            // Article 저장
+            Article savedArticle = articleRepository.save(article);
+
+            // 이미지 업로드 및 저장
+            if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
+                for (MultipartFile imageFile : articleDTO.getImageFiles()) {
+                    // 1. 오브젝트 스토리지에 업로드
+                    String cloudKey =  objectStorageService.uploadFile(bucketName, "storage/", imageFile);
+
+                    // 2. 업로드된 이미지 정보를 DB에 저장
+                    Image image = new Image();
+                    image.setArticleNo(savedArticle); // 게시글과 연결
+                    image.setMemberNo(member.get()); // 작성자와 연결
+                    image.setImageName(imageFile.getOriginalFilename());
+                    image.setImageUuidName(cloudKey); // 스토리지의 키 저장
+                    imageRepository.save(image);
+                }
+            }
+
+            return true; // 성공
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            return false; // 실패 시
         }
     }
 
+
+
+    
     // 게시글 수정
     @Override
     public boolean updateArticle(Long articleNo, ArticleDTO articleDTO) {
