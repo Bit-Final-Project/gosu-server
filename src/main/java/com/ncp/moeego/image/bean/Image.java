@@ -26,7 +26,7 @@ public class Image {
 	private Review reviewNo;
 	
 	@ManyToOne // 여러개의 이미지를 고수 게시판에 넣을수있음
-	@JoinColumn(name="pro_article_no")
+	@JoinColumn(name="pro_article_no", nullable = true)
 	private ProArticle proArticleNo;
 
 	@ManyToOne // 여러개의 이미지를 게시판에 넣을수있음

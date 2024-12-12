@@ -1,9 +1,11 @@
 package com.ncp.moeego.article.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,9 +16,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.service.ArticleService;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -125,17 +130,46 @@ public class ArticleController {
 	    return ResponseEntity.ok(response);
 	}
 	
-	// 게시글 작성
+//	// 게시글 작성
+//	@PostMapping("/article/write")
+//	public ResponseEntity<String> writeArticle(@RequestBody ArticleDTO articleDTO) {
+//	    boolean result = articleService.writeArticle(articleDTO);
+//
+//	    if (result) {
+//	        return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
+//	    } else {
+//	        return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+//	    }
+//	}
+	
+	// ncp 추가 게시글 작성
 	@PostMapping("/article/write")
-	public ResponseEntity<String> writeArticle(@RequestBody ArticleDTO articleDTO) {
-	    boolean result = articleService.writeArticle(articleDTO);
+	public ResponseEntity<String> writeArticle(
+	        @RequestParam("article") String articleJson,
+	        @RequestParam("images") List<MultipartFile> images) {
+	    try {
+	        // JSON 문자열을 ArticleDTO로 변환
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        ArticleDTO articleDTO = objectMapper.readValue(articleJson, ArticleDTO.class);
 
-	    if (result) {
-	        return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
-	    } else {
-	        return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+	        // ArticleDTO에 이미지 파일 리스트 설정
+	        articleDTO.setImageFiles(images);
+
+	        // 서비스 호출
+	        boolean result = articleService.writeArticle(articleDTO);
+
+	        if (result) {
+	            return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
+	        } else {
+	            return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 	    }
 	}
+
+	
 	
 	// 게시글 수정
 	@PutMapping("/article/update/{articleNo}")
