@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-public class Date {
+public class ConvertDate {
 
     // ~분 전
     public static String calculateDate(LocalDateTime localDateTime) {

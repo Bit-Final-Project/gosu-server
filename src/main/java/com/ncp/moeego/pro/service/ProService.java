@@ -10,7 +10,7 @@ import java.util.List;
 public interface ProService {
     String proJoin(ProJoinRequest request);
 
-    String proApply(ProApplyRequest request);
+    void proApply(ProApplyRequest request);
 
     Page<FavoriteResponse> getFavorites(Long memberNo, int pg);
 

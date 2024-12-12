@@ -14,7 +14,7 @@ import com.ncp.moeego.article.bean.Article;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.comment.repository.CommentRepository;
-import com.ncp.moeego.common.Date;
+import com.ncp.moeego.common.ConvertDate;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
 
@@ -93,7 +93,7 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = (Article) result[0];
             Long commentCount = (Long) result[1];
 
-            String elapsedTime = Date.calculateDate(article.getWriteDate()); // 경과 시간 계산
+            String elapsedTime = ConvertDate.calculateDate(article.getWriteDate()); // 경과 시간 계산
             String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo()); // 회원 이름 가져오기
 
             return new ArticleDTO(
@@ -128,7 +128,7 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = (Article) result[0];
             Long commentCount = (Long) result[1];
 
-            String elapsedTime = Date.calculateDate(article.getWriteDate());
+            String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
             String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
 
             return new ArticleDTO(
@@ -193,7 +193,7 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = (Article) result[0];
             Long commentCount = (Long) result[1];
 
-            String elapsedTime = Date.calculateDate(article.getWriteDate());
+            String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
             String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
 
             return new ArticleDTO(
@@ -232,7 +232,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setWriteDate(article.getWriteDate());
         articleDTO.setLikes(article.getLikes());
         
-        String elapsedTime = Date.calculateDate(article.getWriteDate());
+        String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
         String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
      
         // 시간을 포맷하여 변환
@@ -265,7 +265,7 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = (Article) result[0];
             Long commentCount = (Long) result[1];
 
-            String elapsedTime = Date.calculateDate(article.getWriteDate());
+            String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
             String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
 
             return new ArticleDTO(
