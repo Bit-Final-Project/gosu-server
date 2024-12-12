@@ -145,12 +145,12 @@ public class ArticleController {
 	// ncp 추가 게시글 작성
 	@PostMapping("/article/write")
 	public ResponseEntity<String> writeArticle(
-	        @RequestParam("article") String articleJson,
+	        @RequestParam("article") String article,
 	        @RequestParam("images") List<MultipartFile> images) {
 	    try {
 	        // JSON 문자열을 ArticleDTO로 변환
 	        ObjectMapper objectMapper = new ObjectMapper();
-	        ArticleDTO articleDTO = objectMapper.readValue(articleJson, ArticleDTO.class);
+	        ArticleDTO articleDTO = objectMapper.readValue(article, ArticleDTO.class);
 
 	        // ArticleDTO에 이미지 파일 리스트 설정
 	        articleDTO.setImageFiles(images);
