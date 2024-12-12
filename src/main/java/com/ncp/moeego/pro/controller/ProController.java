@@ -56,7 +56,7 @@ public class ProController {
         data.put("currentPage", favoritePage.getNumber());
         data.put("totalElements", favoritePage.getTotalElements());
 
-        return ResponseEntity.ok(ApiResponse.success("success", data));
+        return ResponseEntity.ok(ApiResponse.success("조회성공", data));
     }
 
     @DeleteMapping("/favorite")
