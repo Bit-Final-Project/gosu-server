@@ -41,5 +41,5 @@ public class ProController {
         return memberService.isExist(email);
     }
 
-
+asdasdasdsadas
 }
