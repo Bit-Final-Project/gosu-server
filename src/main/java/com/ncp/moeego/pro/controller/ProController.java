@@ -1,5 +1,6 @@
 package com.ncp.moeego.pro.controller;
 
+import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
 import com.ncp.moeego.pro.dto.FavoriteDeleteRequest;
 import com.ncp.moeego.pro.dto.FavoriteResponse;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -29,15 +29,11 @@ public class ProController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<String> proJoin(@RequestBody ProJoinRequest proJoinRequest) {
-        String response = proService.proJoin(proJoinRequest);
-
-        return switch (response) {
-            case "pro join success" -> ResponseEntity.status(HttpStatus.OK).body(response);
-            case "join fail", "pro apply fail" -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("internal server error");
-        };
+    public ResponseEntity<?> proJoin(@RequestBody ProJoinRequest proJoinRequest) {
+        String message = proService.proJoin(proJoinRequest);
+        return ResponseEntity.ok(ApiResponse.success(message));
     }
+
 
     @PostMapping("/join/exist")
     public boolean isExistingEmail(@RequestBody Map<String, String> payload) {
@@ -54,25 +50,22 @@ public class ProController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", favoritePage.getContent());
-        response.put("totalPages", favoritePage.getTotalPages());
-        response.put("currentPage", favoritePage.getNumber());
-        response.put("totalElements", favoritePage.getTotalElements());
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", favoritePage.getContent());
+        data.put("totalPages", favoritePage.getTotalPages());
+        data.put("currentPage", favoritePage.getNumber());
+        data.put("totalElements", favoritePage.getTotalElements());
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(ApiResponse.success("조회성공", data));
     }
 
-        @DeleteMapping("/favorite")
-        public ResponseEntity<?> deleteFavorites(@RequestBody FavoriteDeleteRequest favoriteDeleteRequest) {
-            log.debug(favoriteDeleteRequest.toString());
-            String response = proService.deleteFavorites(favoriteDeleteRequest.getMemberNo(), favoriteDeleteRequest.getProNo());
+    @DeleteMapping("/favorite")
+    public ResponseEntity<?> deleteFavorites(@RequestBody FavoriteDeleteRequest favoriteDeleteRequest) {
+        log.info("deleteFavorites 요청: memberNo={}, proNoList={}", favoriteDeleteRequest.getMemberNo(), favoriteDeleteRequest.getProNo());
+        String message = proService.deleteFavorites(favoriteDeleteRequest.getMemberNo(), favoriteDeleteRequest.getProNo());
 
-            if (response.equals("fail")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid request");
-            }
-            return ResponseEntity.ok("delete success");
-        }
+        return ResponseEntity.ok(ApiResponse.success(message));
+    }
 
 
 }
