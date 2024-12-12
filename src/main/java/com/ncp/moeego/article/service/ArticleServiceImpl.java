@@ -331,8 +331,7 @@ public class ArticleServiceImpl implements ArticleService {
             if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
                 for (MultipartFile imageFile : articleDTO.getImageFiles()) {
                     // 1. 오브젝트 스토리지에 업로드
-                    String cloudKey = "storage/" + UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
-                    objectStorageService.uploadFile(bucketName, cloudKey, imageFile);
+                    String cloudKey =  objectStorageService.uploadFile(bucketName, "storage/", imageFile);
 
                     // 2. 업로드된 이미지 정보를 DB에 저장
                     Image image = new Image();
