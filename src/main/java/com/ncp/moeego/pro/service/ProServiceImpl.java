@@ -1,16 +1,23 @@
 package com.ncp.moeego.pro.service;
 
 import com.ncp.moeego.category.repository.MainCategoryRepository;
+import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
-import com.ncp.moeego.pro.bean.Pro;
+import com.ncp.moeego.pro.dto.FavoriteResponse;
 import com.ncp.moeego.pro.dto.ProApplyRequest;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
+import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.repository.ProRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -18,13 +25,17 @@ public class ProServiceImpl implements ProService {
 
     private final MemberServiceImpl memberService;
     private final ProRepository proRepository;
-    private final MainCategoryRepository mainCategoryRepository;
 
-    public ProServiceImpl(MemberServiceImpl memberService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository) {
+    public ProServiceImpl(MemberServiceImpl memberService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository) {
         this.memberService = memberService;
         this.proRepository = proRepository;
         this.mainCategoryRepository = mainCategoryRepository;
+        this.favoriteRepository = favoriteRepository;
     }
+
+    private final MainCategoryRepository mainCategoryRepository;
+    private final FavoriteRepository favoriteRepository;
+
 
     @Transactional
     @Override
@@ -59,6 +70,20 @@ public class ProServiceImpl implements ProService {
         memberService.setMemberStatus(request.getMemberNo(), MemberStatus.ROLE_PEND_PRO);
 
         return "pro apply success";
+    }
+
+    @Override
+    public Page<FavoriteResponse> getFavorites(Long memberNo, int pg) {
+
+        Pageable pageable = PageRequest.of(pg - 1, 10);
+
+        List<Long> proNoList = favoriteRepository.findProNosByMemberNo(memberNo);
+
+        if (proNoList.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        return proRepository.findByProNoIn(proNoList, pageable);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.ncp.moeego.reserve.bean;
+package com.ncp.moeego.pro.entity;
 
 import java.time.LocalDateTime;
 

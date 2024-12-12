@@ -1,17 +1,19 @@
 package com.ncp.moeego.pro.controller;
 
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
+import com.ncp.moeego.pro.dto.FavoriteResponse;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.service.ProServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/pro")
 public class ProController {
@@ -39,6 +41,24 @@ public class ProController {
     public boolean isExistingEmail(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
         return memberService.isExist(email);
+    }
+
+    @GetMapping("/favorite")
+    public ResponseEntity<?> getFavorites(@RequestParam("memberNo") Long memberNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+
+        Page<FavoriteResponse> favoritePage = proService.getFavorites(memberNo, pg);
+
+        if (favoritePage.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", favoritePage.getContent());
+        response.put("totalPages", favoritePage.getTotalPages());
+        response.put("currentPage", favoritePage.getNumber());
+        response.put("totalElements", favoritePage.getTotalElements());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

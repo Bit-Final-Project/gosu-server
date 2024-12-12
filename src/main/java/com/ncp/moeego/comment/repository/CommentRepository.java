@@ -23,7 +23,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                 c.commentStatus,
                 c.writeDate)
             FROM Comment c
-            WHERE c.member.memberNo = :memberNo
+            WHERE c.member.memberNo = :memberNo 
             ORDER BY c.writeDate ASC
             """)
     Page<MemberCommentResponse> findByMember_MemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
