@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,12 +49,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
-    // 필수 파라미터 누락
+    // RequestParam 누락
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         log.error("MissingServletRequestParameterException 발생: {}", e.getMessage());
         ApiResponse<Void> response = ApiResponse.error(
                 String.format("필수 요청 파라미터가 누락되었습니다: %s", e.getParameterName()), "MISSING_PARAMETER"
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // RequestBody 누락 또는 잘못된 형식
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        String location = getExceptionLocation(e);
+        log.error("HttpMessageNotReadableException 발생: {} at {}", e.getMessage(), location);
+        ApiResponse<Void> response = ApiResponse.error(
+                "요청 본문이 누락되었거나 잘못된 형식입니다.", "INVALID_OR_MISSING_REQUEST_BODY"
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
