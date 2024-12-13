@@ -9,6 +9,7 @@ import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import com.ncp.moeego.member.bean.JoinDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,10 +37,27 @@ public class MemberController {
     }
 
     @PatchMapping("/mypage/account/private/signout")
-    public ResponseEntity checkLogin(@RequestBody SignOutDTO signOutDTO) {
-        boolean check = memberService.checkMember(signOutDTO.getEmail(), signOutDTO.getPwd());
-        if(check) return ResponseEntity.ok(ApiResponse.success("T", memberService.cancelMember(signOutDTO)));
-        else throw new IllegalArgumentException();
+    public ResponseEntity<ApiResponse> checkLogin(@RequestBody SignOutDTO signOutDTO) {
+        try {
+            // 비밀번호 확인
+            boolean isMember = memberService.checkMember(signOutDTO.getEmail(), signOutDTO.getPwd());
+            if (!isMember) {
+                return ResponseEntity.badRequest().body(
+                        ApiResponse.error("비밀번호가 다릅니다", HttpStatus.BAD_REQUEST.name())
+                );
+            }
+
+            // 회원 탈퇴 처리
+            ApiResponse response = memberService.cancelMember(signOutDTO);
+            HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.resolve(Integer.parseInt(response.getErrorCode()));
+            return ResponseEntity.status(status).body(response);
+
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("서버에서 문제가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
     }
 
     @PatchMapping("/mypage/account/private/update/name")

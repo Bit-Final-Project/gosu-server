@@ -2,6 +2,7 @@ package com.ncp.moeego.member.service.impl;
 
 import com.ncp.moeego.cancel.entity.Cancel;
 import com.ncp.moeego.cancel.repository.CancelRepository;
+import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.bean.SignOutDTO;
 import com.ncp.moeego.member.entity.Member;
@@ -10,10 +11,15 @@ import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -87,32 +93,36 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public boolean cancelMember(SignOutDTO signOutDTO) {
-        boolean check = false;
+    public ApiResponse cancelMember(SignOutDTO signOutDTO) {
         try {
-            // 이메일로 회원 찾기
+            // 이메일로 회원 조회
             Member member = memberRepository.findByEmail(signOutDTO.getEmail())
                     .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
-            // Cancel 객체 생성
+            // 이미 탈퇴 처리된 회원인지 확인
+            if (member.getMemberStatus() == MemberStatus.ROLE_CANCEL) {
+                throw new IllegalStateException("이미 탈퇴 처리가 완료된 사용자입니다.");
+            }
+
+            // Cancel 엔티티 생성 및 저장
             Cancel cancel = new Cancel();
-            cancel.setMemberNo(member); // 해당 회원 정보 설정
-            cancel.setReason(signOutDTO.getReason()); // 사유 설정
-
-            member.setMemberStatus(MemberStatus.ROLE_CANCEL);
-
-            // Cancel 엔티티 저장
+            cancel.setMemberNo(member);
+            cancel.setReason(signOutDTO.getReason());
             cancelRepository.save(cancel);
+
+            // 회원 상태 업데이트
+            member.setMemberStatus(MemberStatus.ROLE_CANCEL);
             memberRepository.save(member);
-            check = true;
+
+            return ApiResponse.success("회원 탈퇴가 완료되었습니다.", null);
+
         } catch (UsernameNotFoundException e) {
-            // 회원을 찾을 수 없을 때 처리
-            log.error("회원 정보 오류: {}", e.getMessage());
+            return ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name());
+        } catch (IllegalStateException e) {
+            return ApiResponse.error("이미 탈퇴 처리가 완료된 사용자입니다.", HttpStatus.CONFLICT.name());
         } catch (Exception e) {
-            // 일반적인 예외 처리
-            log.error("회원 탈퇴 처리 중 오류 발생: {}", e.getMessage());
+            return ApiResponse.error("회원 탈퇴 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
         }
-        return check; // 성공 여부 반환
     }
 
 }
