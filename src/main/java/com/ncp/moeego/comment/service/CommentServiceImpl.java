@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (newComment.getParent() != null) {
             Comment parentComment = commentRepository.findById(newComment.getParent().getCommentNo())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("해당 부모 댓글을 찾을 수 없습니다."));
 
             if (parentComment.getCommentStatus() == CommentStatus.DELETED) {
                 throw new IllegalArgumentException("삭제된 댓글에 답글을 달수 없습니다.");
@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         existingComment.setContent(newContent);
         existingComment.setCommentStatus(CommentStatus.EDITED);
 
-        log.debug("수정된 댓글: ID={}, Content={}", existingComment.getCommentNo(), existingComment.getContent());
+        log.info("수정된 댓글: ID={}, Content={}", existingComment.getCommentNo(), existingComment.getContent());
 
         return commentMapper.toDTO(existingComment);
 
@@ -78,7 +78,7 @@ public class CommentServiceImpl implements CommentService {
 
         existingComment.setCommentStatus(CommentStatus.DELETED);
 
-        log.debug("삭제된 댓글: ID={}, Content={}", existingComment.getCommentNo(), existingComment.getContent());
+        log.info("삭제된 댓글: ID={}, Content={}", existingComment.getCommentNo(), existingComment.getContent());
 
         return commentMapper.toDTO(existingComment);
     }

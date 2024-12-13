@@ -17,7 +17,7 @@ public class Pro {
     @Column(name = "pro_no")
     private Long proNo;
 
-    @OneToOne // 고수는 하나의 메인 카테고리를 선택할수있음
+    @ManyToOne // 고수는 하나의 메인 카테고리를 선택할수있음
     @JoinColumn(name = "main_cate_no", nullable = false)
     private MainCategory mainCateNo;
 
