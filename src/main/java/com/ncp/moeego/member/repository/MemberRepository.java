@@ -2,6 +2,7 @@ package com.ncp.moeego.member.repository;
 
 import com.ncp.moeego.cancel.entity.Cancel;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
+import com.ncp.moeego.member.bean.SignOutDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.pro.entity.Pro;
@@ -50,7 +51,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT p FROM Cancel p WHERE p.cancelDate BETWEEN :startDate AND :endDate")
     List<Cancel> findByCancelDateBetween(@Param("startDate") LocalDateTime startDateTime, @Param("endDate") LocalDateTime endDateTime);
 
-
-    
-    
 }

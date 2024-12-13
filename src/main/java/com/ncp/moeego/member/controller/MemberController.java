@@ -1,5 +1,7 @@
 package com.ncp.moeego.member.controller;
 
+import com.ncp.moeego.common.ApiResponse;
+import com.ncp.moeego.exception.GlobalExceptionHandler;
 import com.ncp.moeego.member.bean.LoginDTO;
 import com.ncp.moeego.member.bean.MemberDetails;
 import com.ncp.moeego.member.bean.SignOutDTO;
@@ -35,9 +37,9 @@ public class MemberController {
 
     @PatchMapping("/mypage/account/private/signout")
     public ResponseEntity checkLogin(@RequestBody SignOutDTO signOutDTO) {
-        System.out.println(signOutDTO);
         boolean check = memberService.checkMember(signOutDTO.getEmail(), signOutDTO.getPwd());
-        return ResponseEntity.ok("");
+        if(check) return ResponseEntity.ok(ApiResponse.success("T", memberService.cancelMember(signOutDTO)));
+        else throw new IllegalArgumentException();
     }
 
     @PatchMapping("/mypage/account/private/update/name")

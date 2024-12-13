@@ -6,5 +6,5 @@ import lombok.Data;
 public class SignOutDTO {
     private String email;
     private String pwd;
-    private String oneIntro;
+    private String reason;
 }
