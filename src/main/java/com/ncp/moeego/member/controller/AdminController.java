@@ -10,10 +10,16 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
+import com.ncp.moeego.member.bean.ProDTO;
+import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.AdminService;
+import com.ncp.moeego.pro.entity.Pro;
 
 import lombok.RequiredArgsConstructor;
 
@@ -111,6 +117,27 @@ public class AdminController {
         }
     }
     
+    // 일반 회원 조회
+    @GetMapping("/admin/member/user")
+    public ResponseEntity<List<Member>> getUserMembers() {
+        List<Member> userData = adminService.getUserMembers();
+        return ResponseEntity.ok(userData);
+    }
+
+    // 고수 회원 조회
+    @GetMapping("/admin/member/pro")
+    public ResponseEntity<List<ProDTO>> getProMembersWithDetails() {
+        List<ProDTO> proMembers = adminService.getProMembersWithDetails();
+        return ResponseEntity.ok(proMembers);
+    }
+    
+    // 탈퇴 회원 조회
+    @GetMapping("/admin/member/cancel")
+    public ResponseEntity<List<CancelDTO>> getCancelMembersWithDetails() {
+        List<CancelDTO> cancelMembers = adminService.getCancelMembersWithDetails();
+        return ResponseEntity.ok(cancelMembers);
+    }
+
     
     
     
