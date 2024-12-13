@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.ncp.moeego.cancel.bean.Cancel;
 import com.ncp.moeego.member.bean.CancelDTO;
+import com.ncp.moeego.cancel.entity.Cancel;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;

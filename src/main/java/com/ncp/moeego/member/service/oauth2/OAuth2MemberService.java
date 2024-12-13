@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import com.ncp.moeego.member.bean.oauth2.NaverResponse;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -64,9 +65,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     @Transactional
     void saveUser(OAuth2Response response, String naverId, String memberStatus) {
         // DB 조회
-        Member existData = memberRepository.findByEmail(naverId);
-
-        System.out.println(response.getProfileImage());
+        Member existData = memberRepository.findByEmail(naverId).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         if (existData != null) {
             existData.setEmail(naverId);

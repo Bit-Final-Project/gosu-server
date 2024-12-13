@@ -134,16 +134,12 @@ public class ArticleController {
 //	    }
 //	}
 	
-	// ncp 추가 게시글 작성
+	//ncp 게시글 작성
 	@PostMapping("/article/write")
 	public ResponseEntity<String> writeArticle(
-	        @RequestParam("article") String article,
-	        @RequestParam(value = "images", required = false) List<MultipartFile> images) { // images는 선택 사항
+	        @ModelAttribute ArticleDTO articleDTO,  // @RequestBody -> @ModelAttribute로 변경
+	        @RequestPart(value = "images", required = false) List<MultipartFile> images) { // images는 선택 사항
 	    try {
-	        // JSON 문자열을 ArticleDTO로 변환
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        ArticleDTO articleDTO = objectMapper.readValue(article, ArticleDTO.class);
-
 	        // ArticleDTO에 이미지 파일 리스트 설정 (null 처리)
 	        articleDTO.setImageFiles(images == null ? List.of() : images);
 
@@ -160,8 +156,6 @@ public class ArticleController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 	    }
 	}
-
-	
 	
 	// 게시글 수정
 	@PutMapping("/article/update/{articleNo}")
