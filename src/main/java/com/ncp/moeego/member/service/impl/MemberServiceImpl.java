@@ -1,7 +1,13 @@
 package com.ncp.moeego.member.service.impl;
 
+<<<<<<< Updated upstream
 import com.ncp.moeego.member.bean.JwtDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
+=======
+import com.ncp.moeego.cancel.entity.Cancel;
+import com.ncp.moeego.member.bean.LoginDTO;
+import com.ncp.moeego.member.bean.MemberDetails;
+>>>>>>> Stashed changes
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.repository.MemberRepository;
@@ -9,9 +15,15 @@ import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import com.ncp.moeego.member.bean.JoinDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -63,8 +75,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public Long getMemberNo(String email) {
-        log.info(memberRepository.findByEmail(email).getMemberNo().toString());
-        return memberRepository.findByEmail(email).getMemberNo();
+        return memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.")).getMemberNo();
 
     }
 
@@ -75,4 +86,22 @@ public class MemberServiceImpl implements MemberService {
         log.debug("MemberNo: {}, MemberStatus: {}", member.getMemberNo(), member.getMemberStatus());
     }
 
+<<<<<<< Updated upstream
+=======
+    @Override
+    public boolean checkMember(String email, String pwd) {
+        if(email.equals("")) return false;
+        if(pwd.equals("")) return false;
+
+        String memberPwd = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.")).getPwd();
+        return bCryptPasswordEncoder.matches(pwd, memberPwd);
+    }
+
+    @Override
+    public boolean cancelMember(Cancel cancel) {
+
+        return false;
+    }
+
+>>>>>>> Stashed changes
 }

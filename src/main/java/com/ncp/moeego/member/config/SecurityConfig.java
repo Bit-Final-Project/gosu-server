@@ -5,6 +5,7 @@ import com.ncp.moeego.member.jwt.JWTUtil;
 import com.ncp.moeego.member.oauth2.CustomFormSuccessHandler;
 import com.ncp.moeego.member.oauth2.CustomLogoutFilter;
 import com.ncp.moeego.member.oauth2.CustomOAuth2SuccessHandler;
+import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.repository.RefreshRepository;
 import com.ncp.moeego.member.service.MemberInfoProvider;
 import com.ncp.moeego.member.service.MemberService;
@@ -41,6 +42,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final OAuth2MemberService oAuth2MemberService;
     private final RefreshTokenService refreshTokenService;
+    private final MemberRepository memberRepository;
     private final RefreshRepository refreshRepository;
     private final MemberInfoProvider memberInfoProvider;
 
@@ -129,7 +131,7 @@ public class SecurityConfig {
 
         // jwt filter
         http
-                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(new JWTFilter(jwtUtil, memberRepository), UsernamePasswordAuthenticationFilter.class);
 
         // custom logout filter 등록
         http
