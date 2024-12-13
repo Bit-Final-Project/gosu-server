@@ -4,8 +4,12 @@ package com.ncp.moeego.article.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.service.ArticleService;
+import com.ncp.moeego.image.bean.ImageDTO;
+import com.ncp.moeego.image.service.ImageService;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,9 @@ import java.util.Map;
 public class ArticleController {
 
 	private final ArticleService articleService;
+	
+	@Autowired
+	private ImageService imageService;
 
 	// 한 페이지에 출력할 게시글 수
 	private int pageSize = 10;
@@ -98,11 +105,15 @@ public class ArticleController {
 
 	// 게시글 상세보기
 	@GetMapping("/article/viewpage")
-	public ResponseEntity<ArticleDTO> getArticleView(@RequestParam("article_no") Long articleNo) {
+	public ResponseEntity<Map<String, Object>> getArticleView(@RequestParam("article_no") Long articleNo) {
 		
 		ArticleDTO article = articleService.getArticleViewById(articleNo);
-
-		return ResponseEntity.ok(article);
+		List<ImageDTO> images = imageService.getImageListByArticleNo(articleNo);
+		Map<String, Object> response = new HashMap<>();
+		response.put("article", article);
+		response.put("images", images);
+		
+		return ResponseEntity.ok(response);
 		
 	}
 	
