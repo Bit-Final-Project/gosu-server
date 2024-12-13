@@ -328,11 +328,11 @@ public class ArticleServiceImpl implements ArticleService {
             // Article 저장
             Article savedArticle = articleRepository.save(article);
 
-            // 이미지 업로드 및 저장
+            // 이미지 업로드 및 저장 (이미지가 있을 경우에만 처리)
             if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
                 for (MultipartFile imageFile : articleDTO.getImageFiles()) {
                     // 1. 오브젝트 스토리지에 업로드
-                    String cloudKey =  objectStorageService.uploadFile(bucketName, "storage/", imageFile);
+                    String cloudKey = objectStorageService.uploadFile(bucketName, "storage/", imageFile);
 
                     // 2. 업로드된 이미지 정보를 DB에 저장
                     Image image = new Image();
@@ -350,6 +350,7 @@ public class ArticleServiceImpl implements ArticleService {
             return false; // 실패 시
         }
     }
+
 
 
 

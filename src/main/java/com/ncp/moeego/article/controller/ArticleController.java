@@ -138,14 +138,14 @@ public class ArticleController {
 	@PostMapping("/article/write")
 	public ResponseEntity<String> writeArticle(
 	        @RequestParam("article") String article,
-	        @RequestParam("images") List<MultipartFile> images) {
+	        @RequestParam(value = "images", required = false) List<MultipartFile> images) { // images는 선택 사항
 	    try {
 	        // JSON 문자열을 ArticleDTO로 변환
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        ArticleDTO articleDTO = objectMapper.readValue(article, ArticleDTO.class);
 
-	        // ArticleDTO에 이미지 파일 리스트 설정
-	        articleDTO.setImageFiles(images);
+	        // ArticleDTO에 이미지 파일 리스트 설정 (null 처리)
+	        articleDTO.setImageFiles(images == null ? List.of() : images);
 
 	        // 서비스 호출
 	        boolean result = articleService.writeArticle(articleDTO);
