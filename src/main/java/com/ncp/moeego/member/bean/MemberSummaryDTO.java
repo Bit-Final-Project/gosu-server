@@ -6,12 +6,14 @@ import lombok.Data;
 
 @Data
 public class MemberSummaryDTO {
-	private Long memberNo;
-    private String name;
-    private MemberStatus memberStatus;
+	private Long memberNo; // 번호
+    private String name; // 이름
+    private MemberStatus memberStatus; 
     private String oneIntro;
     private Long count;
-
+    
+    
+    
     public MemberSummaryDTO(Long memberNo, String name, MemberStatus memberStatus, String oneIntro, Long count) {
         this.memberNo = memberNo;
         this.name = name;

@@ -3,6 +3,7 @@ package com.ncp.moeego.member.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,7 +11,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.ncp.moeego.cancel.bean.Cancel;
+import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
+import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
@@ -152,6 +155,24 @@ public class AdminServiceImpl implements AdminService {
             .collect(Collectors.toList());
     }
 	
-	
+	// 일반 회원 조회
+    public List<Member> getUserMembers() {
+        return memberRepository.findAllUser();
+    }
+
+    // 고수 회원 조회
+    public List<ProDTO> getProMembersWithDetails() {
+        return memberRepository.findProMembersWithDetails();
+    }
+
+	@Override
+	public List<CancelDTO> getCancelMembersWithDetails() {
+        return memberRepository.findAllCancelDetails();
+    }
+
+
 	
 }
+
+	
+
