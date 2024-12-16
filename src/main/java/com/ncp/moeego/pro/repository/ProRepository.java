@@ -19,7 +19,7 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
             """
                     SELECT new com.ncp.moeego.pro.dto.FavoriteResponse(
                                 p.proNo, p.member.name, p.member.profileImage,p.mainCateNo.mainCateNo,
-                                p.subCategories, p.star, p.oneIntro
+                                p.star, p.oneIntro
                                 )
                     From Pro p
                     Where p.proNo IN :proNo

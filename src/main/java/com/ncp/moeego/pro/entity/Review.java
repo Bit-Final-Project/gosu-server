@@ -15,7 +15,7 @@ public class Review {
     private Long reviewNo;
 
     @ManyToOne // 한 고수게시판에는 여러개의 리뷰가 달릴수있음
-    @JoinColumn(name = "pro_article_no", nullable = false)
+    @JoinColumn(name = "pro_service_item_no", nullable = false)
     private ProServiceItem proServiceItem;
 
     @OneToOne // 해당 고수의 카테고리 전용 게시판이 존재함
