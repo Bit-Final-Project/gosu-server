@@ -67,6 +67,12 @@ public class MemberController {
 
     @PatchMapping("/mypage/account/private/update/name")
     public ResponseEntity<ApiResponse> updateName(@RequestBody Map<String, String> payload, Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
+            );
+        }
+
         try {
             String name = payload.get("nickname");
             String email = authentication.getName(); // JWT에서 사용자 이메일 추출
