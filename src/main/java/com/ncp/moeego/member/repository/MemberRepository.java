@@ -82,5 +82,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT new com.ncp.moeego.member.bean.CancelDTO(m.name, m.phone, m.email , c.cancelNo, c.cancelDate, c.reason) " +
             "FROM Cancel c JOIN c.memberNo m")
      List<CancelDTO> findAllCancelDetails();
+
+    // 회원 프로필 이미지 업로드
+    @Modifying
+    @Transactional
+    @Query("UPDATE Member m SET m.profileImage = :cloudKey WHERE m = :member")
+    void updateProfileImage(@Param("member") Member member, @Param("cloudKey") String cloudKey);
     
 }

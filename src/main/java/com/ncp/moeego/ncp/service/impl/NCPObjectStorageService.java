@@ -56,4 +56,14 @@ public class NCPObjectStorageService implements ObjectStorageService{
 				throw new RuntimeException("파일 업로드 에러" + e);
 			}
 		}
+
+		
+		// 프로필 수정시 이미 프로필 있으면 삭제 후 재 업로드
+		@Override
+		public void memberDeleteFile(String profileImage, String bucketName, String directoryPath) {
+
+			s3.deleteObject(bucketName, directoryPath + profileImage);
+			
+		}
+
 }
