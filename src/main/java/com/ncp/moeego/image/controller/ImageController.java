@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -46,9 +47,26 @@ public class ImageController {
 	        boolean result = imageService.profileUpload(image, memberNo);
 
 	        if (result) {
-	            return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
+	            return ResponseEntity.ok("프로필 이미지가 성공적으로 작성되었습니다.");
 	        } else {
-	            return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+	            return ResponseEntity.badRequest().body("프로필 이미지 등록 중 오류가 발생했습니다.");
+	        }
+	        // 모든 예외 GlobalExceptionHandler로
+	    } catch (Exception e) {
+	        throw e;
+	    }
+	}
+	
+	@DeleteMapping("/image/profileDelete")
+	public ResponseEntity<String> deleteProfileImage(@RequestParam("memberNo") Long memberNo) {
+	    try {
+
+	        boolean result = imageService.profileDelete(memberNo);
+
+	        if (result) {
+	            return ResponseEntity.ok("정상적으로 삭제 되었습니다.");
+	        } else {
+	            return ResponseEntity.badRequest().body("삭제 중 오류가 발생했습니다.");
 	        }
 	        // 모든 예외 GlobalExceptionHandler로
 	    } catch (Exception e) {

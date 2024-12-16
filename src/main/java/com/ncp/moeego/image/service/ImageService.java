@@ -14,4 +14,6 @@ public interface ImageService {
 
 	public boolean profileUpload(MultipartFile file, Long memberNo);
 
+	public boolean profileDelete(Long memberNo);
+
 }
