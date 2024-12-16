@@ -18,6 +18,7 @@ import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.comment.repository.CommentRepository;
 import com.ncp.moeego.common.ConvertDate;
 import com.ncp.moeego.image.bean.Image;
+import com.ncp.moeego.image.bean.ImageDTO;
 import com.ncp.moeego.image.repository.ImageRepository;
 
 import com.ncp.moeego.member.entity.Member;
@@ -262,7 +263,6 @@ public class ArticleServiceImpl implements ArticleService {
         // 댓글 수 설정 (쿼리에서 가져온 값 사용)
         Long commentCount = commentRepository.countNonDeletedCommentsByArticleNo(articleNo);
         articleDTO.setCommentCount(commentCount.intValue());
-
 
         return articleDTO;
 

@@ -36,5 +36,20 @@ public class ImageServiceImpl implements ImageService{
 	        ))
 	        .collect(Collectors.toList());
 	}
-
+	
+	@Override
+	public List<ImageDTO> getImageListByArticleNo(Long articleNo) {
+		List<Image> images = imageRepository.findByArticleNo_ArticleNo(articleNo);
+		return images.stream()
+				.map(image -> new ImageDTO(
+		            image.getImageNo(),
+		            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
+		            image.getProArticleNo() != null ? image.getProArticleNo().getProArticleNo() : null,
+		            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
+		            image.getMemberNo().getMemberNo(),
+		            image.getImageName(),
+		            image.getImageUuidName()
+		        ))
+		        .collect(Collectors.toList());
+	}
 }

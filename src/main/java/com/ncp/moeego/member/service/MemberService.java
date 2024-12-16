@@ -1,9 +1,10 @@
 package com.ncp.moeego.member.service;
 
-import com.ncp.moeego.member.bean.JwtDTO;
-import com.ncp.moeego.member.bean.oauth2.MemberDTO;
-import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.bean.JoinDTO;
+import com.ncp.moeego.member.bean.SignOutDTO;
+import com.ncp.moeego.member.entity.Member;
+import org.springframework.http.ResponseEntity;
 
 public interface MemberService {
     boolean write(JoinDTO joinDTO);
@@ -11,5 +12,6 @@ public interface MemberService {
     String getMemberName(Long memberNo);
     String getMemberProfileImage(Long memberNo);
     boolean isExist(String email);
-
+    boolean checkMember(String email, String pwd);
+    ApiResponse cancelMember(SignOutDTO signOutDTO);
 }

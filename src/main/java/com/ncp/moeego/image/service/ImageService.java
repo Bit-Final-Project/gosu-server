@@ -8,4 +8,6 @@ public interface ImageService {
 
 	public List<ImageDTO> getAllImages();
 
+	public List<ImageDTO> getImageListByArticleNo(Long articleNo);
+
 }

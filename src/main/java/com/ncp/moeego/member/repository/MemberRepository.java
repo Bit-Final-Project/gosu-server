@@ -1,12 +1,20 @@
 package com.ncp.moeego.member.repository;
 
-import com.ncp.moeego.cancel.bean.Cancel;
+import com.ncp.moeego.cancel.entity.Cancel;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
+import com.ncp.moeego.member.bean.SignOutDTO;
+import com.ncp.moeego.member.bean.CancelDTO;
+import com.ncp.moeego.member.bean.MemberSummaryDTO;
+import com.ncp.moeego.member.bean.ProDTO;
+
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.pro.entity.Pro;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +22,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -24,9 +33,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findAllByNameContaining(String name);
 
     //username을 받아 DB 테이블에서 회원을 조회하는 메소드 작성
-    Member findByEmail(String email);
-	
-    
+    Optional<Member> findByEmail(String email);
+
     // 전체 회원 수 , 탈퇴 회원 수 ( 관리자 대시보드 차트 데이터화 )
     int countByMemberStatus(MemberStatus memberStatus);
 
@@ -51,6 +59,28 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Cancel> findByCancelDateBetween(@Param("startDate") LocalDateTime startDateTime, @Param("endDate") LocalDateTime endDateTime);
 
 
+    // 모든 일반 회원 조회
+    @Query("SELECT m FROM Member m")
+    List<Member> findAllUser();  // 일반 회원 조회
     
+    // 고수 회원 조회
+    @Query("SELECT DISTINCT new com.ncp.moeego.member.bean.ProDTO(" +
+    	       "p.member.memberNo, " +
+    	       "p.member.name, " +
+    	       "p.accessDate, " +
+    	       "p.star, " +
+    	       "p.depriveDate, " +
+    	       "p.subCategories, " +
+    	       "p.proNo, " +
+    	       "c.mainCateName) " +  // subCateName을 제외하고 mainCateName만 추가
+    	       "FROM Pro p " +
+    	       "LEFT JOIN p.mainCateNo c " + // mainCateNo로 조인
+    	       "WHERE c.mainCateName IS NOT NULL")  // mainCateName이 null이 아닌 경우만 가져옴
+    List<ProDTO> findProMembersWithDetails();
+
+    // 탈퇴 회원 조회
+    @Query("SELECT new com.ncp.moeego.member.bean.CancelDTO(m.name, m.phone, m.email , c.cancelNo, c.cancelDate, c.reason) " +
+            "FROM Cancel c JOIN c.memberNo m")
+     List<CancelDTO> findAllCancelDetails();
     
 }

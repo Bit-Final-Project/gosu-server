@@ -4,8 +4,12 @@ package com.ncp.moeego.article.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.service.ArticleService;
+import com.ncp.moeego.image.bean.ImageDTO;
+import com.ncp.moeego.image.service.ImageService;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,9 @@ import java.util.Map;
 public class ArticleController {
 
 	private final ArticleService articleService;
+	
+	@Autowired
+	private ImageService imageService;
 
 	// 한 페이지에 출력할 게시글 수
 	private int pageSize = 10;
@@ -98,11 +105,15 @@ public class ArticleController {
 
 	// 게시글 상세보기
 	@GetMapping("/article/viewpage")
-	public ResponseEntity<ArticleDTO> getArticleView(@RequestParam("article_no") Long articleNo) {
+	public ResponseEntity<Map<String, Object>> getArticleView(@RequestParam("article_no") Long articleNo) {
 		
 		ArticleDTO article = articleService.getArticleViewById(articleNo);
-
-		return ResponseEntity.ok(article);
+		List<ImageDTO> images = imageService.getImageListByArticleNo(articleNo);
+		Map<String, Object> response = new HashMap<>();
+		response.put("article", article);
+		response.put("images", images);
+		
+		return ResponseEntity.ok(response);
 		
 	}
 	
@@ -134,13 +145,12 @@ public class ArticleController {
 //	    }
 //	}
 	
-	// ncp 추가 게시글 작성
+	//ncp 게시글 작성
 	@PostMapping("/article/write")
 	public ResponseEntity<String> writeArticle(
-			@RequestBody ArticleDTO articleDTO,
-			@RequestPart(value = "images", required = false) List<MultipartFile> images) { // images는 선택 사항
+	        @ModelAttribute ArticleDTO articleDTO,  // @RequestBody -> @ModelAttribute로 변경
+	        @RequestPart(value = "images", required = false) List<MultipartFile> images) { // images는 선택 사항
 	    try {
-
 	        // ArticleDTO에 이미지 파일 리스트 설정 (null 처리)
 	        articleDTO.setImageFiles(images == null ? List.of() : images);
 
@@ -157,8 +167,6 @@ public class ArticleController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 	    }
 	}
-
-	
 	
 	// 게시글 수정
 	@PutMapping("/article/update/{articleNo}")

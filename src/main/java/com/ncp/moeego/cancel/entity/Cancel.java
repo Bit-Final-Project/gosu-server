@@ -1,4 +1,4 @@
-package com.ncp.moeego.cancel.bean;
+package com.ncp.moeego.cancel.entity;
 
 import java.time.LocalDateTime;
 

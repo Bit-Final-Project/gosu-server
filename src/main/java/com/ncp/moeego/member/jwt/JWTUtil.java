@@ -55,7 +55,7 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
-    public String createJwt(String category, JwtDTO jwtDTO, String memberStutus, Long expiredMs) {
+    public String createJwt(String category, JwtDTO jwtDTO, String memberStatus, Long expiredMs) {
         return Jwts.builder()
                 .claim("category", category)
                 .claim("email", jwtDTO.getEmail())
@@ -64,7 +64,7 @@ public class JWTUtil {
                 .claim("address", jwtDTO.getAddress())
                 .claim("phone", jwtDTO.getPhone())
                 .claim("profileImage", jwtDTO.getProfileImage())
-                .claim("memberStatus", memberStutus)
+                .claim("memberStatus", memberStatus)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
