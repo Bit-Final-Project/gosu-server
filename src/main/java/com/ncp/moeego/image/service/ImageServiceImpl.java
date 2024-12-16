@@ -97,7 +97,7 @@ public class ImageServiceImpl implements ImageService{
 	        image.setMemberNo(member.get()); // 사용자 연결
 	        image.setImageUuidName(cloudKey); // 스토리지의 키 저장
 	        image.setArticleNo(null); 
-	        image.setProArticleNo(null);
+	        image.setProServiceItem(null);
 	        image.setReviewNo(null);
 	        imageRepository.save(image);
 
