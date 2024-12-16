@@ -7,6 +7,7 @@ import com.ncp.moeego.member.bean.MemberDetails;
 import com.ncp.moeego.member.bean.SignOutDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
+import com.ncp.moeego.member.service.impl.MailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import com.ncp.moeego.member.bean.JoinDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +25,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final MailServiceImpl mailService;
+    private int number; // 이메일 인증 숫자를 저장하는 변수
 
     @PostMapping("/join")
     public ResponseEntity joinProcess(@RequestBody JoinDTO joinDTO) {
@@ -76,6 +79,44 @@ public class MemberController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     ApiResponse.error("회원 이름 수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+    }
+
+    // 인증 이메일 전송
+    @PostMapping("/mypage/account/private/mailSend")
+    public ResponseEntity<ApiResponse> mailSend(@RequestBody Map<String, String> payload) {
+        try {
+            String email = payload.get("email").trim(); // 공백 제거
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", HttpStatus.BAD_REQUEST.name()));
+            }
+
+            // 이메일 발송
+            number = mailService.sendMail(email);
+            return ResponseEntity.ok(ApiResponse.success("메일이 성공적으로 발송되었습니다.", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("메일 발송 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+    }
+
+    // 인증번호 일치여부 확인
+    @GetMapping("/mypage/account/private/mailCheck")
+    public ResponseEntity<ApiResponse> mailCheck(@RequestBody Map<String, String> payload) {
+        try {
+            String num = payload.get("num").trim();
+            boolean isMatch = num.equals(String.valueOf(number));
+
+            if (isMatch) {
+                return ResponseEntity.ok(ApiResponse.success("인증번호가 일치합니다.", null));
+            } else {
+                return ResponseEntity.badRequest().body(ApiResponse.error("인증번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST.name()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
             );
         }
     }
