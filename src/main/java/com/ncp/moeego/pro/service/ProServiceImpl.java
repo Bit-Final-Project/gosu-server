@@ -1,6 +1,7 @@
 package com.ncp.moeego.pro.service;
 
 import com.ncp.moeego.category.repository.MainCategoryRepository;
+import com.ncp.moeego.category.service.SubCategoryServiceImpl;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.MemberStatus;
@@ -8,8 +9,11 @@ import com.ncp.moeego.member.service.impl.MemberServiceImpl;
 import com.ncp.moeego.pro.dto.FavoriteResponse;
 import com.ncp.moeego.pro.dto.ProApplyRequest;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
+import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.Pro;
+import com.ncp.moeego.pro.entity.ProServiceItem;
 import com.ncp.moeego.pro.repository.ProRepository;
+import com.ncp.moeego.pro.repository.ProServiceItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,48 +29,71 @@ public class ProServiceImpl implements ProService {
 
     private final MemberServiceImpl memberService;
     private final ProRepository proRepository;
+    private final MainCategoryRepository mainCategoryRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final SubCategoryServiceImpl subCategoryService;
+    private final ProServiceItemRepository proServiceItemRepository;
 
-    public ProServiceImpl(MemberServiceImpl memberService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository) {
+    public ProServiceImpl(MemberServiceImpl memberService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, SubCategoryServiceImpl subCategoryService, ProServiceItemRepository proServiceItemRepository) {
         this.memberService = memberService;
         this.proRepository = proRepository;
         this.mainCategoryRepository = mainCategoryRepository;
         this.favoriteRepository = favoriteRepository;
+        this.subCategoryService = subCategoryService;
+        this.proServiceItemRepository = proServiceItemRepository;
     }
-
-    private final MainCategoryRepository mainCategoryRepository;
-    private final FavoriteRepository favoriteRepository;
-
 
     @Transactional
     @Override
     public String proJoin(ProJoinRequest proJoinRequest) {
+        try {
+            proJoinExecute(proJoinRequest);
+            ProApplyRequest proApplyRequest = new ProApplyRequest(proJoinRequest);
+            proApplyRequest.setMemberNo(memberService.getMemberNo(proJoinRequest.getEmail()));
+            proApplyExecute(proApplyRequest);
+            return "달인 회원가입 성공";
+
+        } catch (Exception e) {
+            log.error("회원가입 실패 : {}", e.getMessage());
+            return "회원가입 실패";
+
+        }
+    }
+
+    @Transactional
+    @Override
+    public String proApply(ProApplyRequest request) {
+        return "";
+    }
+
+    public void proJoinExecute(ProJoinRequest proJoinRequest) {
         JoinDTO join = new JoinDTO(proJoinRequest);
         log.info("Join 요청: {}", join);
 
-
         if (!memberService.write(join)) {
-            throw new IllegalArgumentException("회원 가입에 실패했습니다.");
+            throw new IllegalArgumentException("회원가입에 실패했습니다.");
         }
-
-        ProApplyRequest proApplyRequest = new ProApplyRequest(proJoinRequest);
-        proApplyRequest.setMemberNo(memberService.getMemberNo(proJoinRequest.getEmail()));
-
-        proApply(proApplyRequest);
-
-        return "달인회원 가입 성공.";
 
     }
 
-    @Override
-    public void proApply(ProApplyRequest proApplyRequest) {
+    public void proApplyExecute(ProApplyRequest proApplyRequest) {
+
         Pro pro = new Pro();
         pro.setMember(memberService.getMemberById(proApplyRequest.getMemberNo()));
-        pro.setMainCateNo(mainCategoryRepository.findById(proApplyRequest.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("Invalid MainCateNo")));
-        pro.setSubCategories(proApplyRequest.getSubCategories());
+        pro.setMainCateNo(mainCategoryRepository.findById(proApplyRequest.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 메인카테고리: " + proApplyRequest.getMainCateNo())));
         pro.setOneIntro(proApplyRequest.getOneIntro());
         pro.setIntro(proApplyRequest.getIntro());
         proRepository.save(pro);
+
         memberService.setMemberStatus(proApplyRequest.getMemberNo(), MemberStatus.ROLE_PEND_PRO);
+
+        for (Long subCateNo : proApplyRequest.getSubCategories()) {
+            ProServiceItem proServiceItem = new ProServiceItem();
+            proServiceItem.setPro(pro);
+            proServiceItem.setSubCategory(subCategoryService.getSubCategoryById(subCateNo));
+            proServiceItem.setItemStatus(ItemStatus.PENDING);
+            proServiceItemRepository.save(proServiceItem);
+        }
 
     }
 

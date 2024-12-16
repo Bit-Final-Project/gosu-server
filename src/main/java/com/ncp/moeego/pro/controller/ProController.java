@@ -67,5 +67,4 @@ public class ProController {
         return ResponseEntity.ok(ApiResponse.success(message));
     }
 
-
 }

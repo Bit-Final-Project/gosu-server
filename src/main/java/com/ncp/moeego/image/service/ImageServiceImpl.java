@@ -36,7 +36,7 @@ public class ImageServiceImpl implements ImageService{
 	        .map(image -> new ImageDTO(
 	            image.getImageNo(),
 	            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
-	            image.getProArticleNo() != null ? image.getProArticleNo().getProArticleNo() : null,
+	            image.getProServiceItem() != null ? image.getProServiceItem().getProServiceItemNo() : null,
 	            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
 	            image.getMemberNo().getMemberNo(),
 	            image.getImageName(),
@@ -52,7 +52,7 @@ public class ImageServiceImpl implements ImageService{
 				.map(image -> new ImageDTO(
 		            image.getImageNo(),
 		            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
-		            image.getProArticleNo() != null ? image.getProArticleNo().getProArticleNo() : null,
+		            image.getProServiceItem() != null ? image.getProServiceItem().getProServiceItemNo() : null,
 		            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
 		            image.getMemberNo().getMemberNo(),
 		            image.getImageName(),
