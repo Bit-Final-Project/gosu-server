@@ -83,17 +83,18 @@ public class ProServiceImpl implements ProService {
         pro.setMainCateNo(mainCategoryRepository.findById(proApplyRequest.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 메인카테고리: " + proApplyRequest.getMainCateNo())));
         pro.setOneIntro(proApplyRequest.getOneIntro());
         pro.setIntro(proApplyRequest.getIntro());
-        proRepository.save(pro);
-
-        memberService.setMemberStatus(proApplyRequest.getMemberNo(), MemberStatus.ROLE_PEND_PRO);
 
         for (Long subCateNo : proApplyRequest.getSubCategories()) {
             ProServiceItem proServiceItem = new ProServiceItem();
             proServiceItem.setPro(pro);
             proServiceItem.setSubCategory(subCategoryService.getSubCategoryById(subCateNo));
             proServiceItem.setItemStatus(ItemStatus.PENDING);
-            proServiceItemRepository.save(proServiceItem);
+            pro.getProServiceItems().add(proServiceItem);
+
         }
+
+        proRepository.save(pro);
+        memberService.setMemberStatus(proApplyRequest.getMemberNo(), MemberStatus.ROLE_PEND_PRO);
 
     }
 
@@ -123,7 +124,6 @@ public class ProServiceImpl implements ProService {
         }
 
         return "찜한 달인 삭제 성공";
-
 
     }
 
