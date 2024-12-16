@@ -23,9 +23,6 @@ public class Pro {
     @JoinColumn(name = "main_cate_no", nullable = false)
     private MainCategory mainCateNo;
 
-    @Column(name = "sub_categories")
-    private String subCategories;
-
     @ManyToOne // 고수는 여러개의 예약신청을 받을수도 있고 예약을 못 받을수도있음
     @JoinColumn(name = "reserve_no", nullable = true)
     private Reserve reserveNo;
