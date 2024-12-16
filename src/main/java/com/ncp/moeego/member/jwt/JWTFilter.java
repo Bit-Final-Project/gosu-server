@@ -1,16 +1,14 @@
 package com.ncp.moeego.member.jwt;
 
+import com.ncp.moeego.member.bean.MemberDetails;
+import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
-import com.ncp.moeego.member.service.MemberService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import com.ncp.moeego.member.bean.MemberDetails;
-import com.ncp.moeego.member.entity.Member;
-import com.ncp.moeego.member.entity.MemberStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,14 +25,15 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String access = null;
-        access = request.getHeader("access");
+        String authorizationHeader = request.getHeader("Authorization");
 
-        // access token null
-        if (access == null) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+
+        String access = authorizationHeader.substring(7); // "Bearer " 제거
+
         // access token expired
         try{
             jwtUtil.isExpired(access);
