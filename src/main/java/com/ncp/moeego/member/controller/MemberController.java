@@ -5,6 +5,7 @@ import com.ncp.moeego.exception.GlobalExceptionHandler;
 import com.ncp.moeego.member.bean.LoginDTO;
 import com.ncp.moeego.member.bean.MemberDetails;
 import com.ncp.moeego.member.bean.SignOutDTO;
+import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import com.ncp.moeego.member.bean.JoinDTO;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +39,7 @@ public class MemberController {
     }
 
     @PatchMapping("/mypage/account/private/signout")
-    public ResponseEntity<ApiResponse> checkLogin(@RequestBody SignOutDTO signOutDTO) {
+    public ResponseEntity<ApiResponse> signOut(@RequestBody SignOutDTO signOutDTO) {
         try {
             // 비밀번호 확인
             boolean isMember = memberService.checkMember(signOutDTO.getEmail(), signOutDTO.getPwd());
@@ -61,8 +63,21 @@ public class MemberController {
     }
 
     @PatchMapping("/mypage/account/private/update/name")
-    public void updateName(@RequestBody String name) {
-        System.out.println(name);
+    public ResponseEntity<ApiResponse> updateName(@RequestBody Map<String, String> payload, Authentication authentication) {
+        try {
+            String name = payload.get("nickname");
+            String email = authentication.getName(); // JWT에서 사용자 이메일 추출
+            String updatedName = memberService.updateName(email, name);
+            return ResponseEntity.ok(ApiResponse.success("회원 이름이 성공적으로 변경되었습니다.", Map.of("updateName", updatedName)));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("회원 이름 수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
     }
     
 }
