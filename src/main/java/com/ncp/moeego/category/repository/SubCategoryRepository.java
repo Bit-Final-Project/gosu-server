@@ -1,6 +1,7 @@
 package com.ncp.moeego.category.repository;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,5 +18,5 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
 	public Collection<SubCategory> findByMainCateNo(@Param("mainCateNo") Long mainCateNo);
 
 
-
+    SubCategory findBySubCateNo(Long subCateNo);
 }

@@ -36,7 +36,7 @@ public class ImageServiceImpl implements ImageService{
 	        .map(image -> new ImageDTO(
 	            image.getImageNo(),
 	            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
-	            image.getProArticleNo() != null ? image.getProArticleNo().getProArticleNo() : null,
+	            image.getProServiceItem() != null ? image.getProServiceItem().getProServiceItemNo() : null,
 	            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
 	            image.getMemberNo().getMemberNo(),
 	            image.getImageName(),
@@ -52,7 +52,7 @@ public class ImageServiceImpl implements ImageService{
 				.map(image -> new ImageDTO(
 		            image.getImageNo(),
 		            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
-		            image.getProArticleNo() != null ? image.getProArticleNo().getProArticleNo() : null,
+		            image.getProServiceItem() != null ? image.getProServiceItem().getProServiceItemNo() : null,
 		            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
 		            image.getMemberNo().getMemberNo(),
 		            image.getImageName(),
@@ -97,7 +97,7 @@ public class ImageServiceImpl implements ImageService{
 	        image.setMemberNo(member.get()); // 사용자 연결
 	        image.setImageUuidName(cloudKey); // 스토리지의 키 저장
 	        image.setArticleNo(null); 
-	        image.setProArticleNo(null);
+	        image.setProServiceItem(null);
 	        image.setReviewNo(null);
 	        imageRepository.save(image);
 
@@ -149,6 +149,24 @@ public class ImageServiceImpl implements ImageService{
 	    }
 		
 	}
+
+	// UUID 반환
+	@Override
+	public String getUploadedUuid(Long memberNo) {
+		 Optional<Member> member = memberRepository.findById(memberNo);
+		
+		 if (member.isPresent()) {
+		        // 해당 Member 객체를 ImageRepository에 전달하여 이미지 정보를 찾음
+		        Optional<Image> image = imageRepository.findByMemberNo(member);
+
+		        // 이미지가 존재하면 UUID 반환, 없으면 null 반환
+		        return image.map(Image::getImageUuidName).orElse(null);
+		    }
+
+		    return null;  
+	}
+
+
 	
 	
 	

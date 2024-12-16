@@ -1,21 +1,21 @@
 package com.ncp.moeego.category.service;
 
+import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.category.bean.SubCategoryDTO;
+import com.ncp.moeego.category.repository.SubCategoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.ncp.moeego.category.repository.SubCategoryRepository;
-import org.springframework.stereotype.Service;
-
-import com.ncp.moeego.category.bean.SubCategoryDTO;
-import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
-public class SubCategoryServiceImpl implements SubCategoryService{
-	
-	private final SubCategoryRepository subCategoryRepository;
+public class SubCategoryServiceImpl implements SubCategoryService {
 
-	@Override
+    private final SubCategoryRepository subCategoryRepository;
+
+    @Override
     public List<SubCategoryDTO> getSubCategoriesByMainCategory(Long mainCateNo) {
         return subCategoryRepository.findByMainCateNo(mainCateNo)
                 .stream()
@@ -27,5 +27,8 @@ public class SubCategoryServiceImpl implements SubCategoryService{
                 .collect(Collectors.toList());
     }
 
+    public SubCategory getSubCategoryById(Long subCateNo) {
+        return subCategoryRepository.findById(subCateNo).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 서브카테고리: " + subCateNo));
+    }
 
 }

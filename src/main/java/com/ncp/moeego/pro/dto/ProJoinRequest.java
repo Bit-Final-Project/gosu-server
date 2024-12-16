@@ -2,11 +2,13 @@ package com.ncp.moeego.pro.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ProJoinRequest {
 
     private Long mainCateNo;
-    private String subCategories;
+    private List<Long> subCategories;
     private String oneIntro;
     private String intro;
 

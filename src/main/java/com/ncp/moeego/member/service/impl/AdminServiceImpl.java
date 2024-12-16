@@ -160,10 +160,11 @@ public class AdminServiceImpl implements AdminService {
         return memberRepository.findAllUser();
     }
 
+/*
     // 고수 회원 조회
     public List<ProDTO> getProMembersWithDetails() {
         return memberRepository.findProMembersWithDetails();
-    }
+    }*/
 
 	@Override
 	public List<CancelDTO> getCancelMembersWithDetails() {

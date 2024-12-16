@@ -123,13 +123,13 @@ public class AdminController {
         List<Member> userData = adminService.getUserMembers();
         return ResponseEntity.ok(userData);
     }
-
+/*
     // 고수 회원 조회
     @GetMapping("/admin/member/pro")
     public ResponseEntity<List<ProDTO>> getProMembersWithDetails() {
         List<ProDTO> proMembers = adminService.getProMembersWithDetails();
         return ResponseEntity.ok(proMembers);
-    }
+    }*/
     
     // 탈퇴 회원 조회
     @GetMapping("/admin/member/cancel")

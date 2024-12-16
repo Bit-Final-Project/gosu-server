@@ -16,4 +16,7 @@ public interface ImageService {
 
 	public boolean profileDelete(Long memberNo);
 
+	public String getUploadedUuid(Long memberNo);
+
+
 }
