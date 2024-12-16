@@ -1,5 +1,6 @@
 package com.ncp.moeego.pro.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ncp.moeego.category.bean.SubCategory;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class ProServiceItem {
 
 	@ManyToOne
 	@JoinColumn(name = "pro_no")
+	@JsonIgnore
 	private Pro pro;
 
 	@ManyToOne

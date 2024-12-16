@@ -96,6 +96,9 @@ public class ProServiceImpl implements ProService {
         proRepository.save(pro);
         memberService.setMemberStatus(proApplyRequest.getMemberNo(), MemberStatus.ROLE_PEND_PRO);
 
+       log.info(pro.toString());
+        log.info(pro.getProServiceItems().toString());
+
     }
 
     @Override
