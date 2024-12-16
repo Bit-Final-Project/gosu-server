@@ -30,7 +30,7 @@ public class Image {
 	private ProArticle proArticleNo;
 
 	@ManyToOne // 여러개의 이미지를 게시판에 넣을수있음
-	@JoinColumn(name="article_no")
+	@JoinColumn(name="article_no", nullable = true)
 	private Article articleNo;
 	
 	@ManyToOne // 여러개의 이미지를 사용자가 넣을수있음
