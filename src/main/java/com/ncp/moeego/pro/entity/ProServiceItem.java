@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ncp.moeego.category.bean.SubCategory;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "pro_service_item")
@@ -18,6 +19,7 @@ public class ProServiceItem {
 	@ManyToOne
 	@JoinColumn(name = "pro_no")
 	@JsonIgnore
+	@ToString.Exclude
 	private Pro pro;
 
 	@ManyToOne
