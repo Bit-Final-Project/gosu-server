@@ -113,6 +113,42 @@ public class ImageServiceImpl implements ImageService{
 	        throw new RuntimeException("프로필 이미지 업로드 중 오류 발생", e);
 	    }
 	}
+
+	@Override
+	public boolean profileDelete(Long memberNo) {
+	    try {
+
+	        Optional<Member> memberOptional = memberRepository.findById(memberNo);
+
+	        if (memberOptional.isEmpty()) {
+	            throw new IllegalArgumentException("회원 정보를 찾을 수 없습니다.");
+	        }
+
+	        Member member = memberOptional.get();
+	        // 이미지 테이블에서 해당 회원의 프로필 이미지 UUID 가져오기
+	        String profileImageUuid = member.getProfileImage();
+
+	        if (profileImageUuid == null) {
+	            throw new IllegalArgumentException("프로필 이미지가 존재하지 않습니다.");
+	        }
+
+	        // NCP 오브젝트 스토리지에서 프로필 이미지 삭제
+	        objectStorageService.memberDeleteFile(profileImageUuid, bucketName, "profile/");
+
+	        // image 테이블에서 해당 프로필 이미지 UUID와 일치하는 레코드 삭제
+	        imageRepository.deleteByImageUuidName(profileImageUuid);
+
+	        // member 테이블에서 profile_image를 null로 업데이트
+	        memberRepository.updateProfileImageToNull(memberNo);
+
+	        return true;  // 삭제 성공 시 true 반환
+	    } catch (IllegalArgumentException e) {
+	        throw e;  // 잘못된 입력 처리
+	    } catch (Exception e) {
+	        throw new RuntimeException("프로필 삭제 중 오류 발생", e);
+	    }
+		
+	}
 	
 	
 	
