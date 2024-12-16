@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class PostItemRequest {
-    Long proNo;
-    Long subCateNo;
-    String subject;
-    String content;
-    Long price;
+    private Long proNo;
+    private Long subCateNo;
+    private String subject;
+    private String content;
+    private Long price;
 }

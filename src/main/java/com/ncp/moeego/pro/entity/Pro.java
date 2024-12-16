@@ -21,11 +21,11 @@ public class Pro {
 
     @ManyToOne // 고수는 하나의 메인 카테고리를 선택할수있음
     @JoinColumn(name = "main_cate_no", nullable = false)
-    private MainCategory mainCateNo;
+    private MainCategory mainCategory;
 
     @ManyToOne // 고수는 여러개의 예약신청을 받을수도 있고 예약을 못 받을수도있음
     @JoinColumn(name = "reserve_no", nullable = true)
-    private Reserve reserveNo;
+    private Reserve reserve;
 
     @Column(name = "deprive_date")
     private LocalDateTime depriveDate;

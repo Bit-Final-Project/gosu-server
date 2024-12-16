@@ -8,10 +8,7 @@ import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
-import com.ncp.moeego.pro.dto.FavoriteResponse;
-import com.ncp.moeego.pro.dto.PostItemRequest;
-import com.ncp.moeego.pro.dto.ProApplyRequest;
-import com.ncp.moeego.pro.dto.ProJoinRequest;
+import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
@@ -85,7 +82,7 @@ public class ProServiceImpl implements ProService {
 
         Pro pro = new Pro();
         pro.setMember(memberService.getMemberById(proApplyRequest.getMemberNo()));
-        pro.setMainCateNo(mainCategoryRepository.findById(proApplyRequest.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 메인카테고리: " + proApplyRequest.getMainCateNo())));
+        pro.setMainCategory(mainCategoryRepository.findById(proApplyRequest.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 메인카테고리: " + proApplyRequest.getMainCateNo())));
         pro.setOneIntro(proApplyRequest.getOneIntro());
         pro.setIntro(proApplyRequest.getIntro());
 
@@ -154,4 +151,17 @@ public class ProServiceImpl implements ProService {
         return "달인 서비스 등록 성공";
     }
 
+
+    @Override
+    public ItemResponse getItemDetails(Long proItemNo) {
+
+
+        if (!proItemRepository.existsByProItemNoAndItemStatus(proItemNo, ItemStatus.ACTIVE)) {
+            throw new IllegalArgumentException("승인되지 않은 서비스입니다 : " + proItemNo + "번");
+
+        }
+
+        return proItemRepository.getItemDetails(proItemNo);
+
+    }
 }

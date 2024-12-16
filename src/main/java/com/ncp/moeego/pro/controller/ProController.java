@@ -2,10 +2,7 @@ package com.ncp.moeego.pro.controller;
 
 import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
-import com.ncp.moeego.pro.dto.FavoriteDeleteRequest;
-import com.ncp.moeego.pro.dto.FavoriteResponse;
-import com.ncp.moeego.pro.dto.PostItemRequest;
-import com.ncp.moeego.pro.dto.ProJoinRequest;
+import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.service.ProServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -68,7 +65,8 @@ public class ProController {
         return ResponseEntity.ok(ApiResponse.success(message));
     }
 
-    @PostMapping("/item")
+    //서비스 등록
+    @PutMapping("/item")
     public ResponseEntity<?> postItem(@RequestBody PostItemRequest postItemRequest) {
         log.info("postItem 요청: " + postItemRequest.toString());
 
@@ -77,5 +75,23 @@ public class ProController {
         return ResponseEntity.ok(ApiResponse.success(message));
 
     }
+
+    // 달인 서비스 리스트
+    @GetMapping("/item")
+    public ResponseEntity<?> getItemList() {
+        return ResponseEntity.ok(ApiResponse.success("즐"));
+
+    }
+
+    // 달인 서비스 상세보기
+    @GetMapping("/item/{proItemNo}")
+    public ResponseEntity<?> getItemDetails(@PathVariable Long proItemNo) {
+        ItemResponse itemResponse = proService.getItemDetails(proItemNo);
+
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", itemResponse));
+
+    }
+
+
 
 }

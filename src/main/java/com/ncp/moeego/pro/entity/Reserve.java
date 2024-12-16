@@ -21,5 +21,5 @@ public class Reserve {
 	// 여러 예약이 하나의 회원에 속할 수 있도록 다대일 관계 설정
     @ManyToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private Member member;
 }
