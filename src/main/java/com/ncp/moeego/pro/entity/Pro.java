@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "pro")
@@ -45,5 +47,9 @@ public class Pro {
 
     @Column(length = 3000)
     private String intro; // 서비스 소개
+
+    // ProServiceItem 와 연관 설정
+    @OneToMany(mappedBy = "pro", cascade = CascadeType.ALL)
+    private List<ProServiceItem> proServiceItems = new ArrayList<>();
 
 }

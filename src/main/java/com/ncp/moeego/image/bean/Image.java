@@ -10,7 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import com.ncp.moeego.member.entity.Member;
-import com.ncp.moeego.pro.entity.ProArticle;
+import com.ncp.moeego.pro.entity.ProServiceItem;
 import com.ncp.moeego.pro.entity.Review;
 
 @Entity
@@ -27,7 +27,7 @@ public class Image {
 	
 	@ManyToOne // 여러개의 이미지를 고수 게시판에 넣을수있음
 	@JoinColumn(name="pro_article_no", nullable = true)
-	private ProArticle proArticleNo;
+	private ProServiceItem proServiceItem;
 
 	@ManyToOne // 여러개의 이미지를 게시판에 넣을수있음
 	@JoinColumn(name="article_no")
