@@ -36,7 +36,7 @@ public class ImageServiceImpl implements ImageService{
 	        .map(image -> new ImageDTO(
 	            image.getImageNo(),
 	            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
-	            image.getProServiceItem() != null ? image.getProServiceItem().getProServiceItemNo() : null,
+	            image.getProItem() != null ? image.getProItem().getProItemNo() : null,
 	            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
 	            image.getMemberNo().getMemberNo(),
 	            image.getImageName(),
@@ -52,7 +52,7 @@ public class ImageServiceImpl implements ImageService{
 				.map(image -> new ImageDTO(
 		            image.getImageNo(),
 		            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
-		            image.getProServiceItem() != null ? image.getProServiceItem().getProServiceItemNo() : null,
+		            image.getProItem() != null ? image.getProItem().getProItemNo() : null,
 		            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
 		            image.getMemberNo().getMemberNo(),
 		            image.getImageName(),
@@ -97,7 +97,7 @@ public class ImageServiceImpl implements ImageService{
 	        image.setMemberNo(member.get()); // 사용자 연결
 	        image.setImageUuidName(cloudKey); // 스토리지의 키 저장
 	        image.setArticleNo(null); 
-	        image.setProServiceItem(null);
+	        image.setProItem(null);
 	        image.setReviewNo(null);
 	        imageRepository.save(image);
 

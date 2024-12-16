@@ -7,14 +7,14 @@ import lombok.Data;
 import lombok.ToString;
 
 @Entity
-@Table(name = "pro_service_item")
+@Table(name = "pro_item")
 @Data
-public class ProServiceItem {
+public class ProItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pro_service_item_no")
-    private Long proServiceItemNo;
+    @Column(name = "pro_item_no")
+    private Long proItemNo;
 
 	@ManyToOne
 	@JoinColumn(name = "pro_no")

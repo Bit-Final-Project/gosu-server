@@ -45,8 +45,8 @@ public class Pro {
     @Column(length = 3000)
     private String intro; // 서비스 소개
 
-    // ProServiceItem 와 연관 설정
+    // ProItem 와 연관 설정
     @OneToMany(mappedBy = "pro", cascade = CascadeType.ALL)
-    private List<ProServiceItem> proServiceItems = new ArrayList<>();
+    private List<ProItem> proItems = new ArrayList<>();
 
 }

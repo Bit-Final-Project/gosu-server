@@ -4,6 +4,7 @@ import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
 import com.ncp.moeego.pro.dto.FavoriteDeleteRequest;
 import com.ncp.moeego.pro.dto.FavoriteResponse;
+import com.ncp.moeego.pro.dto.PostItemRequest;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.service.ProServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +66,16 @@ public class ProController {
         String message = proService.deleteFavorites(favoriteDeleteRequest.getMemberNo(), favoriteDeleteRequest.getProNo());
 
         return ResponseEntity.ok(ApiResponse.success(message));
+    }
+
+    @PostMapping("/item")
+    public ResponseEntity<?> postItem(@RequestBody PostItemRequest postItemRequest) {
+        log.info("postItem 요청: " + postItemRequest.toString());
+
+        String message = proService.postItem(postItemRequest);
+
+        return ResponseEntity.ok(ApiResponse.success(message));
+
     }
 
 }
