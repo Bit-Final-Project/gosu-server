@@ -114,7 +114,7 @@ public class MemberServiceImpl implements MemberService {
 
             // Cancel 엔티티 생성 및 저장
             Cancel cancel = new Cancel();
-            cancel.setMemberNo(member);
+            cancel.setMember(member);
             cancel.setReason(signOutDTO.getReason());
             cancelRepository.save(cancel);
 

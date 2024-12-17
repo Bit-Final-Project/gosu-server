@@ -7,12 +7,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ncp.moeego.image.bean.Image;
+import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.image.bean.ImageDTO;
 import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.ncp.service.ObjectStorageService;
+
+import lombok.RequiredArgsConstructor;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,10 +37,10 @@ public class ImageServiceImpl implements ImageService{
 	    return images.stream()
 	        .map(image -> new ImageDTO(
 	            image.getImageNo(),
-	            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
+	            image.getReview() != null ? image.getReview().getReviewNo() : null,
 	            image.getProItem() != null ? image.getProItem().getProItemNo() : null,
-	            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
-	            image.getMemberNo().getMemberNo(),
+	            image.getArticle() != null ? image.getArticle().getArticleNo() : null,
+	            image.getMember().getMemberNo(),
 	            image.getImageName(),
 	            image.getImageUuidName()
 	        ))
@@ -47,14 +49,14 @@ public class ImageServiceImpl implements ImageService{
 	
 	@Override
 	public List<ImageDTO> getImageListByArticleNo(Long articleNo) {
-		List<Image> images = imageRepository.findByArticleNo_ArticleNo(articleNo);
+		List<Image> images = imageRepository.findByArticle_ArticleNo(articleNo);
 		return images.stream()
 				.map(image -> new ImageDTO(
 		            image.getImageNo(),
-		            image.getReviewNo() != null ? image.getReviewNo().getReviewNo() : null,
+		            image.getReview() != null ? image.getReview().getReviewNo() : null,
 		            image.getProItem() != null ? image.getProItem().getProItemNo() : null,
-		            image.getArticleNo() != null ? image.getArticleNo().getArticleNo() : null,
-		            image.getMemberNo().getMemberNo(),
+		            image.getArticle() != null ? image.getArticle().getArticleNo() : null,
+		            image.getMember().getMemberNo(),
 		            image.getImageName(),
 		            image.getImageUuidName()
 		        ))
@@ -94,11 +96,11 @@ public class ImageServiceImpl implements ImageService{
 	        // 3. 업로드된 이미지 정보를 DB에 저장
 	        Image image = new Image();
 	        image.setImageName(file.getOriginalFilename());
-	        image.setMemberNo(member.get()); // 사용자 연결
+	        image.setMember(member.get()); // 사용자 연결
 	        image.setImageUuidName(cloudKey); // 스토리지의 키 저장
-	        image.setArticleNo(null); 
+	        image.setArticle(null);
 	        image.setProItem(null);
-	        image.setReviewNo(null);
+	        image.setReview(null);
 	        imageRepository.save(image);
 
 	        // 3. profile_image 컬럼만 업데이트
@@ -157,7 +159,7 @@ public class ImageServiceImpl implements ImageService{
 		
 		 if (member.isPresent()) {
 		        // 해당 Member 객체를 ImageRepository에 전달하여 이미지 정보를 찾음
-		        Optional<Image> image = imageRepository.findByMemberNo(member);
+		        Optional<Image> image = imageRepository.findByMember(member);
 
 		        // 이미지가 존재하면 UUID 반환, 없으면 null 반환
 		        return image.map(Image::getImageUuidName).orElse(null);
