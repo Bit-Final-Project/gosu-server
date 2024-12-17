@@ -90,17 +90,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     
     
     // 회원 프로필 이미지 업로드 시 게시글 작성해도 하나만 가져오기
-    @Query("SELECT DISTINCT m FROM Member m " +
+    @Query("SELECT m FROM Member m " +
+    	       "LEFT JOIN Image i ON i.member = m " +
     	       "WHERE m.memberNo = :memberNo " +
-    	       "AND EXISTS ( " +
-    	       "    SELECT 1 FROM Image i " +
-    	       "    WHERE i.member = m " +  
-    	       "    AND i.article IS NULL " +
-    	       "    AND i.review IS NULL " +
-    	       "    AND i.proItem IS NULL" +
-    	       ")")
+    	       "AND (i.article IS NULL AND i.review IS NULL AND i.proItem IS NULL)")
     Optional<Member> findByIdWithEmptyImage(@Param("memberNo") Long memberNo);
-
     
     // 회원 프로필 이미지 삭제
     @Modifying

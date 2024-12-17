@@ -28,6 +28,4 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 	// uuid값 가져오기
 	Optional<Image> findByMember(Optional<Member> member);
 
-
-
 }

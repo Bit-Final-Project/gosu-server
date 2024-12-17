@@ -22,8 +22,9 @@ import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173")
@@ -55,18 +56,14 @@ public class ImageController {
 	        String email = memberDetails.getUsername(); 
 	        Member member = memberService.getMemberByEmail(email);
 	        
+	        log.info("사용자 보고싶어 : {}", member);
+	        
 	        Long memberNo = member.getMemberNo();
-	        
-	        System.out.println(memberNo + "뭐가 오시나요 ? ");
-	        
-	        boolean result = imageService.profileUpload(image, memberNo);
+	        	        
+	        String uploadedUuid = imageService.profileUpload(image, memberNo);
 
-	        if (result) {
-	            // 업로드된 파일의 UUID (cloudKey)
-	            String uploadedUuid = imageService.getUploadedUuid(memberNo);  // imageService에서 반환한 UUID 값
-	            
-	            // UUID를 포함한 응답 반환
-	            return ResponseEntity.ok(ApiResponse.success("반환 성공", uploadedUuid));
+	        if (uploadedUuid != null) {
+	        	return ResponseEntity.ok(ApiResponse.success("반환 성공", uploadedUuid));
 	        } else {
 	        	return ResponseEntity.badRequest().body(ApiResponse.error("반환 실패", HttpStatus.BAD_REQUEST.name()));
 	        }
