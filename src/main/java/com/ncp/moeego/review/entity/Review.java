@@ -1,7 +1,9 @@
-package com.ncp.moeego.pro.entity;
+package com.ncp.moeego.review.entity;
 
 import com.ncp.moeego.category.entity.MainCategory;
 import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.pro.entity.ProItem;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,6 +28,9 @@ public class Review {
     @JoinColumn(name = "member_no", nullable = false)
     private Member member;
 
+    @Column(name = "review_content", length = 3000)
+    private String reviewContent;
+    
     private float star;
 
     @Column(name = "write_date")
