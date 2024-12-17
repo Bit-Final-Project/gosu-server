@@ -4,6 +4,7 @@ import com.ncp.moeego.pro.dto.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProService {
     String proJoin(ProJoinRequest proJoinRequest);
@@ -17,4 +18,6 @@ public interface ProService {
     String postItem(PostItemRequest postItemRequest);
 
     ItemResponse getItemDetails(Long proItemNo);
+
+    Map<String, Object> getInitItem(Long memberNo);
 }

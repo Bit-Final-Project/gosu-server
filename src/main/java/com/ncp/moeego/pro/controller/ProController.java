@@ -76,6 +76,14 @@ public class ProController {
 
     }
 
+    @GetMapping("/item/init/{memberNo}")
+    public ResponseEntity<?> getItemInit(@PathVariable Long memberNo) {
+        log.info("달인 서비스 등록 요청: " + memberNo);
+
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", proService.getInitItem(memberNo)));
+
+    }
+
     // 달인 서비스 리스트
     @GetMapping("/item")
     public ResponseEntity<?> getItemList() {
@@ -91,7 +99,6 @@ public class ProController {
         return ResponseEntity.ok(ApiResponse.success("조회 성공", itemResponse));
 
     }
-
 
 
 }
