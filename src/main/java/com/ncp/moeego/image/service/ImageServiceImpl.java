@@ -68,9 +68,11 @@ public class ImageServiceImpl implements ImageService{
 	        if (file == null || file.isEmpty()) {
 	            throw new IllegalArgumentException("업로드된 파일이 비어 있습니다.");
 	        }
+	        System.out.println("혹시 뭐가 오시나요 ?!" + memberNo);
+	        Optional<Member> member = memberRepository.findByIdWithEmptyImage(memberNo);
 
-	        Optional<Member> member = memberRepository.findById(memberNo);
-
+	        System.out.println(member + " : 정보를 한번 봐보자");
+	        
 	        // 회원이 존재하지 않으면 예외 처리
 	        if (member.isEmpty()) {
 	            throw new IllegalArgumentException("회원 정보를 찾을 수 없습니다.");
@@ -118,7 +120,7 @@ public class ImageServiceImpl implements ImageService{
 	public boolean profileDelete(Long memberNo) {
 	    try {
 
-	        Optional<Member> memberOptional = memberRepository.findById(memberNo);
+	        Optional<Member> memberOptional = memberRepository.findByIdWithEmptyImage(memberNo);
 
 	        if (memberOptional.isEmpty()) {
 	            throw new IllegalArgumentException("회원 정보를 찾을 수 없습니다.");

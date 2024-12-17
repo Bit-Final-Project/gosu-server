@@ -90,11 +90,24 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = :cloudKey WHERE m = :member")
     void updateProfileImage(@Param("member") Member member, @Param("cloudKey") String cloudKey);
-    // 회원 프로필 이미지 삭제
     
+    @Query("SELECT m FROM Member m " +
+    	       "WHERE m.memberNo = :memberNo " +
+    	       "AND EXISTS ( " +
+    	       "    SELECT 1 FROM Image i " +
+    	       "    WHERE i.memberNo = m " +
+    	       "    AND i.articleNo IS NULL " +
+    	       "    AND i.reviewNo IS NULL " +
+    	       "    AND i.proItem IS NULL" +
+    	       ")")
+    Optional<Member> findByIdWithEmptyImage(@Param("memberNo") Long memberNo);
+
+    
+    // 회원 프로필 이미지 삭제
     @Modifying
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
+
     
 }

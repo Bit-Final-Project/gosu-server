@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,10 @@ import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.image.bean.ImageDTO;
 import com.ncp.moeego.image.bean.ImageUuidResponse;
 import com.ncp.moeego.image.service.ImageService;
+import com.ncp.moeego.member.bean.MemberDetails;
+import com.ncp.moeego.member.bean.oauth2.OAuth2Member;
+import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +34,7 @@ public class ImageController {
 
 	
 	private final ImageService imageService;
-	
+	private final MemberService memberService;
 	
 	@GetMapping("/image/list")
 	public ResponseEntity<List<ImageDTO>> getAllImages() {
@@ -41,13 +46,22 @@ public class ImageController {
     }
 	
 	@PutMapping("/image/profileUpload")
-	public ResponseEntity<ApiResponse> uploadProfileImage(@RequestPart("image") MultipartFile image, @RequestParam("memberNo") Long memberNo) {
+	public ResponseEntity<ApiResponse> uploadProfileImage(@RequestPart("image") MultipartFile image, Authentication authentication) {
 	    try {
 	        // 업로드 파일이 비어 있는지 확인
 	        if (image.isEmpty()) {
 	            throw new IllegalArgumentException("업로드된 파일이 비어 있습니다.");
 	        }
 
+	        // Long 타입 memberNo 가져오기
+	        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+	        String email = memberDetails.getUsername(); 
+	        Member member = memberService.getMemberByEmail(email);
+	        
+	        Long memberNo = member.getMemberNo();
+	        
+	        System.out.println(memberNo + "뭐가 오시나요 ? ");
+	        
 	        boolean result = imageService.profileUpload(image, memberNo);
 
 	        if (result) {
@@ -66,9 +80,14 @@ public class ImageController {
 	}
 	
 	@DeleteMapping("/image/profileDelete")
-	public ResponseEntity<String> deleteProfileImage(@RequestParam("memberNo") Long memberNo) {
+	public ResponseEntity<String> deleteProfileImage(Authentication authentication) {
 	    try {
-
+	    	MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+	        String email = memberDetails.getName(); // Long 타입 memberNo 가져오기
+	        Member member = memberService.getMemberByEmail(email);
+	        
+	        Long memberNo = member.getMemberNo();
+	    	
 	        boolean result = imageService.profileDelete(memberNo);
 
 	        if (result) {
