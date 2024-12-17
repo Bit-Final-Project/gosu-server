@@ -1,6 +1,6 @@
 package com.ncp.moeego.pro.entity;
 
-import com.ncp.moeego.category.bean.MainCategory;
+import com.ncp.moeego.category.entity.MainCategory;
 import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;

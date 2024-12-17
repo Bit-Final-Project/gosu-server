@@ -1,12 +1,12 @@
 package com.ncp.moeego.category.service;
 
-import java.util.List;
-
 import com.ncp.moeego.category.bean.SubCategoryDTO;
+
+import java.util.List;
 
 public interface SubCategoryService {
 
 
-	public List<SubCategoryDTO> getSubCategoriesByMainCategory(Long mainCateNo);
+    public List<SubCategoryDTO> getSubCategoriesByMainCategory(Long mainCateNo);
 
 }

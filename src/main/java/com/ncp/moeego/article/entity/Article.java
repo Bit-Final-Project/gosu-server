@@ -1,4 +1,4 @@
-package com.ncp.moeego.article.bean;
+package com.ncp.moeego.article.entity;
 
 import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.*;
@@ -17,7 +17,7 @@ public class Article {
 
     @ManyToOne(fetch = FetchType.LAZY) // 여러개의 게시판을 한명의 사용자가 작성할수있음
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private Member member;
 
     @Column(length = 3000)
     private String subject;
@@ -28,7 +28,7 @@ public class Article {
     private int view;
 
     private int type;
-    
+
     @Column(nullable = false) // NULL 값 허용 안 함
     private int likes = 0; // 기본값 설정
 
@@ -37,7 +37,7 @@ public class Article {
 
     @Column(length = 200)
     private String service;
-    
+
     @Column(length = 200)
     private String area;
 

@@ -1,7 +1,7 @@
 package com.ncp.moeego.comment.service;
 
-import com.ncp.moeego.comment.dto.CommentResponse;
 import com.ncp.moeego.comment.dto.CommentRequest;
+import com.ncp.moeego.comment.dto.CommentResponse;
 import com.ncp.moeego.comment.dto.MemberCommentResponse;
 import org.springframework.data.domain.Page;
 
@@ -20,4 +20,5 @@ public interface CommentService {
     List<CommentResponse> findCommentsByArticle(Long articleNo);
 
     Page<CommentResponse> findPagedCommentsByArticle(Long articleNo, int pg, int pageSize);
+
 }

@@ -1,7 +1,7 @@
 package com.ncp.moeego.pro.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.category.entity.SubCategory;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;

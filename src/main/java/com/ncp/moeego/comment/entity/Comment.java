@@ -1,6 +1,6 @@
 package com.ncp.moeego.comment.entity;
 
-import com.ncp.moeego.article.bean.Article;
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;

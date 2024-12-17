@@ -11,11 +11,11 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
-    @Query("Select f.proNo.proNo FROM Favorite f where f.memberNo.memberNo =:memberNo")
-    List<Long> findProNosByMemberNo(@Param("memberNo") Long memberNo);
+    @Query("Select f.pro.proNo FROM Favorite f where f.member.memberNo =:memberNo")
+    List<Long> findProsByMemberNo(@Param("memberNo") Long memberNo);
 
     @Modifying
-    @Query("DELETE From Favorite f where f.proNo.proNo in :proNo and f.memberNo.memberNo =:memberNo")
+    @Query("DELETE From Favorite f where f.pro.proNo in :proNo and f.member.memberNo =:memberNo")
     int deleteFavorite(@Param("memberNo") Long memberNo, @Param("proNo") List<Long> proNo);
 
 }
