@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface ProItemRepository extends JpaRepository<ProItem, Long> {
 
@@ -25,8 +23,6 @@ public interface ProItemRepository extends JpaRepository<ProItem, Long> {
                     where p.proItemNo =:proItemNo
                     """)
     ItemResponse getItemDetails(@Param("proItemNo") Long proItemNo);
-
-    boolean existsByProItemNoAndItemStatusAndItemStatus(Long proItemNo, ItemStatus itemStatus, ItemStatus itemStatus1);
 
     boolean existsByProItemNoAndItemStatus(Long proItemNo, ItemStatus itemStatus);
 }
