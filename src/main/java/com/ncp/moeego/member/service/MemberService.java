@@ -15,4 +15,7 @@ public interface MemberService {
     boolean checkMember(String email, String pwd);
     ApiResponse cancelMember(SignOutDTO signOutDTO);
     String updateName(String email, String name);
+    ApiResponse updatePwd(String email, String pwd);
+    ApiResponse updateAddress(String email, String address);
+    ApiResponse updatePhone(String email, String phone);
 }
