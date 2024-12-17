@@ -1,11 +1,12 @@
 package com.ncp.moeego.pro.service;
 
-import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
 import com.ncp.moeego.category.service.SubCategoryServiceImpl;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
+import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
 import com.ncp.moeego.pro.dto.*;
@@ -21,7 +22,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -57,7 +62,7 @@ public class ProServiceImpl implements ProService {
 
         } catch (Exception e) {
             log.error("회원가입 실패 : {}", e.getMessage());
-            return "회원가입 실패";
+            throw e;
 
         }
     }
@@ -105,7 +110,7 @@ public class ProServiceImpl implements ProService {
 
         Pageable pageable = PageRequest.of(pg - 1, 10);
 
-        List<Long> proNoList = favoriteRepository.findProNosByMemberNo(memberNo);
+        List<Long> proNoList = favoriteRepository.findProsByMemberNo(memberNo);
 
         if (proNoList.isEmpty()) {
             return Page.empty(pageable);
@@ -151,6 +156,14 @@ public class ProServiceImpl implements ProService {
         return "달인 서비스 등록 성공";
     }
 
+    public Pro getProByMember(Long memberNo) {
+        Member member = memberService.getMemberById(memberNo);
+        Pro pro = proRepository.findByMember(member);
+        if (pro == null) {
+            throw new IllegalArgumentException("달인 검색 결과가 없습니다.");
+        }
+        return pro;
+    }
 
     @Override
     public ItemResponse getItemDetails(Long proItemNo) {
@@ -163,5 +176,21 @@ public class ProServiceImpl implements ProService {
 
         return proItemRepository.getItemDetails(proItemNo);
 
+    }
+
+    @Override
+    public Map<String, Object> getInitItem(Long memberNo) {
+        Member member = memberService.getMemberById(memberNo);
+        if(!member.getMemberStatus().equals(MemberStatus.ROLE_PRO)){
+            throw new IllegalArgumentException(member.getName() + " 회원은 달인이 아닙니다.");
+        }
+        Pro pro = getProByMember(memberNo);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("proNo", pro.getProNo());
+        response.put("mainCategory", pro.getMainCategory());
+        response.put("proItems", pro.getProItems().stream().toList());
+
+        return response;
     }
 }

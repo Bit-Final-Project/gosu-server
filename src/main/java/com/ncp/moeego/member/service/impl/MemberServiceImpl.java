@@ -11,15 +11,11 @@ import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -59,6 +55,12 @@ public class MemberServiceImpl implements MemberService {
     public Member getMemberById(Long memberNo) {
         return memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
+    }
+    
+    @Override
+    public Member getMemberByEmail(String email) {
+    	return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found: " + email));
     }
 
     @Override
@@ -114,7 +116,7 @@ public class MemberServiceImpl implements MemberService {
 
             // Cancel 엔티티 생성 및 저장
             Cancel cancel = new Cancel();
-            cancel.setMemberNo(member);
+            cancel.setMember(member);
             cancel.setReason(signOutDTO.getReason());
             cancelRepository.save(cancel);
 

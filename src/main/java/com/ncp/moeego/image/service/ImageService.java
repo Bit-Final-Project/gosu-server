@@ -12,7 +12,7 @@ public interface ImageService {
 
 	public List<ImageDTO> getImageListByArticleNo(Long articleNo);
 
-	public boolean profileUpload(MultipartFile file, Long memberNo);
+	public String profileUpload(MultipartFile file, Long memberNo);
 
 	public boolean profileDelete(Long memberNo);
 

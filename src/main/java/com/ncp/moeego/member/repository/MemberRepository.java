@@ -63,26 +63,23 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m")
     List<Member> findAllUser();  // 일반 회원 조회
 
-    /*
-    // 고수 회원 조회
     @Query("SELECT DISTINCT new com.ncp.moeego.member.bean.ProDTO(" +
-    	       "p.member.memberNo, " +
-    	       "p.member.name, " +
-    	       "p.accessDate, " +
-    	       "p.star, " +
-    	       "p.depriveDate, " +
-    	       "p.subCategories, " +
-    	       "p.proNo, " +
-    	       "c.mainCateName) " +  // subCateName을 제외하고 mainCateName만 추가
-    	       "FROM Pro p " +
-    	       "LEFT JOIN p.mainCateNo c " + // mainCateNo로 조인
-    	       "WHERE c.mainCateName IS NOT NULL")  // mainCateName이 null이 아닌 경우만 가져옴
+            "p.member.memberNo, " +
+            "p.member.name, " +
+            "p.accessDate, " +
+            "p.star, " +
+            "p.depriveDate, " +
+            "p.proNo, " +
+            "p.mainCategory.mainCateName, " +  
+            "p.oneIntro, " +                   
+            "p.intro) " +                      
+            "FROM Pro p " +
+            "WHERE p.mainCategory.mainCateName IS NOT NULL")
     List<ProDTO> findProMembersWithDetails();
-*/
 
     // 탈퇴 회원 조회
     @Query("SELECT new com.ncp.moeego.member.bean.CancelDTO(m.name, m.phone, m.email , c.cancelNo, c.cancelDate, c.reason) " +
-            "FROM Cancel c JOIN c.memberNo m")
+            "FROM Cancel c JOIN c.member m")
      List<CancelDTO> findAllCancelDetails();
 
     // 회원 프로필 이미지 업로드
@@ -90,11 +87,20 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = :cloudKey WHERE m = :member")
     void updateProfileImage(@Param("member") Member member, @Param("cloudKey") String cloudKey);
-    // 회원 프로필 이미지 삭제
     
+    
+    // 회원 프로필 이미지 업로드 시 게시글 작성해도 하나만 가져오기
+    @Query("SELECT m FROM Member m " +
+    	       "LEFT JOIN Image i ON i.member = m " +
+    	       "WHERE m.memberNo = :memberNo " +
+    	       "AND (i.article IS NULL AND i.review IS NULL AND i.proItem IS NULL)")
+    Optional<Member> findByIdWithEmptyImage(@Param("memberNo") Long memberNo);
+    
+    // 회원 프로필 이미지 삭제
     @Modifying
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
+
     
 }
