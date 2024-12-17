@@ -131,7 +131,7 @@ public class SecurityConfig {
 
         // jwt filter
         http
-                .addFilterAfter(new JWTFilter(jwtUtil, memberRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(new JWTFilter(jwtUtil, memberRepository, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
         // custom logout filter 등록
         http
