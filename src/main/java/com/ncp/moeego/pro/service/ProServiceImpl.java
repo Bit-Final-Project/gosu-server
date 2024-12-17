@@ -8,6 +8,7 @@ import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
+import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
 import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.ItemStatus;
@@ -22,11 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,8 +38,9 @@ public class ProServiceImpl implements ProService {
     private final FavoriteRepository favoriteRepository;
     private final ProItemRepository proItemRepository;
     private final SubCategoryRepository subCategoryRepository;
+    private final MemberRepository memberRepository;
 
-    public ProServiceImpl(MemberServiceImpl memberService, SubCategoryServiceImpl subCategoryService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, ProItemRepository proItemRepository, SubCategoryRepository subCategoryRepository) {
+    public ProServiceImpl(MemberServiceImpl memberService, SubCategoryServiceImpl subCategoryService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, ProItemRepository proItemRepository, SubCategoryRepository subCategoryRepository, MemberRepository memberRepository) {
         this.memberService = memberService;
         this.subCategoryService = subCategoryService;
         this.proRepository = proRepository;
@@ -48,6 +48,7 @@ public class ProServiceImpl implements ProService {
         this.favoriteRepository = favoriteRepository;
         this.proItemRepository = proItemRepository;
         this.subCategoryRepository = subCategoryRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Transactional
@@ -166,7 +167,7 @@ public class ProServiceImpl implements ProService {
     }
 
     @Override
-    public ItemResponse getItemDetails(Long proItemNo) {
+    public ItemDetailResponse getItemDetails(Long proItemNo) {
 
 
         if (!proItemRepository.existsByProItemNoAndItemStatus(proItemNo, ItemStatus.ACTIVE)) {
@@ -181,7 +182,7 @@ public class ProServiceImpl implements ProService {
     @Override
     public Map<String, Object> getInitItem(Long memberNo) {
         Member member = memberService.getMemberById(memberNo);
-        if(!member.getMemberStatus().equals(MemberStatus.ROLE_PRO)){
+        if (!member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
             throw new IllegalArgumentException(member.getName() + " 회원은 달인이 아닙니다.");
         }
         Pro pro = getProByMember(memberNo);
@@ -190,6 +191,33 @@ public class ProServiceImpl implements ProService {
         response.put("proNo", pro.getProNo());
         response.put("mainCategory", pro.getMainCategory());
         response.put("proItems", pro.getProItems().stream().toList());
+
+        return response;
+    }
+
+    @Override
+    public Map<String, Object> getItemList(Long subCateNo, String location, int pg) {
+        Pageable pageable = PageRequest.of(pg - 1, 1);
+        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location);
+
+        List<ItemResponse> proList = proPage.stream().map(pro -> new ItemResponse(
+                pro.getProNo(),
+                pro.getMember().getName(),
+                pro.getMember().getProfileImage(),
+                pro.getIntro(), pro.getOneIntro(),
+                pro.getMainCategory().getMainCateNo(),
+                pro.getMainCategory().getMainCateName(),
+                pro.getStar(),
+                pro.getMember().getAddress(),
+                pro.getProItems()
+        )).toList();
+
+        // 응답 데이터 구성
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", proList); // 실제 데이터 리스트
+        response.put("currentPage", proPage.getNumber()); // 현재 페이지
+        response.put("totalPages", proPage.getTotalPages()); // 전체 페이지 수
+        response.put("totalElements", proPage.getTotalElements()); // 전체 요소 수
 
         return response;
     }
