@@ -109,7 +109,7 @@ public class MemberController {
     }
 
     // 인증번호 일치여부 확인
-    @GetMapping("/mypage/account/private/mailCheck")
+    @PostMapping("/mypage/account/private/mailCheck")
     public ResponseEntity<ApiResponse> mailCheck(@RequestBody Map<String, String> payload) {
         try {
             String num = payload.get("num").trim();
