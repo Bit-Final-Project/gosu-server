@@ -93,6 +93,49 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
+    public ApiResponse updatePwd(String email, String pwd) {
+        try {
+            Member member = memberRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            member.setPwd(bCryptPasswordEncoder.encode(pwd));
+            memberRepository.save(member);
+            return ApiResponse.success("수정이 완료되었습니다.", null);
+        } catch (Exception e) {
+            return ApiResponse.error("비밀번호 수정 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        }
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse updateAddress(String email, String address) {
+        try {
+            Member member = memberRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            member.setAddress(address);
+            memberRepository.save(member);
+            return ApiResponse.success("수정이 완료되었습니다.", null);
+        } catch (Exception e) {
+            return ApiResponse.error("수정 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        }
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse updatePhone(String email, String phone) {
+        try {
+            Member member = memberRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            if(!member.getPhone().equals(phone)) {
+                member.setPhone(phone);
+                memberRepository.save(member);
+                return ApiResponse.success("수정이 완료되었습니다.", phone);
+            } else {
+                throw new IllegalArgumentException();
+            }
+        } catch (Exception e) {
+            return ApiResponse.error("수정 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        }
+    }
+
+    @Override
     public boolean checkMember(String email, String pwd) {
         if(email.equals("")) return false;
         if(pwd.equals("")) return false;

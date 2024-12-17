@@ -67,6 +67,7 @@ public class MemberController {
 
     @PatchMapping("/mypage/account/private/update/name")
     public ResponseEntity<ApiResponse> updateName(@RequestBody Map<String, String> payload, Authentication authentication) {
+        System.out.println(authentication);
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
@@ -85,6 +86,96 @@ public class MemberController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     ApiResponse.error("회원 이름 수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+    }
+
+    @PatchMapping("/mypage/account/private/update/password")
+    public ResponseEntity<ApiResponse> updatePassword(@RequestBody Map<String, String> payload, Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
+            );
+        }
+
+        try {
+            String pwd = payload.get("password");
+            String email = authentication.getName(); // JWT에서 사용자 이메일 추출
+            boolean isMember = memberService.checkMember(email, pwd);
+            if (!isMember) {
+                return ResponseEntity.badRequest().body(
+                        ApiResponse.error("비밀번호가 다릅니다", HttpStatus.BAD_REQUEST.name())
+                );
+            }
+
+            String rePwd = payload.get("re-password");
+
+            ApiResponse response = memberService.updatePwd(email, rePwd);
+            HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.resolve(Integer.parseInt(response.getErrorCode()));
+            return ResponseEntity.status(status).body(response);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("회원 이름 수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+    }
+
+    @PatchMapping("/mypage/account/private/update/phone")
+    public ResponseEntity<ApiResponse> updatePhone(@RequestBody Map<String, String> payload, Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
+            );
+        }
+
+        try {
+            String phone = payload.get("phone");
+            String email = authentication.getName(); // JWT에서 사용자 이메일 추출
+
+            ApiResponse response = memberService.updatePhone(email, phone);
+            HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.resolve(Integer.parseInt(response.getErrorCode()));
+            return ResponseEntity.status(status).body(response);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name())
+            );
+        } catch (IllegalArgumentException e) { // 이미 사용 중인 번호일 때
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    ApiResponse.error("이미 사용 중인 번호입니다.", HttpStatus.BAD_REQUEST.name())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("번호 수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+    }
+
+    @PatchMapping("/mypage/account/private/update/address")
+    public ResponseEntity<ApiResponse> updateAddress(@RequestBody Map<String, String> payload, Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
+            );
+        }
+
+        try {
+            String address = payload.get("address");
+            String email = authentication.getName(); // JWT에서 사용자 이메일 추출
+
+            ApiResponse response = memberService.updateAddress(email, address);
+            HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.resolve(Integer.parseInt(response.getErrorCode()));
+            return ResponseEntity.status(status).body(response);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("주소 수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
             );
         }
     }
