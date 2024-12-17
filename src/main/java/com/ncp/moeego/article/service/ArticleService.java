@@ -5,6 +5,7 @@ import java.util.List;
 import com.ncp.moeego.article.bean.Article;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ArticleService {
 

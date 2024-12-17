@@ -1,9 +1,11 @@
 package com.ncp.moeego.article.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -359,31 +361,58 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public boolean updateArticle(Long articleNo, ArticleDTO articleDTO) {
         try {
-            // 게시글 가져오기
             Optional<Article> optionalArticle = articleRepository.findById(articleNo);
             if (optionalArticle.isPresent()) {
                 Article article = optionalArticle.get();
 
-                // 업데이트
+                // 게시글 데이터 업데이트
                 article.setSubject(articleDTO.getSubject());
                 article.setContent(articleDTO.getContent());
-//	            article.setView(articleDTO.getView()); 조회수 수정 X 
-//	            article.setLikes(articleDTO.getLikes()); 좋아요 수정 X 
-//	            article.setWriteDate(LocalDateTime.now()); 시간은 업데이트 하지않음
                 article.setType(articleDTO.getType());
                 article.setService(articleDTO.getService());
                 article.setArea(articleDTO.getArea());
 
-                // 게시글 저장
+                // 기존 이미지 처리
+                List<Image> existingImages = imageRepository.findByArticleNo(article);
+
+                // 기존 이미지 삭제
+                if (existingImages != null && !existingImages.isEmpty()) {
+                    for (Image image : existingImages) {
+                        // 기존 이미지 삭제
+                        objectStorageService.deleteFile(image.getImageUuidName(), bucketName, "storage/");
+                        imageRepository.delete(image);
+                    }
+                }
+
+                // 새 이미지 업로드 및 저장
+                if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
+                    // 새 이미지를 추가로 저장
+                    for (MultipartFile imageFile : articleDTO.getImageFiles()) {
+                        String cloudKey = objectStorageService.uploadFile(bucketName, "storage/", imageFile);
+
+                        Image newImage = new Image();
+                        newImage.setArticleNo(article);
+                        newImage.setMemberNo(article.getMemberNo());
+                        newImage.setImageName(imageFile.getOriginalFilename());
+                        newImage.setImageUuidName(cloudKey);
+                        imageRepository.save(newImage);
+                    }
+                }
+
+                // 기존 이미지는 다시 저장하지 않지만, 새 이미지를 처리했으므로 저장된 상태 유지
                 articleRepository.save(article);
                 return true;
             } else {
+                // 게시글이 없는 경우
                 return false;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
+
+
 
     // 게시글 삭제
     @Override

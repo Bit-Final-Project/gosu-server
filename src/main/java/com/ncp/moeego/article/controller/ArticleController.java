@@ -132,20 +132,8 @@ public class ArticleController {
 
 	    return ResponseEntity.ok(response);
 	}
-	
-//	// 게시글 작성
-//	@PostMapping("/article/write")
-//	public ResponseEntity<String> writeArticle(@RequestBody ArticleDTO articleDTO) {
-//	    boolean result = articleService.writeArticle(articleDTO);
-//
-//	    if (result) {
-//	        return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
-//	    } else {
-//	        return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
-//	    }
-//	}
-	
-	//ncp 게시글 작성
+
+	// ncp 추가 게시글 작성
 	@PostMapping("/article/write")
 	public ResponseEntity<String> writeArticle(
 	        @ModelAttribute ArticleDTO articleDTO,  // @RequestBody -> @ModelAttribute로 변경
@@ -168,16 +156,37 @@ public class ArticleController {
 	    }
 	}
 	
-	// 게시글 수정
+	// ncp 추가 게시글 수정
 	@PutMapping("/article/update/{articleNo}")
-	public ResponseEntity<String> updateArticle(@PathVariable("articleNo") Long articleNo, @RequestBody ArticleDTO articleDTO) {
-	    boolean result = articleService.updateArticle(articleNo, articleDTO);
+	public ResponseEntity<String> updateArticle(@PathVariable("articleNo") Long articleNo, 
+												@ModelAttribute ArticleDTO articleDTO, 
+												@RequestPart(value = "images", required = false) List<MultipartFile> images) {	    
+		
+		if (images != null) {
+		    for (MultipartFile image : images) {
+		        System.out.println(image.getOriginalFilename() + " :너 뭐오냐 ?");
+		    }
+		} else {
+		    System.out.println(images + " : 이미지가 없습니다.");
+		}
+		
+	    try {
+	        // ArticleDTO에 이미지 파일 리스트 설정 (null 처리)
+	        articleDTO.setImageFiles(images == null ? List.of() : images);
 
-	    if (result) {
-	        return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
-	    } else {
-	        return ResponseEntity.badRequest().body("게시글 수정 중 오류가 발생했습니다.");
+	        // 서비스 호출
+	        boolean result = articleService.updateArticle(articleNo, articleDTO);
+
+	        if (result) {
+	            return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
+	        } else {
+	            return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 	    }
+	    
 	}
 	
 	// 게시글 삭제
