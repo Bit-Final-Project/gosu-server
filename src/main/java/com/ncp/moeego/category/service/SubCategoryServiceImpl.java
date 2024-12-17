@@ -1,7 +1,7 @@
 package com.ncp.moeego.category.service;
 
-import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.bean.SubCategoryDTO;
+import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .stream()
                 .map(subCategory -> new SubCategoryDTO(
                         subCategory.getSubCateNo(),
-                        subCategory.getMainCateNo().getMainCateNo(), // MainCategory의 ID 추출
+                        subCategory.getMainCategory().getMainCateNo(), // MainCategory의 ID 추출
                         subCategory.getSubCateName()
                 ))
                 .collect(Collectors.toList());

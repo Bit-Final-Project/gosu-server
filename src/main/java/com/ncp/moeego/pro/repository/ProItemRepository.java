@@ -17,7 +17,7 @@ public interface ProItemRepository extends JpaRepository<ProItem, Long> {
     @Query(
             """
                     select new com.ncp.moeego.pro.dto.ItemResponse(
-                    p.pro.member.name, p.pro.member.profileImage, p.pro.member.address, p.subCategory.mainCateNo.mainCateName, p.subCategory.subCateName, p.subject, p.content, p.price, p.pro.star
+                    p.pro.member.name, p.pro.member.profileImage, p.pro.member.address, p.subCategory.mainCategory.mainCateName, p.subCategory.subCateName, p.subject, p.content, p.price, p.pro.star
                     )
                     from ProItem p
                     where p.proItemNo =:proItemNo

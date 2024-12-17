@@ -28,7 +28,7 @@ public class Article {
     private int view;
 
     private int type;
-    
+
     @Column(nullable = false) // NULL 값 허용 안 함
     private int likes = 0; // 기본값 설정
 
@@ -37,7 +37,7 @@ public class Article {
 
     @Column(length = 200)
     private String service;
-    
+
     @Column(length = 200)
     private String area;
 

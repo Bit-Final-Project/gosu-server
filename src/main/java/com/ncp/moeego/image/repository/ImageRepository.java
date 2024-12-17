@@ -17,7 +17,7 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long>{
 
-	List<Image> findByArticleNo_ArticleNo(Long articleNo);
+	List<Image> findByArticle_ArticleNo(Long articleNo);
 
 	// 프로필 등록시 이미 있다면 삭제
 	@Modifying
@@ -26,7 +26,7 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 	void deleteByImageUuidName(@Param("profileImage") String profileImage);
 
 	// uuid값 가져오기
-	Optional<Image> findByMemberNo(Optional<Member> member);
+	Optional<Image> findByMember(Optional<Member> member);
 
 
 

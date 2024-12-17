@@ -1,7 +1,7 @@
 package com.ncp.moeego.comment.repository;
 
-import com.ncp.moeego.comment.entity.Comment;
 import com.ncp.moeego.comment.dto.MemberCommentResponse;
+import com.ncp.moeego.comment.entity.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,5 +41,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     // 상세 게시글 댓글 수 카운트
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.article.articleNo = :articleNo AND c.commentStatus != 'DELETED'")
     Long countNonDeletedCommentsByArticleNo(@Param("articleNo") Long articleNo);
-    
+
 }

@@ -1,11 +1,6 @@
 package com.ncp.moeego.category.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -13,12 +8,12 @@ import lombok.Data;
 @Data
 public class MainCategory {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "main_cate_no")
-	private Long mainCateNo;
-	
-	@Column(name = "main_cate_name", length = 200)
-	private String mainCateName;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "main_cate_no")
+    private Long mainCateNo;
+
+    @Column(name = "main_cate_name", length = 200)
+    private String mainCateName;
+
 }
