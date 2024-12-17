@@ -2,7 +2,7 @@ package com.ncp.moeego.article.service;
 
 import java.util.List;
 
-import com.ncp.moeego.article.bean.Article;
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import org.springframework.data.domain.Page;
 

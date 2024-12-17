@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ncp.moeego.image.bean.Image;
+import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.image.bean.ImageDTO;
 import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.entity.Member;

@@ -1,4 +1,4 @@
-package com.ncp.moeego.category.bean;
+package com.ncp.moeego.category.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +22,7 @@ public class SubCategory {
 
 	@ManyToOne
 	@JoinColumn(name = "main_cate_no", nullable = false)
-	private MainCategory mainCateNo;
+	private MainCategory mainCategory;
 
 	@Column(name = "sub_cate_name", nullable = false, length = 100)
     private String subCateName;

@@ -3,7 +3,6 @@ package com.ncp.moeego.article.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,13 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ncp.moeego.article.bean.Article;
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.comment.repository.CommentRepository;
 import com.ncp.moeego.common.ConvertDate;
-import com.ncp.moeego.image.bean.Image;
-import com.ncp.moeego.image.bean.ImageDTO;
+import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.image.repository.ImageRepository;
 
 import com.ncp.moeego.member.entity.Member;

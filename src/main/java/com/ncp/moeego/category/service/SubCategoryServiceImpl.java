@@ -1,6 +1,6 @@
 package com.ncp.moeego.category.service;
 
-import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.bean.SubCategoryDTO;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
 import lombok.RequiredArgsConstructor;

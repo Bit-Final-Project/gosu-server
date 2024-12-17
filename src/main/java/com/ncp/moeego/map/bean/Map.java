@@ -20,7 +20,7 @@ public class Map {
 	
 	@OneToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private Member member;
 	
 	@Column(name = "map_path", length = 3000)
 	private String mapPath;

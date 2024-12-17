@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.ncp.moeego.image.bean.Image;
+import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.member.entity.Member;
 
 import jakarta.transaction.Transactional;

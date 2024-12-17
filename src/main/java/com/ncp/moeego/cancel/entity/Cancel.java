@@ -23,7 +23,7 @@ public class Cancel {
 	
 	@OneToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private Member member;
 	
 	@Column(length = 3000)
 	private String reason;

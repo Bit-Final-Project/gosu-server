@@ -1,4 +1,4 @@
-package com.ncp.moeego.category.bean;
+package com.ncp.moeego.category.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,6 +1,6 @@
 package com.ncp.moeego.pro.repository;
 
-import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.pro.dto.ItemResponse;
 import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.ProItem;

@@ -1,6 +1,6 @@
 package com.ncp.moeego.pro.service;
 
-import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
 import com.ncp.moeego.category.service.SubCategoryServiceImpl;
