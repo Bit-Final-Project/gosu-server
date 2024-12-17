@@ -1,8 +1,6 @@
 package com.ncp.moeego.pro.service;
 
-import com.ncp.moeego.pro.dto.FavoriteResponse;
-import com.ncp.moeego.pro.dto.ProApplyRequest;
-import com.ncp.moeego.pro.dto.ProJoinRequest;
+import com.ncp.moeego.pro.dto.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -16,4 +14,7 @@ public interface ProService {
 
     String deleteFavorites(Long memNo, List<Long> proNo);
 
+    String postItem(PostItemRequest postItemRequest);
+
+    ItemResponse getItemDetails(Long proItemNo);
 }

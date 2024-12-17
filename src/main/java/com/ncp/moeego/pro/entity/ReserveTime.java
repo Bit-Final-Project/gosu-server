@@ -29,7 +29,7 @@ public class ReserveTime {
     // 한명의 사용자는 여러개의 예약을 할수있고, 여러개의 예약 시간을 선택할수있다.
     @ManyToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private Member member;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
