@@ -3,6 +3,7 @@ package com.ncp.moeego.article.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -360,13 +361,10 @@ public class ArticleServiceImpl implements ArticleService {
                 article.setService(articleDTO.getService());
                 article.setArea(articleDTO.getArea());
 
-                // 기존 이미지 처리
-                List<Image> existingImages = imageRepository.findByArticle(article);
-
-                // 기존 이미지 삭제
-                if (existingImages != null && !existingImages.isEmpty()) {
-                    for (Image image : existingImages) {
-                        // 기존 이미지 삭제
+                // 삭제할 이미지 처리
+                if (articleDTO.getRemovedImageIds() != null && !articleDTO.getRemovedImageIds().isEmpty()) {
+                    List<Image> imagesToDelete = imageRepository.findByImageUuidNameIn(articleDTO.getRemovedImageIds());
+                    for (Image image : imagesToDelete) {
                         objectStorageService.deleteFile(image.getImageUuidName(), bucketName, "storage/");
                         imageRepository.delete(image);
                     }
@@ -374,7 +372,6 @@ public class ArticleServiceImpl implements ArticleService {
 
                 // 새 이미지 업로드 및 저장
                 if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
-                    // 새 이미지를 추가로 저장
                     for (MultipartFile imageFile : articleDTO.getImageFiles()) {
                         String cloudKey = objectStorageService.uploadFile(bucketName, "storage/", imageFile);
 
@@ -387,19 +384,17 @@ public class ArticleServiceImpl implements ArticleService {
                     }
                 }
 
-                // 기존 이미지는 다시 저장하지 않지만, 새 이미지를 처리했으므로 저장된 상태 유지
+                // 게시글 저장
                 articleRepository.save(article);
                 return true;
             } else {
-                // 게시글이 없는 경우
-                return false;
+                return false; // 게시글이 존재하지 않음
             }
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-
 
 
     // 게시글 삭제
