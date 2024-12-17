@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.pro.entity.ProItem;
-import com.ncp.moeego.pro.entity.Review;
+import com.ncp.moeego.review.entity.Review;
 
 @Entity
 @Data
