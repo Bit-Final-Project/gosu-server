@@ -79,7 +79,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 탈퇴 회원 조회
     @Query("SELECT new com.ncp.moeego.member.bean.CancelDTO(m.name, m.phone, m.email , c.cancelNo, c.cancelDate, c.reason) " +
-            "FROM Cancel c JOIN c.memberNo m")
+            "FROM Cancel c JOIN c.member m")
      List<CancelDTO> findAllCancelDetails();
 
     // 회원 프로필 이미지 업로드

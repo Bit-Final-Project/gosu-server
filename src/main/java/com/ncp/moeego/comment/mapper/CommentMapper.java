@@ -1,6 +1,6 @@
 package com.ncp.moeego.comment.mapper;
 
-import com.ncp.moeego.article.bean.Article;
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.comment.dto.CommentRequest;
 import com.ncp.moeego.comment.dto.CommentResponse;
 import com.ncp.moeego.comment.entity.Comment;
