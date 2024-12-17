@@ -63,22 +63,19 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m")
     List<Member> findAllUser();  // 일반 회원 조회
 
-    /*
-    // 고수 회원 조회
     @Query("SELECT DISTINCT new com.ncp.moeego.member.bean.ProDTO(" +
-    	       "p.member.memberNo, " +
-    	       "p.member.name, " +
-    	       "p.accessDate, " +
-    	       "p.star, " +
-    	       "p.depriveDate, " +
-    	       "p.subCategories, " +
-    	       "p.proNo, " +
-    	       "c.mainCateName) " +  // subCateName을 제외하고 mainCateName만 추가
-    	       "FROM Pro p " +
-    	       "LEFT JOIN p.mainCateNo c " + // mainCateNo로 조인
-    	       "WHERE c.mainCateName IS NOT NULL")  // mainCateName이 null이 아닌 경우만 가져옴
+            "p.member.memberNo, " +
+            "p.member.name, " +
+            "p.accessDate, " +
+            "p.star, " +
+            "p.depriveDate, " +
+            "p.proNo, " +
+            "p.mainCategory.mainCateName, " +  
+            "p.oneIntro, " +                   
+            "p.intro) " +                      
+            "FROM Pro p " +
+            "WHERE p.mainCategory.mainCateName IS NOT NULL")
     List<ProDTO> findProMembersWithDetails();
-*/
 
     // 탈퇴 회원 조회
     @Query("SELECT new com.ncp.moeego.member.bean.CancelDTO(m.name, m.phone, m.email , c.cancelNo, c.cancelDate, c.reason) " +

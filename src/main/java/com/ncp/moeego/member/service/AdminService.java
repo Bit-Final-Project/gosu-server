@@ -36,9 +36,9 @@ public interface AdminService {
 
 
 	List<Member> getUserMembers();
-/*
+
 	List<ProDTO> getProMembersWithDetails();
-*/
+
 	List<CancelDTO> getCancelMembersWithDetails();
 
 	
