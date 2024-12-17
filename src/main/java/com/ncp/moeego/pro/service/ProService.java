@@ -17,7 +17,9 @@ public interface ProService {
 
     String postItem(PostItemRequest postItemRequest);
 
-    ItemResponse getItemDetails(Long proItemNo);
+    ItemDetailResponse getItemDetails(Long proItemNo);
 
     Map<String, Object> getInitItem(Long memberNo);
+
+    Map<String, Object> getItemList(Long subCateNo, String location, int pg);
 }
