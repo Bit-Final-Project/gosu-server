@@ -1,10 +1,10 @@
 package com.ncp.moeego.comment.service;
 
-import com.ncp.moeego.comment.entity.Comment;
-import com.ncp.moeego.comment.entity.CommentStatus;
 import com.ncp.moeego.comment.dto.CommentRequest;
 import com.ncp.moeego.comment.dto.CommentResponse;
 import com.ncp.moeego.comment.dto.MemberCommentResponse;
+import com.ncp.moeego.comment.entity.Comment;
+import com.ncp.moeego.comment.entity.CommentStatus;
 import com.ncp.moeego.comment.mapper.CommentMapper;
 import com.ncp.moeego.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
     //회원 ID로 댓글 조회
     @Override
     public Page<MemberCommentResponse> findCommentsByMember(Long memberNo, int pg, int pageSize) {
-        Pageable pageable = PageRequest.of(pg-1, pageSize);
+        Pageable pageable = PageRequest.of(pg - 1, pageSize);
         return commentRepository.findByMember_MemberNo(memberNo, pageable);
     }
 
@@ -105,7 +104,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Page<CommentResponse> findPagedCommentsByArticle(Long articleNo, int pg, int pagesize) {
 
-        Pageable pageable = PageRequest.of(pg-1, pagesize);
+        Pageable pageable = PageRequest.of(pg - 1, pagesize);
 
         Page<Comment> commentList = commentRepository.findParentCommentsByArticle(articleNo, pageable);
 

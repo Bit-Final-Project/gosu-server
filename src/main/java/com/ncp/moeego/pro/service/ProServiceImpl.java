@@ -1,6 +1,6 @@
 package com.ncp.moeego.pro.service;
 
-import com.ncp.moeego.category.bean.SubCategory;
+import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
 import com.ncp.moeego.category.service.SubCategoryServiceImpl;
@@ -105,7 +105,7 @@ public class ProServiceImpl implements ProService {
 
         Pageable pageable = PageRequest.of(pg - 1, 10);
 
-        List<Long> proNoList = favoriteRepository.findProNosByMemberNo(memberNo);
+        List<Long> proNoList = favoriteRepository.findProsByMemberNo(memberNo);
 
         if (proNoList.isEmpty()) {
             return Page.empty(pageable);

@@ -1,6 +1,6 @@
-package com.ncp.moeego.image.bean;
+package com.ncp.moeego.image.entity;
 
-import com.ncp.moeego.article.bean.Article;
+import com.ncp.moeego.article.entity.Article;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +23,7 @@ public class Image {
 	
 	@ManyToOne // 여러개의 이미지를 한 리뷰에 넣을수있음
 	@JoinColumn(name="review_no")
-	private Review reviewNo;
+	private Review review;
 	
 	@ManyToOne // 여러개의 이미지를 고수 게시판에 넣을수있음
 	@JoinColumn(name="pro_item_no", nullable = true)
@@ -31,11 +31,11 @@ public class Image {
 
 	@ManyToOne // 여러개의 이미지를 게시판에 넣을수있음
 	@JoinColumn(name="article_no", nullable = true)
-	private Article articleNo;
+	private Article article;
 	
 	@ManyToOne // 여러개의 이미지를 사용자가 넣을수있음
 	@JoinColumn(name="member_no", nullable = false)
-	private Member memberNo;
+	private Member member;
 	
 	@Column(length = 3000)
 	private String imageName;

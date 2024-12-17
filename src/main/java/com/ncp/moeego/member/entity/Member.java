@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.ncp.moeego.map.bean.Map;
+import com.ncp.moeego.map.entity.Map;
 
 import java.time.LocalDateTime;
 
@@ -49,7 +49,7 @@ public class Member {
     @Column(name = "join_date")
     private LocalDateTime joinDate = LocalDateTime.now();
 
-    @OneToOne(mappedBy = "memberNo", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Map map;
 
 }
