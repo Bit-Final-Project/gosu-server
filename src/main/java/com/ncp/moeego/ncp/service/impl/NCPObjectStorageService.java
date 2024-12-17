@@ -60,7 +60,7 @@ public class NCPObjectStorageService implements ObjectStorageService{
 		
 		// 프로필 수정시 이미 프로필 있으면 삭제 후 재 업로드
 		@Override
-		public void memberDeleteFile(String profileImage, String bucketName, String directoryPath) {
+		public void deleteFile(String profileImage, String bucketName, String directoryPath) {
 
 			s3.deleteObject(bucketName, directoryPath + profileImage);
 			

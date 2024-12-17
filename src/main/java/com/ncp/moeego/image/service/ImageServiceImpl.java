@@ -85,7 +85,7 @@ public class ImageServiceImpl implements ImageService{
 	            imageRepository.deleteByImageUuidName(profileImage);
 
 	            // 오브젝트 스토리지에서 삭제
-	            objectStorageService.memberDeleteFile(profileImage, bucketName, "profile/");
+	            objectStorageService.deleteFile(profileImage, bucketName, "profile/");
 	        }
 	        
 	        // 2. 오브젝트 스토리지에 업로드
@@ -97,7 +97,7 @@ public class ImageServiceImpl implements ImageService{
 	        image.setMemberNo(member.get()); // 사용자 연결
 	        image.setImageUuidName(cloudKey); // 스토리지의 키 저장
 	        image.setArticleNo(null); 
-	        image.setProArticleNo(null);
+	        image.setProServiceItem(null);
 	        image.setReviewNo(null);
 	        imageRepository.save(image);
 
@@ -133,7 +133,7 @@ public class ImageServiceImpl implements ImageService{
 	        }
 
 	        // NCP 오브젝트 스토리지에서 프로필 이미지 삭제
-	        objectStorageService.memberDeleteFile(profileImageUuid, bucketName, "profile/");
+	        objectStorageService.deleteFile(profileImageUuid, bucketName, "profile/");
 
 	        // image 테이블에서 해당 프로필 이미지 UUID와 일치하는 레코드 삭제
 	        imageRepository.deleteByImageUuidName(profileImageUuid);

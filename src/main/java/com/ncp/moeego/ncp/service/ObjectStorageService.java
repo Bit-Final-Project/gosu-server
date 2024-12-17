@@ -6,6 +6,6 @@ public interface ObjectStorageService {
 
 	String uploadFile(String bucketName, String directoryPath, MultipartFile imageFile);
 
-	void memberDeleteFile(String profileImage, String bucketName, String directoryPath);
+	void deleteFile(String profileImage, String bucketName, String directoryPath);
 
 }
