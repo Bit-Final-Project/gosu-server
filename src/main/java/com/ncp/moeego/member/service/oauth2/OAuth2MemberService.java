@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,9 +66,10 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     @Transactional
     void saveUser(OAuth2Response response, String naverId, String memberStatus) {
         // DB 조회
-        Member existData = memberRepository.findByEmail(naverId).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        Optional<Member> optionalMember = memberRepository.findByEmail(naverId);
 
-        if (existData != null) {
+        if (optionalMember.isPresent()) {
+            Member existData = optionalMember.get();
             existData.setEmail(naverId);
             existData.setName(response.getName());
             existData.setPhone(response.getPhone() == null ? existData.getPhone() : response.getPhone());

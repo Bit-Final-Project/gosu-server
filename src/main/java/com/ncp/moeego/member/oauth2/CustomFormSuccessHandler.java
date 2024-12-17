@@ -39,7 +39,7 @@ public class CustomFormSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String memberStatus = authentication.getAuthorities().iterator().next().getAuthority();
 
         // access
-        String access = jwtUtil.createJwt("access", jwtDTO, memberStatus, 10 * 1000L);
+        String access = jwtUtil.createJwt("access", jwtDTO, memberStatus, 60 * 10 * 1000L);
         response.setHeader("access", access);
 
         // refresh
