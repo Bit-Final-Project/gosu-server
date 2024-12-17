@@ -1,6 +1,6 @@
 package com.ncp.moeego.category.repository;
 
-import com.ncp.moeego.category.bean.MainCategory;
+import com.ncp.moeego.category.entity.MainCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,10 +1,16 @@
 package com.ncp.moeego.article.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.ncp.moeego.article.bean.ArticleDTO;
+import com.ncp.moeego.article.entity.Article;
+import com.ncp.moeego.article.repository.ArticleRepository;
+import com.ncp.moeego.comment.repository.CommentRepository;
+import com.ncp.moeego.common.ConvertDate;
+import com.ncp.moeego.image.entity.Image;
+import com.ncp.moeego.image.repository.ImageRepository;
+import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.repository.MemberRepository;
+import com.ncp.moeego.ncp.service.ObjectStorageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,20 +18,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ncp.moeego.article.bean.Article;
-import com.ncp.moeego.article.bean.ArticleDTO;
-import com.ncp.moeego.article.repository.ArticleRepository;
-import com.ncp.moeego.comment.repository.CommentRepository;
-import com.ncp.moeego.common.ConvertDate;
-import com.ncp.moeego.image.bean.Image;
-import com.ncp.moeego.image.bean.ImageDTO;
-import com.ncp.moeego.image.repository.ImageRepository;
-
-import com.ncp.moeego.member.entity.Member;
-import com.ncp.moeego.member.repository.MemberRepository;
-import com.ncp.moeego.ncp.service.ObjectStorageService;
-
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,17 +29,16 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-    
-    
+
+
     private final ImageRepository imageRepository;
-    
+
     // 네이버 클라우드
     private final ObjectStorageService objectStorageService;
-    
+
     private String bucketName = "moeego";
-    
-    
-    
+
+
     // memberNo맞춰서 이름 가져오는 로직
     public String getMemberNameByMemberNo(Long memberNo) {
         Optional<Member> member = memberRepository.findById(memberNo); // memberNo로 Member 조회
@@ -97,8 +91,8 @@ public class ArticleServiceImpl implements ArticleService {
     // 좋아요 순으로 조회(인기 게시글)
     @Override
     public Page<ArticleDTO> getHotArticleByPage(int pg, int pageSize) {
-        
-    	// Pageable 객체 생성: likes 기준 내림차순 정렬
+
+        // Pageable 객체 생성: likes 기준 내림차순 정렬
         Pageable pageable = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("likes")));
 
         // 단일 쿼리로 게시글과 댓글 수를 함께 조회
@@ -110,28 +104,27 @@ public class ArticleServiceImpl implements ArticleService {
             Long commentCount = (Long) result[1];
 
             String elapsedTime = ConvertDate.calculateDate(article.getWriteDate()); // 경과 시간 계산
-            String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo()); // 회원 이름 가져오기
+            String memberName = getMemberNameByMemberNo(article.getMember().getMemberNo()); // 회원 이름 가져오기
 
             return new ArticleDTO(
-                article.getArticleNo(),
-                article.getSubject(),
-                article.getContent(),
-                article.getView(),
-                article.getType(),
-                article.getWriteDate(),
-                article.getMemberNo().getMemberNo(),
-                article.getLikes(),
-                elapsedTime,
-                memberName,
-                article.getService(),
-                article.getArea(),
-                commentCount.intValue()
+                    article.getArticleNo(),
+                    article.getSubject(),
+                    article.getContent(),
+                    article.getView(),
+                    article.getType(),
+                    article.getWriteDate(),
+                    article.getMember().getMemberNo(),
+                    article.getLikes(),
+                    elapsedTime,
+                    memberName,
+                    article.getService(),
+                    article.getArea(),
+                    commentCount.intValue()
             );
         });
     }
 
 
-    
     // 전체 게시글 조회 페이징 성능 개선 후
     @Override
     public Page<ArticleDTO> getArticleListByPage(int pg, int pageSize) {
@@ -145,26 +138,26 @@ public class ArticleServiceImpl implements ArticleService {
             Long commentCount = (Long) result[1];
 
             String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
-            String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+            String memberName = getMemberNameByMemberNo(article.getMember().getMemberNo());
 
             return new ArticleDTO(
-                    article.getArticleNo(), 
-                    article.getSubject(), 
-                    article.getContent(), 
+                    article.getArticleNo(),
+                    article.getSubject(),
+                    article.getContent(),
                     article.getView(),
-                    article.getType(), 
-                    article.getWriteDate(), 
-                    article.getMemberNo().getMemberNo(), 
+                    article.getType(),
+                    article.getWriteDate(),
+                    article.getMember().getMemberNo(),
                     article.getLikes(),
-                    elapsedTime, 
+                    elapsedTime,
                     memberName,
                     article.getService(),
                     article.getArea(),
                     commentCount.intValue());
         });
     }
-    
-    
+
+
 //    // 전체 게시글 조회 페이징 성능 개선 전
 //    @Override
 //    public Page<ArticleDTO> getArticleListByPage(int pg, int pageSize) {
@@ -193,10 +186,8 @@ public class ArticleServiceImpl implements ArticleService {
 //                    commentCount);
 //        });
 //    }
-    
-    
-    
-    
+
+
     // Type 별 게시판 조회
     @Override
     public Page<ArticleDTO> getTypeArticles(int pg, int pageSize, int type) {
@@ -210,23 +201,23 @@ public class ArticleServiceImpl implements ArticleService {
             Long commentCount = (Long) result[1];
 
             String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
-            String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+            String memberName = getMemberNameByMemberNo(article.getMember().getMemberNo());
 
             return new ArticleDTO(
-                article.getArticleNo(),
-                article.getSubject(),
-                article.getContent(),
-                article.getView(),
-                article.getType(),
-                
-                article.getWriteDate(),
-                article.getMemberNo().getMemberNo(),
-                article.getLikes(),
-                elapsedTime,
-                memberName,
-                article.getService(),
-                article.getArea(),
-                commentCount.intValue()
+                    article.getArticleNo(),
+                    article.getSubject(),
+                    article.getContent(),
+                    article.getView(),
+                    article.getType(),
+
+                    article.getWriteDate(),
+                    article.getMember().getMemberNo(),
+                    article.getLikes(),
+                    elapsedTime,
+                    memberName,
+                    article.getService(),
+                    article.getArea(),
+                    commentCount.intValue()
             );
         });
     }
@@ -241,25 +232,25 @@ public class ArticleServiceImpl implements ArticleService {
         // 조회된 Article 엔티티를 ArticleDTO로 변환하여 반환
         ArticleDTO articleDTO = new ArticleDTO();
         articleDTO.setArticleNo(article.getArticleNo());
-        articleDTO.setMemberNo(article.getMemberNo().getMemberNo());
+        articleDTO.setMemberNo(article.getMember().getMemberNo());
         articleDTO.setSubject(article.getSubject());
         articleDTO.setContent(article.getContent());
         articleDTO.setView(article.getView());
         articleDTO.setType(article.getType());
         articleDTO.setWriteDate(article.getWriteDate());
         articleDTO.setLikes(article.getLikes());
-        
+
         String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
-        String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
-     
+        String memberName = getMemberNameByMemberNo(article.getMember().getMemberNo());
+
         // 시간을 포맷하여 변환
         articleDTO.setElapsedTime(elapsedTime);
-        
+
         // 작성자 이름, 서비스, 지역 등의 추가 정보를 설정
         articleDTO.setMemberName(memberName);
         articleDTO.setService(article.getService());
         articleDTO.setArea(article.getArea());
-        
+
         // 댓글 수 설정 (쿼리에서 가져온 값 사용)
         Long commentCount = commentRepository.countNonDeletedCommentsByArticleNo(articleNo);
         articleDTO.setCommentCount(commentCount.intValue());
@@ -267,7 +258,7 @@ public class ArticleServiceImpl implements ArticleService {
         return articleDTO;
 
     }
-    
+
 
     // 마이페이지 작성한 게시글 조회
     @Override
@@ -282,22 +273,22 @@ public class ArticleServiceImpl implements ArticleService {
             Long commentCount = (Long) result[1];
 
             String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
-            String memberName = getMemberNameByMemberNo(article.getMemberNo().getMemberNo());
+            String memberName = getMemberNameByMemberNo(article.getMember().getMemberNo());
 
             return new ArticleDTO(
-                article.getArticleNo(),
-                article.getSubject(),
-                article.getContent(),
-                article.getView(),
-                article.getType(),
-                article.getWriteDate(),
-                article.getMemberNo().getMemberNo(),
-                article.getLikes(),
-                elapsedTime,
-                memberName,
-                article.getService(),
-                article.getArea(),
-                commentCount.intValue()
+                    article.getArticleNo(),
+                    article.getSubject(),
+                    article.getContent(),
+                    article.getView(),
+                    article.getType(),
+                    article.getWriteDate(),
+                    article.getMember().getMemberNo(),
+                    article.getLikes(),
+                    elapsedTime,
+                    memberName,
+                    article.getService(),
+                    article.getArea(),
+                    commentCount.intValue()
             );
         });
     }
@@ -320,7 +311,7 @@ public class ArticleServiceImpl implements ArticleService {
             // Member 조회 및 설정
             Optional<Member> member = memberRepository.findById(articleDTO.getMemberNo());
             if (member.isPresent()) {
-                article.setMemberNo(member.get());
+                article.setMember(member.get());
             } else {
                 return false; // Member가 없으면 실패 처리
             }
@@ -336,8 +327,8 @@ public class ArticleServiceImpl implements ArticleService {
 
                     // 2. 업로드된 이미지 정보를 DB에 저장
                     Image image = new Image();
-                    image.setArticleNo(savedArticle); // 게시글과 연결
-                    image.setMemberNo(member.get()); // 작성자와 연결
+                    image.setArticle(savedArticle); // 게시글과 연결
+                    image.setMember(member.get()); // 작성자와 연결
                     image.setImageName(imageFile.getOriginalFilename());
                     image.setImageUuidName(cloudKey); // 스토리지의 키 저장
                     imageRepository.save(image);
@@ -352,9 +343,6 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
-
-
-    
     // 게시글 수정
     @Override
     public boolean updateArticle(Long articleNo, ArticleDTO articleDTO) {
