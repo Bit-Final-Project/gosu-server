@@ -21,8 +21,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException e) {
         String location = getExceptionLocation(e);
         log.error("IllegalArgumentException 발생: {} at {}", e.getMessage(), location);
-        ApiResponse<Void> response = ApiResponse.error(
-                String.format("잘못된 요청입니다. (%s)", location), "INVALID_ARGUMENT"
+        ApiResponse<Void> response = ApiResponse.error(e.getMessage(), "INVALID_ARGUMENT"
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }

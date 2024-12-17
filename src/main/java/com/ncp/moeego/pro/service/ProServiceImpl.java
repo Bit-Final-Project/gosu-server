@@ -1,19 +1,19 @@
 package com.ncp.moeego.pro.service;
 
+import com.ncp.moeego.category.bean.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
+import com.ncp.moeego.category.repository.SubCategoryRepository;
 import com.ncp.moeego.category.service.SubCategoryServiceImpl;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
-import com.ncp.moeego.pro.dto.FavoriteResponse;
-import com.ncp.moeego.pro.dto.ProApplyRequest;
-import com.ncp.moeego.pro.dto.ProJoinRequest;
+import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.Pro;
-import com.ncp.moeego.pro.entity.ProServiceItem;
+import com.ncp.moeego.pro.entity.ProItem;
+import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
-import com.ncp.moeego.pro.repository.ProServiceItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,19 +28,21 @@ import java.util.List;
 public class ProServiceImpl implements ProService {
 
     private final MemberServiceImpl memberService;
+    private final SubCategoryServiceImpl subCategoryService;
     private final ProRepository proRepository;
     private final MainCategoryRepository mainCategoryRepository;
     private final FavoriteRepository favoriteRepository;
-    private final SubCategoryServiceImpl subCategoryService;
-    private final ProServiceItemRepository proServiceItemRepository;
+    private final ProItemRepository proItemRepository;
+    private final SubCategoryRepository subCategoryRepository;
 
-    public ProServiceImpl(MemberServiceImpl memberService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, SubCategoryServiceImpl subCategoryService, ProServiceItemRepository proServiceItemRepository) {
+    public ProServiceImpl(MemberServiceImpl memberService, SubCategoryServiceImpl subCategoryService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, ProItemRepository proItemRepository, SubCategoryRepository subCategoryRepository) {
         this.memberService = memberService;
+        this.subCategoryService = subCategoryService;
         this.proRepository = proRepository;
         this.mainCategoryRepository = mainCategoryRepository;
         this.favoriteRepository = favoriteRepository;
-        this.subCategoryService = subCategoryService;
-        this.proServiceItemRepository = proServiceItemRepository;
+        this.proItemRepository = proItemRepository;
+        this.subCategoryRepository = subCategoryRepository;
     }
 
     @Transactional
@@ -80,20 +82,21 @@ public class ProServiceImpl implements ProService {
 
         Pro pro = new Pro();
         pro.setMember(memberService.getMemberById(proApplyRequest.getMemberNo()));
-        pro.setMainCateNo(mainCategoryRepository.findById(proApplyRequest.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 메인카테고리: " + proApplyRequest.getMainCateNo())));
+        pro.setMainCategory(mainCategoryRepository.findById(proApplyRequest.getMainCateNo()).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 메인카테고리: " + proApplyRequest.getMainCateNo())));
         pro.setOneIntro(proApplyRequest.getOneIntro());
         pro.setIntro(proApplyRequest.getIntro());
-        proRepository.save(pro);
-
-        memberService.setMemberStatus(proApplyRequest.getMemberNo(), MemberStatus.ROLE_PEND_PRO);
 
         for (Long subCateNo : proApplyRequest.getSubCategories()) {
-            ProServiceItem proServiceItem = new ProServiceItem();
-            proServiceItem.setPro(pro);
-            proServiceItem.setSubCategory(subCategoryService.getSubCategoryById(subCateNo));
-            proServiceItem.setItemStatus(ItemStatus.PENDING);
-            proServiceItemRepository.save(proServiceItem);
+            ProItem proItem = new ProItem();
+            proItem.setPro(pro);
+            proItem.setSubCategory(subCategoryService.getSubCategoryById(subCateNo));
+            proItem.setItemStatus(ItemStatus.PENDING);
+            pro.getProItems().add(proItem);
+
         }
+
+        proRepository.save(pro);
+        memberService.setMemberStatus(proApplyRequest.getMemberNo(), MemberStatus.ROLE_PEND_PRO);
 
     }
 
@@ -124,7 +127,41 @@ public class ProServiceImpl implements ProService {
 
         return "찜한 달인 삭제 성공";
 
-
     }
 
+    @Transactional
+    @Override
+    public String postItem(PostItemRequest postItemRequest) {
+
+        SubCategory subCategory = subCategoryRepository.findById(postItemRequest.getSubCateNo()).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 서브카테고리입니다 : " + postItemRequest.getSubCateNo()));
+
+        ProItem proItem = proItemRepository.findProItemsByPro_ProNoAndSubCategory(postItemRequest.getProNo(), subCategory);
+        log.info("proItem : {}", proItem);
+
+        if (!proItem.getItemStatus().equals(ItemStatus.ACTIVE)) {
+            throw new IllegalArgumentException("승인되지 않은 서비스입니다.");
+        }
+
+        proItem.setSubject(postItemRequest.getSubject());
+        proItem.setContent(postItemRequest.getContent());
+        proItem.setPrice(postItemRequest.getPrice());
+
+        proItemRepository.save(proItem);
+
+        return "달인 서비스 등록 성공";
+    }
+
+
+    @Override
+    public ItemResponse getItemDetails(Long proItemNo) {
+
+
+        if (!proItemRepository.existsByProItemNoAndItemStatus(proItemNo, ItemStatus.ACTIVE)) {
+            throw new IllegalArgumentException("승인되지 않은 서비스입니다 : " + proItemNo + "번");
+
+        }
+
+        return proItemRepository.getItemDetails(proItemNo);
+
+    }
 }

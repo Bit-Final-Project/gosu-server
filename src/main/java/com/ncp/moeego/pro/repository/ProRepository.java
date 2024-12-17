@@ -18,7 +18,7 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
     @Query(
             """
                     SELECT new com.ncp.moeego.pro.dto.FavoriteResponse(
-                                p.proNo, p.member.name, p.member.profileImage,p.mainCateNo.mainCateNo,
+                                p.proNo, p.member.name, p.member.profileImage,p.mainCategory.mainCateNo,
                                 p.star, p.oneIntro
                                 )
                     From Pro p
