@@ -33,4 +33,6 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 
 	Optional<Image> findByMember(Optional<Member> member);
 
+	List<Image> findByImageUuidNameIn(List<String> removedImageIds);
+
 }
