@@ -20,10 +20,6 @@ public class Review {
     @JoinColumn(name = "pro_item_no", nullable = false)
     private ProItem proItem;
 
-    @OneToOne // 해당 고수의 카테고리 전용 게시판이 존재함
-    @JoinColumn(name = "main_cate_no", nullable = false)
-    private MainCategory mainCategory;
-
     @ManyToOne // 고수 게시판에 사용자는 여러개의 리뷰를 작성할수있음
     @JoinColumn(name = "member_no", nullable = false)
     private Member member;

@@ -1,6 +1,8 @@
 package com.ncp.moeego.review.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,11 +50,6 @@ public class ReviewServiceImpl implements ReviewService{
 	        review.setStar(reviewDTO.getStar());
 	        review.setWriteDate(LocalDateTime.now());
 
-	        // MainCategory 조회 및 설정
-	        MainCategory mainCategory = mainCategoryRepository.findById(reviewDTO.getMainCateNo())
-	                .orElseThrow(() -> new IllegalArgumentException("Invalid mainCategoryNo"));
-	        review.setMainCategory(mainCategory);
-
 	        // ProItem 조회 및 설정
 	        ProItem proItem = proItemRepository.findById(reviewDTO.getProItemNo())
 	                .orElseThrow(() -> new IllegalArgumentException("Invalid proItemNo"));
@@ -95,7 +92,6 @@ public class ReviewServiceImpl implements ReviewService{
 
 	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
 
-	    // 성능 개선을 위한 단일 쿼리로 필요한 데이터 조회
 	    Page<Object[]> reviewPage = reviewRepository.findReviewsWithDetails(pageRequest);
 
 	    return reviewPage.map(result -> {
@@ -111,6 +107,75 @@ public class ReviewServiceImpl implements ReviewService{
 
 	        return new ReviewDTO(
 	        		reviewNo,
+	                proName,
+	                star,
+	                subject,
+	                review.getReviewContent(),
+	                memberName,
+	                review.getWriteDate(),
+	                elapsedTime
+	        );
+	    });
+	}
+
+	// 리뷰 삭제
+	@Override
+	public boolean deleteReview(Long reviewNo) {
+		try {
+			
+			Optional<Review> optionalReview = reviewRepository.findById(reviewNo);
+			
+			if(optionalReview.isPresent()) {
+				Review review = optionalReview.get();
+				
+				// 리뷰와 연결된 이미지 조회
+				List<Image> images = imageRepository.findByReview(review);
+				
+				if(images != null && !images.isEmpty()) {
+					for(Image image : images) {
+						// 오브젝트 스토리지 이미지 삭제
+						objectStorageService.deleteFile(image.getImageUuidName(), bucketName, "storage/");
+						
+						// 이미지 엔티티 삭제
+						imageRepository.delete(image);
+					}
+				}
+				
+				// 리뷰 삭제
+				reviewRepository.deleteById(reviewNo);
+				return true;
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return false;
+	}
+
+	// 내가 작성한 리뷰
+	@Override
+	public Page<ReviewDTO> getMyReviews(Long memberNo, int pg, int pageSize) {
+
+	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
+
+	    // memberNo로 리뷰 조회
+	    Page<Object[]> reviewPage = reviewRepository.findReviewsByMemberNo(memberNo, pageRequest);
+
+	    return reviewPage.map(result -> {
+	        Long reviewNo = (Long) result[0];
+	        Review review = (Review) result[1];
+	        float star = (float) result[2]; 
+	        String proName = (String) result[3]; // 달인 이름
+	        String subject = (String) result[4]; // 서비스 이름
+	        String memberName = (String) result[5]; // 리뷰 작성자 이름
+
+	        // 작성일 기준 경과 시간 계산
+	        String elapsedTime = ConvertDate.calculateDate(review.getWriteDate());
+
+	        return new ReviewDTO(
+	                reviewNo,
 	                proName,
 	                star,
 	                subject,

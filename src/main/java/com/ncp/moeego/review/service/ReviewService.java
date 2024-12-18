@@ -10,4 +10,8 @@ public interface ReviewService {
 
 	Page<ReviewDTO> getReviewListByPage(int pg, int pageSize);
 
+	boolean deleteReview(Long reviewNo);
+
+	Page<ReviewDTO> getMyReviews(Long member_no, int pg, int pageSize);
+
 }
