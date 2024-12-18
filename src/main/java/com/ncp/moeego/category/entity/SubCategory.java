@@ -1,5 +1,6 @@
 package com.ncp.moeego.category.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ public class SubCategory {
     @Column(name = "sub_cate_no")
     private Long subCateNo;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "main_cate_no", nullable = false)
     private MainCategory mainCategory;

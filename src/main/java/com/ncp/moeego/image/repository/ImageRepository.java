@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.member.entity.Member;
 
@@ -26,8 +27,12 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 	void deleteByImageUuidName(@Param("profileImage") String profileImage);
 
 	// uuid값 가져오기
+	
+	// 게시글 번호 기준으로 이미지 리스트 조회
+	List<Image> findByArticle(Article article);
+
 	Optional<Image> findByMember(Optional<Member> member);
 
-
+	List<Image> findByImageUuidNameIn(List<String> removedImageIds);
 
 }

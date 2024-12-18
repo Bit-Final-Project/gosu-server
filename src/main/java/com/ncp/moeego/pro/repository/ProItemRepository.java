@@ -1,7 +1,7 @@
 package com.ncp.moeego.pro.repository;
 
 import com.ncp.moeego.category.entity.SubCategory;
-import com.ncp.moeego.pro.dto.ItemResponse;
+import com.ncp.moeego.pro.dto.ItemDetailResponse;
 import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
@@ -20,13 +20,13 @@ public interface ProItemRepository extends JpaRepository<ProItem, Long> {
 
     @Query(
             """
-                    select new com.ncp.moeego.pro.dto.ItemResponse(
+                    select new com.ncp.moeego.pro.dto.ItemDetailResponse(
                     p.pro.member.name, p.pro.member.profileImage, p.pro.member.address, p.subCategory.mainCategory.mainCateName, p.subCategory.subCateName, p.subject, p.content, p.price, p.pro.star
                     )
                     from ProItem p
                     where p.proItemNo =:proItemNo
                     """)
-    ItemResponse getItemDetails(@Param("proItemNo") Long proItemNo);
+    ItemDetailResponse getItemDetails(@Param("proItemNo") Long proItemNo);
 
     boolean existsByProItemNoAndItemStatus(Long proItemNo, ItemStatus itemStatus);
     

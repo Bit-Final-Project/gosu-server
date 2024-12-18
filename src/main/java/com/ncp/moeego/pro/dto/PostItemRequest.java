@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PostItemRequest {
-    private Long proNo;
+    private Long proNo; // memNo로 가져오기
     private Long subCateNo;
     private String subject;
     private String content;

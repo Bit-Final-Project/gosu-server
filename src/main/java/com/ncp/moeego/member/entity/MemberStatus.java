@@ -7,7 +7,6 @@ public enum MemberStatus {
     ROLE_PEND_PRO(3, "달인 미승인"),
     ROLE_CANCEL_PRO(4, "달인 박탈"),
     ROLE_CANCEL(99, "회원 탈퇴");
-
     private final int code;
     private final String description;
 

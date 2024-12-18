@@ -1,10 +1,11 @@
 package com.ncp.moeego.article.service;
 
-import com.ncp.moeego.article.bean.ArticleDTO;
-import com.ncp.moeego.article.entity.Article;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
-import java.util.List;
+import com.ncp.moeego.article.bean.ArticleDTO;
+import com.ncp.moeego.article.entity.Article;
 
 public interface ArticleService {
 

@@ -76,22 +76,29 @@ public class ProController {
 
     }
 
+    @GetMapping("/item/init")
+    public ResponseEntity<?> getItemInit(@RequestParam("memberNo") Long memberNo) {
+        log.info("달인 서비스 등록 요청: " + memberNo);
+
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", proService.getInitItem(memberNo)));
+
+    }
+
     // 달인 서비스 리스트
     @GetMapping("/item")
-    public ResponseEntity<?> getItemList() {
-        return ResponseEntity.ok(ApiResponse.success("즐"));
+    public ResponseEntity<?> getItemList(@RequestParam(value = "subCateNo", required = false) Long subCateNo, @RequestParam(value = "location", required = false) String location, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+        log.info(location + subCateNo);
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", proService.getItemList(subCateNo, location, pg)));
 
     }
 
     // 달인 서비스 상세보기
-    @GetMapping("/item/{proItemNo}")
-    public ResponseEntity<?> getItemDetails(@PathVariable Long proItemNo) {
-        ItemResponse itemResponse = proService.getItemDetails(proItemNo);
+    @GetMapping("/item/detail")
+    public ResponseEntity<?> getItemDetails(@RequestParam("proItemNo") Long proItemNo) {
+        ItemDetailResponse itemDetailResponse = proService.getItemDetails(proItemNo);
 
-        return ResponseEntity.ok(ApiResponse.success("조회 성공", itemResponse));
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", itemDetailResponse));
 
     }
-
-
 
 }

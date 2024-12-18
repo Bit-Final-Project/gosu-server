@@ -95,6 +95,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member m SET m.profileImage = :cloudKey WHERE m = :member")
     void updateProfileImage(@Param("member") Member member, @Param("cloudKey") String cloudKey);
     
+
+    // 회원 프로필 이미지 업로드 시 게시글 작성해도 하나만 가져오기
+    @Query("SELECT m FROM Member m " +
+    	       "LEFT JOIN Image i ON i.member = m " +
+    	       "WHERE m.memberNo = :memberNo " +
+    	       "AND (i.article IS NULL AND i.review IS NULL AND i.proItem IS NULL)")
+    Optional<Member> findByIdWithEmptyImage(@Param("memberNo") Long memberNo);
     
     // 회원 프로필 이미지 삭제
     @Modifying
@@ -102,8 +109,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
 
-    //해당 번호의 member 조회
-    Optional<Member> findByMemberNo(Long memberNo);
+
     
     
 }
