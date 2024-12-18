@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.ncp.moeego.article.entity.Article;
+import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
@@ -42,6 +44,9 @@ public interface AdminService {
 	List<CancelDTO> getCancelMembersWithDetails();
 
 	void revokeMember(Long memberNo);
+
+	List<ArticleImageDTO> getArticlesWithImages();
+
 
 	
 

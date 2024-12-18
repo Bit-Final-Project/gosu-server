@@ -72,4 +72,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus != 'DELETED' GROUP BY a ORDER BY a.likes DESC")
     Page<Object[]> findHotArticlesWithCommentCount(Pageable pageable);
 
+
 }

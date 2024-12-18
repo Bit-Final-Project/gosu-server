@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ncp.moeego.article.entity.Article;
+import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
@@ -152,6 +154,15 @@ public class AdminController {
         return ResponseEntity.ok(cancelMembers);
     }
 
+    
+    // 이벤트 및 공지 페이지 조회
+    @GetMapping("/admin/article")
+    public List<ArticleImageDTO> getArticlesWithImages() {
+        return adminService.getArticlesWithImages();
+    }
+    
+    //새 이벤트/공지 등록
+    
     
     
     

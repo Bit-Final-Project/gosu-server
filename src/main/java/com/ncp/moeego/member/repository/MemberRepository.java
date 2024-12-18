@@ -1,8 +1,10 @@
 package com.ncp.moeego.member.repository;
 
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.cancel.entity.Cancel;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.SignOutDTO;
+import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
@@ -109,7 +111,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
 
-
+    //공지 및 이벤트 게시판 조회
+    @Query("SELECT new com.ncp.moeego.member.bean.ArticleImageDTO(a.articleNo, a.subject, a.content, a.type, i.imageNo, i.imageUuidName, a.writeDate) " +
+    	       "FROM Article a " +
+    	       "JOIN Image i ON a.articleNo = i.article.articleNo " +
+    	       "WHERE a.type IN (0, 1)")
+    List<ArticleImageDTO> findArticlesWithImages();
+ 
     
     
 }

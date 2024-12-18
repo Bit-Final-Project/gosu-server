@@ -12,7 +12,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
+import com.ncp.moeego.article.entity.Article;
+import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.cancel.entity.Cancel;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
@@ -36,6 +39,7 @@ public class AdminServiceImpl implements AdminService {
     private final MemberRepository memberRepository;
     private final ProRepository proRepository;
     private final ProItemRepository proItemRepository;
+    private final ArticleRepository articleRepository;
 
     @Override
     public int getRoleUserCount() {
@@ -226,6 +230,11 @@ public class AdminServiceImpl implements AdminService {
         return memberRepository.findAllCancelDetails();
     }
 
+	// 이벤트 및 공지 페이지 조회
+	public List<ArticleImageDTO> getArticlesWithImages() {
+        return memberRepository.findArticlesWithImages();
+    }
+	
 	
 }
 
