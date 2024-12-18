@@ -40,6 +40,5 @@ public class ReviewDTO {
         this.writeDate = writeDate;
         this.elapsedTime = elapsedTime;
     }
-    
-    
+
 }

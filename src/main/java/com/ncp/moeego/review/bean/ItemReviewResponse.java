@@ -4,6 +4,7 @@ import com.ncp.moeego.common.ConvertDate;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ItemReviewResponse {
@@ -17,6 +18,7 @@ public class ItemReviewResponse {
     private String elapsedTime;  // 경과 시간 (서비스 계층에서 계산)
     private Long proItemNo;            // ProItem의 ID
     private Long memberNo;             // Member의 ID
+    private List <String> imageUuidNames; //
 
     public ItemReviewResponse(Long reviewNo, String reviewContent, float star, LocalDateTime writeDate, String proName, String subject, String memberName, Long proItemNo, Long memberNo) {
         this.reviewNo = reviewNo;

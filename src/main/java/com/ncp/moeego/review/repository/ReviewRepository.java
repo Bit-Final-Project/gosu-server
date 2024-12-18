@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import com.ncp.moeego.review.entity.Review;
 
+import java.util.List;
+
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>{
 
@@ -46,4 +48,6 @@ r.reviewNo,r.reviewContent, r.star, r.writeDate, r.proItem.pro.member.name, r.pr
 where r.proItem.proItemNo = :proItemNo
 """)
 	Page<ItemReviewResponse> findReviewsByProItem_ProItemNo(@Param("proItemNo") Long proItemNo, Pageable pageable);
+
+
 }
