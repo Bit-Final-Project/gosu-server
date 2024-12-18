@@ -39,7 +39,6 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
             where p.member.memberStatus = :memberStatus
             and (:location is null or p.member.address like %:location%)
             and (:subCateNo is null or pi.subCategory.subCateNo = :subCateNo)
-            
             """)
     Page<Pro> findFilteredPros(@Param("memberStatus") MemberStatus memberStatus, Pageable pageable, @Param("subCateNo") Long subCateNo, @Param("location") String location);
 

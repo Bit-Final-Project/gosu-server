@@ -16,6 +16,7 @@ import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
+import com.ncp.moeego.review.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,8 +40,9 @@ public class ProServiceImpl implements ProService {
     private final ProItemRepository proItemRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final MemberRepository memberRepository;
+    private final ReviewRepository reviewRepository;
 
-    public ProServiceImpl(MemberServiceImpl memberService, SubCategoryServiceImpl subCategoryService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, ProItemRepository proItemRepository, SubCategoryRepository subCategoryRepository, MemberRepository memberRepository) {
+    public ProServiceImpl(MemberServiceImpl memberService, SubCategoryServiceImpl subCategoryService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, ProItemRepository proItemRepository, SubCategoryRepository subCategoryRepository, MemberRepository memberRepository, ReviewRepository reviewRepository) {
         this.memberService = memberService;
         this.subCategoryService = subCategoryService;
         this.proRepository = proRepository;
@@ -49,6 +51,7 @@ public class ProServiceImpl implements ProService {
         this.proItemRepository = proItemRepository;
         this.subCategoryRepository = subCategoryRepository;
         this.memberRepository = memberRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Transactional
