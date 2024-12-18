@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.review.entity.Review;
 
 import jakarta.transaction.Transactional;
 
@@ -34,5 +35,12 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 	Optional<Image> findByMember(Optional<Member> member);
 
 	List<Image> findByImageUuidNameIn(List<String> removedImageIds);
+
+	// 리뷰 이미지 조회
+	@Query("SELECT i FROM Image i WHERE i.review IS NOT NULL")
+	List<Image> findImagesWithReviewNotNull();
+
+	// 리뷰 번호에 맞는 이미지 조회
+	List<Image> findByReview(Review review);
 
 }

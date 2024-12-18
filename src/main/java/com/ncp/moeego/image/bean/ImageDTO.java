@@ -1,5 +1,7 @@
 package com.ncp.moeego.image.bean;
 
+import com.ncp.moeego.review.entity.Review;
+
 import lombok.Data;
 
 @Data
@@ -26,4 +28,10 @@ public class ImageDTO {
         this.imageName = imageName;
         this.imageUuidName = imageUuidName;
     }
+
+	public ImageDTO(Long reviewNo, String imageUuidName) {
+		this.reviewNo = reviewNo;
+		this.imageUuidName = imageUuidName;
+	}
+
 }

@@ -1,6 +1,8 @@
 package com.ncp.moeego.review.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -120,6 +122,42 @@ public class ReviewServiceImpl implements ReviewService{
 	                elapsedTime
 	        );
 	    });
+	}
+
+	// 리뷰 삭제
+	@Override
+	public boolean deleteReview(Long reviewNo) {
+		try {
+			
+			Optional<Review> optionalReview = reviewRepository.findById(reviewNo);
+			
+			if(optionalReview.isPresent()) {
+				Review review = optionalReview.get();
+				
+				// 리뷰와 연결된 이미지 조회
+				List<Image> images = imageRepository.findByReview(review);
+				
+				if(images != null && !images.isEmpty()) {
+					for(Image image : images) {
+						// 오브젝트 스토리지 이미지 삭제
+						objectStorageService.deleteFile(image.getImageUuidName(), bucketName, "storage/");
+						
+						// 이미지 엔티티 삭제
+						imageRepository.delete(image);
+					}
+				}
+				
+				// 리뷰 삭제
+				reviewRepository.deleteById(reviewNo);
+				return true;
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return false;
 	}
 
 }
