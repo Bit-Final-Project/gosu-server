@@ -21,11 +21,9 @@ public class ReviewDTO {
     private String memberName;    // 리뷰 작성자
     private String elapsedTime;  // 경과 시간 (서비스 계층에서 계산)
     private Long proItemNo;            // ProItem의 ID
-    private Long mainCateNo;       // MainCategory의 ID
     private Long memberNo;             // Member의 ID
     private List<MultipartFile> imageFiles;
 
-    
     // 기본 생성자
     public ReviewDTO() {
     	

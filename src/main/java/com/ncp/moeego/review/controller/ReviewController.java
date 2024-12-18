@@ -40,13 +40,7 @@ public class ReviewController {
 	public ResponseEntity<String> writeReview(@ModelAttribute ReviewDTO reviewDTO,
 											  @RequestPart(value = "images", required = false) List<MultipartFile> images){
 		try {
-	        // 서비스 호출
-			System.out.println(reviewDTO.getReviewContent()  +" : 뭐오세요?");
-			System.out.println(reviewDTO.getStar()  +" : 뭐오세요?");
-			System.out.println(reviewDTO.getMemberNo()  +" : 뭐오세요?");
-			System.out.println(reviewDTO.getProItemNo()  +" : 뭐오세요?");
-			System.out.println(reviewDTO.getMainCateNo()  +" : 뭐오세요?");
-			
+
 			reviewDTO.setImageFiles(images == null ? List.of() : images);
 			
 	        boolean result = reviewService.writeReview(reviewDTO);

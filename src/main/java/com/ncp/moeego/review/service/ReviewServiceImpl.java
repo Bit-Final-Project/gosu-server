@@ -50,11 +50,6 @@ public class ReviewServiceImpl implements ReviewService{
 	        review.setStar(reviewDTO.getStar());
 	        review.setWriteDate(LocalDateTime.now());
 
-	        // MainCategory 조회 및 설정
-	        MainCategory mainCategory = mainCategoryRepository.findById(reviewDTO.getMainCateNo())
-	                .orElseThrow(() -> new IllegalArgumentException("Invalid mainCategoryNo"));
-	        review.setMainCategory(mainCategory);
-
 	        // ProItem 조회 및 설정
 	        ProItem proItem = proItemRepository.findById(reviewDTO.getProItemNo())
 	                .orElseThrow(() -> new IllegalArgumentException("Invalid proItemNo"));

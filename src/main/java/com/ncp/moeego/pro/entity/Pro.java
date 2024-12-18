@@ -3,7 +3,6 @@ package com.ncp.moeego.pro.entity;
 import com.ncp.moeego.category.entity.MainCategory;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.reserve.entity.Reserve;
-
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,13 +28,14 @@ public class Pro {
     @JoinColumn(name = "reserve_no", nullable = true)
     private Reserve reserve;
 
-    @Column(name = "deprive_date")
-    private LocalDateTime depriveDate;
-
     @Column(name = "access_date")
     private LocalDateTime accessDate;
 
+    @Column(name = "star")
     private float star;
+
+    @Column(name = "review_count")
+    private Long reviewCount;
 
     @OneToOne
     @JoinColumn(name = "member_no", nullable = false)
