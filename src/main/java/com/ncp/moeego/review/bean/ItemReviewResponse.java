@@ -1,17 +1,13 @@
 package com.ncp.moeego.review.bean;
 
+import com.ncp.moeego.common.ConvertDate;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-public class ReviewDTO {
+@Data
+public class ItemReviewResponse {
     private Long reviewNo;             // 리뷰 번호
     private String reviewContent;      // 리뷰 내용
     private float star;                // 별점 (0~5.0)
@@ -22,23 +18,18 @@ public class ReviewDTO {
     private String elapsedTime;  // 경과 시간 (서비스 계층에서 계산)
     private Long proItemNo;            // ProItem의 ID
     private Long memberNo;             // Member의 ID
-    private List<MultipartFile> imageFiles;
+    private List <String> imageUuidNames; //
 
-    // 기본 생성자
-    public ReviewDTO() {
-    	
-    }
-    
-    // 전체 리뷰 조회 생성자
-    public ReviewDTO(Long reviewNo, String proName,float star, String subject, String reviewContent, String memberName, LocalDateTime writeDate, String elapsedTime) {
+    public ItemReviewResponse(Long reviewNo, String reviewContent, float star, LocalDateTime writeDate, String proName, String subject, String memberName, Long proItemNo, Long memberNo) {
         this.reviewNo = reviewNo;
-    	this.proName = proName;
-        this.star = star;
-    	this.subject = subject;
         this.reviewContent = reviewContent;
-        this.memberName = memberName;
+        this.star = star;
         this.writeDate = writeDate;
-        this.elapsedTime = elapsedTime;
+        this.proName = proName;
+        this.subject = subject;
+        this.memberName = memberName;
+        this.proItemNo = proItemNo;
+        this.memberNo = memberNo;
+        this.elapsedTime = ConvertDate.calculateDate(writeDate);
     }
-
 }
