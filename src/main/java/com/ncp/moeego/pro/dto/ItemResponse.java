@@ -16,10 +16,11 @@ public class ItemResponse {
     private Long mainCateNo;
     private String mainCateName;
     private float star;
+    private Long reviewCount;
     private String address;
     private List<ProItem> proItems;
 
-    public ItemResponse(Long proNo, String name, String profileImage, String intro, String oneIntro, Long mainCateNo, String mainCateName, float star, String address, List<ProItem> proItems) {
+    public ItemResponse(Long proNo, String name, String profileImage, String intro, String oneIntro, Long mainCateNo, String mainCateName, float star, Long reviewCount, String address, List<ProItem> proItems) {
         this.proNo = proNo;
         this.name = name;
         this.profileImage = profileImage;
@@ -28,6 +29,7 @@ public class ItemResponse {
         this.mainCateNo = mainCateNo;
         this.mainCateName = mainCateName;
         this.star = star;
+        this.reviewCount = reviewCount;
         this.address = address;
         this.proItems = proItems;
     }
