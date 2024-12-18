@@ -10,6 +10,7 @@ import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.pro.entity.Pro;
+import com.ncp.moeego.pro.entity.ProItem;
 
 import jakarta.transaction.Transactional;
 
@@ -40,11 +41,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 상태별 회원 리스트 반환
     @Query("SELECT new com.ncp.moeego.member.bean.MemberSummaryDTO(" +
-            "m.memberNo, m.name, m.memberStatus, p.oneIntro, COUNT(p.depriveDate)) " +  
+            "m.memberNo, m.name, m.memberStatus, p.oneIntro, p.intro , p.mainCategory.mainCateName) " +
             "FROM Member m " +
             "LEFT JOIN Pro p ON p.member = m " +
             "WHERE m.memberStatus = :status " +
-            "GROUP BY m.memberNo, m.name, m.memberStatus, p.oneIntro")
+            "GROUP BY m.memberNo, m.name, m.memberStatus, p.oneIntro, p.mainCategory.mainCateName")
     List<MemberSummaryDTO> findMemberSummaryByStatus(@Param("status") MemberStatus status);
     
     // 일주일 치 회원 가입 수
@@ -63,20 +64,26 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m")
     List<Member> findAllUser();  // 일반 회원 조회
 
-    @Query("SELECT DISTINCT new com.ncp.moeego.member.bean.ProDTO(" +
-            "p.member.memberNo, " +
-            "p.member.name, " +
-            "p.accessDate, " +
-            "p.star, " +
-            "p.depriveDate, " +
-            "p.proNo, " +
-            "p.mainCategory.mainCateName, " +  
-            "p.oneIntro, " +                   
-            "p.intro) " +                      
-            "FROM Pro p " +
-            "WHERE p.mainCategory.mainCateName IS NOT NULL")
-    List<ProDTO> findProMembersWithDetails();
-
+    //고수 회원 조회
+    @Query("SELECT DISTINCT new com.ncp.moeego.member.bean.ProDTO( "
+            + "p.member.memberNo, "
+            + "p.member.name, "
+            + "p.accessDate, "
+            + "p.star, "
+            + "p.proNo, "
+            + "p.mainCategory.mainCateName, "
+            + "p.oneIntro, "
+            + "p.intro, "
+            + "p.member.memberStatus) "
+        + "FROM Pro p "
+        + "JOIN p.member m "
+        + "LEFT JOIN p.proItems pi "
+        + "LEFT JOIN p.mainCategory mc "
+        + "WHERE m.memberStatus = 'ROLE_PRO' "
+        + "AND pi.itemStatus = 'ACTIVE' "
+        + "AND mc.mainCateName IS NOT NULL")
+	List<ProDTO> findProMembersWithRolePro();
+	
     // 탈퇴 회원 조회
     @Query("SELECT new com.ncp.moeego.member.bean.CancelDTO(m.name, m.phone, m.email , c.cancelNo, c.cancelDate, c.reason) " +
             "FROM Cancel c JOIN c.member m")
@@ -87,11 +94,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = :cloudKey WHERE m = :member")
     void updateProfileImage(@Param("member") Member member, @Param("cloudKey") String cloudKey);
-    // 회원 프로필 이미지 삭제
     
+    
+    // 회원 프로필 이미지 삭제
     @Modifying
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
+
+    //해당 번호의 member 조회
+    Optional<Member> findByMemberNo(Long memberNo);
+    
     
 }

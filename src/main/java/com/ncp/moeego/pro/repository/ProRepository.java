@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProRepository extends JpaRepository<Pro, Long> {
@@ -29,5 +30,9 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
     Page<FavoriteResponse> findByProNoIn(@Param("proNo") List<Long> proNo, Pageable pageable);
 
 	Pro findByMember(Member member);
+
+	Optional<Pro> findByMemberMemberNo(Long memberNo);
+
+	Pro findByMember_MemberNo(Long memberNo);
 
 }
