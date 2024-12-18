@@ -1,6 +1,7 @@
 package com.ncp.moeego.comment.dto;
 
 import com.ncp.moeego.comment.entity.CommentStatus;
+import com.ncp.moeego.common.ConvertDate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,6 +18,7 @@ public class MemberCommentResponse {
     private String content;
     private CommentStatus commentStatus;
     private LocalDateTime writeDate;
+    private String elapsedTime;
 
     public MemberCommentResponse(Long commentNo, Long articleNo, String articleSubject, String content, CommentStatus status, LocalDateTime writeDate) {
         this.commentNo = commentNo;
@@ -25,6 +27,7 @@ public class MemberCommentResponse {
         this.content = content;
         this.commentStatus = status;
         this.writeDate = writeDate;
+        this.elapsedTime = ConvertDate.calculateDate(writeDate);
     }
 
 }
