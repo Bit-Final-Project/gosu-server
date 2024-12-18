@@ -70,19 +70,7 @@ public class ReviewController {
 
 	    return ResponseEntity.ok(response);
 	}
-	
-	// 리뷰 이미지조회
-	@GetMapping("/review/images")
-	public ResponseEntity<Map<String, Object>> getReviewImages(){
-		
-		
-		List<ImageDTO> images = imageService.getImageByReviewNo();
-		
-	    Map<String, Object> response = new HashMap<>();
-	    response.put("images", images);
 
-	    return ResponseEntity.ok(response);
-	}
 	
 	// 리뷰 삭제
 	@DeleteMapping("/review/delete/{reviewNo}")

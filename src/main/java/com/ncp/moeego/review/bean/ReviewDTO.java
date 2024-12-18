@@ -23,14 +23,15 @@ public class ReviewDTO {
     private Long proItemNo;            // ProItem의 ID
     private Long memberNo;             // Member의 ID
     private List<MultipartFile> imageFiles;
-
+    private List<String> imageUuidName;
+    
     // 기본 생성자
     public ReviewDTO() {
     	
     }
     
     // 전체 리뷰 조회 생성자
-    public ReviewDTO(Long reviewNo, String proName,float star, String subject, String reviewContent, String memberName, LocalDateTime writeDate, String elapsedTime) {
+    public ReviewDTO(Long reviewNo, String proName,float star, String subject, String reviewContent, String memberName, LocalDateTime writeDate, String elapsedTime,Long proItemNo, List<String> imageUuidName) {
         this.reviewNo = reviewNo;
     	this.proName = proName;
         this.star = star;
@@ -39,6 +40,8 @@ public class ReviewDTO {
         this.memberName = memberName;
         this.writeDate = writeDate;
         this.elapsedTime = elapsedTime;
+        this.proItemNo = proItemNo;
+        this.imageUuidName = imageUuidName;
     }
     
     

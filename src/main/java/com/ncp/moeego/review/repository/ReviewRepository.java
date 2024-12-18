@@ -1,5 +1,7 @@
 package com.ncp.moeego.review.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
 	        " WHERE r.member.memberNo = :memberNo " + // memberNo를 조건으로 추가
 	        " ORDER BY r.writeDate DESC")
 	Page<Object[]> findReviewsByMemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
+
+	// 전체 데이터 조회시 리뷰 번호에 맞는 이미지 조회
+	@Query("SELECT i.imageUuidName FROM Image i WHERE i.review.reviewNo = :reviewNo")
+	List<String> findImageUuidsByReviewNo(@Param("reviewNo") Long reviewNo);
 
 
 

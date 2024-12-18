@@ -104,7 +104,12 @@ public class ReviewServiceImpl implements ReviewService{
 
 	        // 작성일 기준 경과 시간 계산
 	        String elapsedTime = ConvertDate.calculateDate(review.getWriteDate());
+	        
+	        // 리뷰에 맞는 이미지 UUID 조회
+	        List<String> imageUuidList = reviewRepository.findImageUuidsByReviewNo(reviewNo);
 
+	        Long proItemNo = review.getProItem().getProItemNo();
+	        
 	        return new ReviewDTO(
 	        		reviewNo,
 	                proName,
@@ -113,7 +118,9 @@ public class ReviewServiceImpl implements ReviewService{
 	                review.getReviewContent(),
 	                memberName,
 	                review.getWriteDate(),
-	                elapsedTime
+	                elapsedTime,
+	                proItemNo,
+	                imageUuidList
 	        );
 	    });
 	}
@@ -173,7 +180,12 @@ public class ReviewServiceImpl implements ReviewService{
 
 	        // 작성일 기준 경과 시간 계산
 	        String elapsedTime = ConvertDate.calculateDate(review.getWriteDate());
+	        
+	        // 리뷰에 맞는 이미지 UUID 조회
+	        List<String> imageUuidList = reviewRepository.findImageUuidsByReviewNo(reviewNo);
 
+	        Long proItemNo = review.getProItem().getProItemNo();
+	        
 	        return new ReviewDTO(
 	                reviewNo,
 	                proName,
@@ -182,7 +194,9 @@ public class ReviewServiceImpl implements ReviewService{
 	                review.getReviewContent(),
 	                memberName,
 	                review.getWriteDate(),
-	                elapsedTime
+	                elapsedTime,
+	                proItemNo,
+	                imageUuidList
 	        );
 	    });
 	}
