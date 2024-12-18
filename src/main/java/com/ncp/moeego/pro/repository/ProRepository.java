@@ -33,15 +33,18 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
 
     Pro findByMember(Member member);
 
+    @Query("""
+            select distinct p from Pro p
+            left join p.proItems pi
+            where p.member.memberStatus = :memberStatus
+            and (:location is null or p.member.address like %:location%)
+            and (:subCateNo is null or pi.subCategory.subCateNo = :subCateNo)
+            
+            """)
+    Page<Pro> findFilteredPros(@Param("memberStatus") MemberStatus memberStatus, Pageable pageable, @Param("subCateNo") Long subCateNo, @Param("location") String location);
+
 	Optional<Pro> findByMemberMemberNo(Long memberNo);
 
 	Pro findByMember_MemberNo(Long memberNo);
 
-//    @Query("""
-//			select p from Pro p
-//			where p.member.memberStatus = :memberStatus
-//			and p.member.address like :%address%
-//			
-//			""")
-//	Page<Pro> findFilteredPros(@Param("memberStatus") MemberStatus memberStatus, Pageable pageable, Long subCateNo, @Param("location") String location);
 }
