@@ -2,11 +2,15 @@ package com.ncp.moeego.review.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ncp.moeego.category.entity.MainCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
+import com.ncp.moeego.common.ConvertDate;
 import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.entity.Member;
@@ -34,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService{
 	
 	private String bucketName = "moeego";
 	
-	
+	// 리뷰 작성
 	@Override
 	public boolean writeReview(ReviewDTO reviewDTO) {
 	    try {
@@ -78,11 +82,44 @@ public class ReviewServiceImpl implements ReviewService{
 	            }
 	        }
 
-	        return true; // 성공
+	        return true; 
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return false; // 실패 시
+	        return false; 
 	    }
+	}
+
+	// 리뷰 조회
+	@Override
+	public Page<ReviewDTO> getReviewListByPage(int pg, int pageSize) {
+
+	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
+
+	    // 성능 개선을 위한 단일 쿼리로 필요한 데이터 조회
+	    Page<Object[]> reviewPage = reviewRepository.findReviewsWithDetails(pageRequest);
+
+	    return reviewPage.map(result -> {
+	    	Long reviewNo = (Long) result[0];
+	        Review review = (Review) result[1];
+	        float star = (float) result[2]; 
+	        String proName = (String) result[3]; // 달인 이름
+	        String subject = (String) result[4]; // 서비스 이름
+	        String memberName = (String) result[5]; // 리뷰 작성자 이름
+
+	        // 작성일 기준 경과 시간 계산
+	        String elapsedTime = ConvertDate.calculateDate(review.getWriteDate());
+
+	        return new ReviewDTO(
+	        		reviewNo,
+	                proName,
+	                star,
+	                subject,
+	                review.getReviewContent(),
+	                memberName,
+	                review.getWriteDate(),
+	                elapsedTime
+	        );
+	    });
 	}
 
 }
