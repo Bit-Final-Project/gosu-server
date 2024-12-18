@@ -1,4 +1,4 @@
-package com.ncp.moeego.pro.entity;
+package com.ncp.moeego.reserve.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

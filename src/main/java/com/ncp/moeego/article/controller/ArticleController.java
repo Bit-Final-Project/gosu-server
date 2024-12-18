@@ -158,36 +158,34 @@ public class ArticleController {
 	
 	// ncp 추가 게시글 수정
 	@PutMapping("/article/update/{articleNo}")
-	public ResponseEntity<String> updateArticle(@PathVariable("articleNo") Long articleNo, 
-												@ModelAttribute ArticleDTO articleDTO, 
-												@RequestPart(value = "images", required = false) List<MultipartFile> images) {	    
-		
-		if (images != null) {
-		    for (MultipartFile image : images) {
-		        System.out.println(image.getOriginalFilename() + " :너 뭐오냐 ?");
-		    }
-		} else {
-		    System.out.println(images + " : 이미지가 없습니다.");
-		}
-		
+	public ResponseEntity<String> updateArticle(
+	        @PathVariable("articleNo") Long articleNo,
+	        @ModelAttribute ArticleDTO articleDTO,
+	        @RequestParam(value = "existingImages", required = false) List<String> existingImageIds, // 유지할 이미지 ID 목록
+	        @RequestParam(value = "removedImages", required = false) List<String> removedImageIds,   // 삭제할 이미지 ID 목록
+	        @RequestPart(value = "images", required = false) List<MultipartFile> images) {          // 새 이미지
 	    try {
-	        // ArticleDTO에 이미지 파일 리스트 설정 (null 처리)
+	        System.out.println("유지할 이미지: " + existingImageIds);
+	        System.out.println("삭제할 이미지: " + removedImageIds);
+
 	        articleDTO.setImageFiles(images == null ? List.of() : images);
+	        articleDTO.setExistingImageIds(existingImageIds);
+	        articleDTO.setRemovedImageIds(removedImageIds);
 
 	        // 서비스 호출
 	        boolean result = articleService.updateArticle(articleNo, articleDTO);
 
 	        if (result) {
-	            return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
+	            return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
 	        } else {
-	            return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+	            return ResponseEntity.badRequest().body("게시글 수정 중 오류가 발생했습니다.");
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 	    }
-	    
 	}
+
 	
 	// 게시글 삭제
 	@DeleteMapping("/article/delete/{articleNo}")

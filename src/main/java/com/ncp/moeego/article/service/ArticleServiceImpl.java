@@ -1,5 +1,17 @@
 package com.ncp.moeego.article.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.repository.ArticleRepository;
@@ -10,17 +22,8 @@ import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.ncp.service.ObjectStorageService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -347,46 +350,86 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public boolean updateArticle(Long articleNo, ArticleDTO articleDTO) {
         try {
-            // 게시글 가져오기
             Optional<Article> optionalArticle = articleRepository.findById(articleNo);
             if (optionalArticle.isPresent()) {
                 Article article = optionalArticle.get();
 
-                // 업데이트
+                // 게시글 데이터 업데이트
                 article.setSubject(articleDTO.getSubject());
                 article.setContent(articleDTO.getContent());
-//	            article.setView(articleDTO.getView()); 조회수 수정 X 
-//	            article.setLikes(articleDTO.getLikes()); 좋아요 수정 X 
-//	            article.setWriteDate(LocalDateTime.now()); 시간은 업데이트 하지않음
                 article.setType(articleDTO.getType());
                 article.setService(articleDTO.getService());
                 article.setArea(articleDTO.getArea());
+
+                // 삭제할 이미지 처리
+                if (articleDTO.getRemovedImageIds() != null && !articleDTO.getRemovedImageIds().isEmpty()) {
+                    List<Image> imagesToDelete = imageRepository.findByImageUuidNameIn(articleDTO.getRemovedImageIds());
+                    for (Image image : imagesToDelete) {
+                        objectStorageService.deleteFile(image.getImageUuidName(), bucketName, "storage/");
+                        imageRepository.delete(image);
+                    }
+                }
+
+                // 새 이미지 업로드 및 저장
+                if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
+                    for (MultipartFile imageFile : articleDTO.getImageFiles()) {
+                        String cloudKey = objectStorageService.uploadFile(bucketName, "storage/", imageFile);
+
+                        Image newImage = new Image();
+                        newImage.setArticle(article);
+                        newImage.setMember(article.getMember());
+                        newImage.setImageName(imageFile.getOriginalFilename());
+                        newImage.setImageUuidName(cloudKey);
+                        imageRepository.save(newImage);
+                    }
+                }
 
                 // 게시글 저장
                 articleRepository.save(article);
                 return true;
             } else {
-                return false;
+                return false; // 게시글이 존재하지 않음
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
+
 
     // 게시글 삭제
     @Override
     public boolean deleteArticle(Long articleNo) {
         try {
             // 게시글 가져오기
-            Optional<Article> article = articleRepository.findById(articleNo);
-            if (article.isPresent()) {
+            Optional<Article> optionalArticle = articleRepository.findById(articleNo);
+
+            if (optionalArticle.isPresent()) {
+                Article article = optionalArticle.get();
+
+                // 게시글과 연결된 이미지 리스트 가져오기
+                List<Image> images = imageRepository.findByArticle(article);
+
+                // 이미지 삭제
+                if (images != null && !images.isEmpty()) {
+                    for (Image image : images) {
+                        // NCP 오브젝트 스토리지에서 파일 삭제
+                        objectStorageService.deleteFile(image.getImageUuidName(), bucketName, "storage/");
+                        
+                        // 이미지 엔티티 삭제
+                        imageRepository.delete(image);
+                    }
+                }
+
                 // 게시글 삭제
                 articleRepository.deleteById(articleNo);
                 return true;
             } else {
+                // 게시글이 없는 경우
                 return false;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

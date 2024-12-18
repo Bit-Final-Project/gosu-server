@@ -25,6 +25,8 @@ public class ArticleDTO {
 	private String area;
 	private int commentCount;
 	private List<MultipartFile> imageFiles; // 클라이언트에서 전송된 이미지 파일 리스트 추가
+	private List<String> existingImageIds;  // 유지할 기존 이미지 ID
+	private List<String> removedImageIds;   // 삭제할 이미지 ID
 	
 	// 기본 생성자
 	public ArticleDTO() {

@@ -3,7 +3,11 @@ package com.ncp.moeego.pro.repository;
 import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.pro.dto.ItemDetailResponse;
 import com.ncp.moeego.pro.entity.ItemStatus;
+import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +29,11 @@ public interface ProItemRepository extends JpaRepository<ProItem, Long> {
     ItemDetailResponse getItemDetails(@Param("proItemNo") Long proItemNo);
 
     boolean existsByProItemNoAndItemStatus(Long proItemNo, ItemStatus itemStatus);
+    
+    // 해당 Pro에 속하는 ProItem 조회 (admin에서 사용)
+    List<ProItem> findByPro(Pro pro);  
+    
+    List<ProItem> findByPro_Member_MemberNo(Long memberNo);
+
+	List<ProItem> findByPro_ProNo(Long proNo);
 }
