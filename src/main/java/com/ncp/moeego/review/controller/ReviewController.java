@@ -90,6 +90,7 @@ public class ReviewController {
 	    return ResponseEntity.ok(response);
 	}
 	
+	// 리뷰 삭제
 	@DeleteMapping("/review/delete/{reviewNo}")
 	public ResponseEntity<String> deleteReview(@PathVariable("reviewNo") Long reviewNo) {
 	    boolean result = reviewService.deleteReview(reviewNo);
@@ -99,6 +100,22 @@ public class ReviewController {
 	    } else {
 	        return ResponseEntity.badRequest().body("리뷰 삭제 중 오류가 발생했습니다.");
 	    }
+	}
+	
+	// 내가 작성한 리뷰 조회
+	@GetMapping("/review/mypage")
+	public ResponseEntity<Map<String, Object>> getMyReviews(@RequestParam(name = "member_no") Long member_no,
+		     												@RequestParam(value = "pg", required = false, defaultValue = "1") int pg){
+		
+		Page<ReviewDTO> reviewPage = reviewService.getMyReviews(member_no,pg, pageSize);
+		
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("content", reviewPage.getContent());  
+	    response.put("totalPages", reviewPage.getTotalPages());  
+	    response.put("currentPage", reviewPage.getNumber() + 1);  
+	    response.put("totalElements", reviewPage.getTotalElements());  
+
+	    return ResponseEntity.ok(response);
 	}
 	
 }

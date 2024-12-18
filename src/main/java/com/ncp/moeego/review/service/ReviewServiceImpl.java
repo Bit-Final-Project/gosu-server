@@ -97,7 +97,6 @@ public class ReviewServiceImpl implements ReviewService{
 
 	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
 
-	    // 성능 개선을 위한 단일 쿼리로 필요한 데이터 조회
 	    Page<Object[]> reviewPage = reviewRepository.findReviewsWithDetails(pageRequest);
 
 	    return reviewPage.map(result -> {
@@ -158,6 +157,39 @@ public class ReviewServiceImpl implements ReviewService{
 		}
 		
 		return false;
+	}
+
+	// 내가 작성한 리뷰
+	@Override
+	public Page<ReviewDTO> getMyReviews(Long memberNo, int pg, int pageSize) {
+
+	    PageRequest pageRequest = PageRequest.of(pg - 1, pageSize, Sort.by(Sort.Order.desc("writeDate")));
+
+	    // memberNo로 리뷰 조회
+	    Page<Object[]> reviewPage = reviewRepository.findReviewsByMemberNo(memberNo, pageRequest);
+
+	    return reviewPage.map(result -> {
+	        Long reviewNo = (Long) result[0];
+	        Review review = (Review) result[1];
+	        float star = (float) result[2]; 
+	        String proName = (String) result[3]; // 달인 이름
+	        String subject = (String) result[4]; // 서비스 이름
+	        String memberName = (String) result[5]; // 리뷰 작성자 이름
+
+	        // 작성일 기준 경과 시간 계산
+	        String elapsedTime = ConvertDate.calculateDate(review.getWriteDate());
+
+	        return new ReviewDTO(
+	                reviewNo,
+	                proName,
+	                star,
+	                subject,
+	                review.getReviewContent(),
+	                memberName,
+	                review.getWriteDate(),
+	                elapsedTime
+	        );
+	    });
 	}
 
 }
