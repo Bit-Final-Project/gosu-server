@@ -1,11 +1,15 @@
 package com.ncp.moeego.review.service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import com.ncp.moeego.review.bean.ItemReviewResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -116,6 +120,13 @@ public class ReviewServiceImpl implements ReviewService{
 	                elapsedTime
 	        );
 	    });
+	}
+
+	public Page<ItemReviewResponse> getReviewsByItemNo (Long proItemNo, int pg) {
+		Pageable pageable  = PageRequest.of(pg - 1, 5);
+		Page<ItemReviewResponse> reviewPage = reviewRepository.findReviewsByProItem_ProItemNo(proItemNo, pageable);
+		return reviewPage;
+
 	}
 
 	// 리뷰 삭제

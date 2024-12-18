@@ -1,5 +1,6 @@
 package com.ncp.moeego.review.repository;
 
+import com.ncp.moeego.review.bean.ItemReviewResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,5 +39,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
 	Page<Object[]> findReviewsByMemberNo(@Param("memberNo") Long memberNo, Pageable pageable);
 
 
-
+	@Query("""
+select new com.ncp.moeego.review.bean.ItemReviewResponse(
+r.reviewNo,r.reviewContent, r.star, r.writeDate, r.proItem.pro.member.name, r.proItem.subject, r.member.name, r.proItem.proItemNo, r.member.memberNo
+) from Review r
+where r.proItem.proItemNo = :proItemNo
+""")
+	Page<ItemReviewResponse> findReviewsByProItem_ProItemNo(@Param("proItemNo") Long proItemNo, Pageable pageable);
 }
