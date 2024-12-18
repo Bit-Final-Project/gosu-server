@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProRepository extends JpaRepository<Pro, Long> {
@@ -32,11 +33,15 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
 
     Pro findByMember(Member member);
 
-    @Query("""
-select p from Pro p
-where p.member.memberStatus = :memberStatus
-and p.member.address like :%address%
+	Optional<Pro> findByMemberMemberNo(Long memberNo);
 
-""")
-    Page<Pro> findFilteredPros(@Param("memberStatus") MemberStatus memberStatus, Pageable pageable, Long subCateNo, @Param("location") String location);
+	Pro findByMember_MemberNo(Long memberNo);
+
+//    @Query("""
+//			select p from Pro p
+//			where p.member.memberStatus = :memberStatus
+//			and p.member.address like :%address%
+//			
+//			""")
+//	Page<Pro> findFilteredPros(@Param("memberStatus") MemberStatus memberStatus, Pageable pageable, Long subCateNo, @Param("location") String location);
 }

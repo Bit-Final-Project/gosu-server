@@ -21,5 +21,5 @@ public interface ProService {
 
     Map<String, Object> getInitItem(Long memberNo);
 
-    Map<String, Object> getItemList(Long subCateNo, String location, int pg);
+    //Map<String, Object> getItemList(Long subCateNo, String location, int pg);
 }

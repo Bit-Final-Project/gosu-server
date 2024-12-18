@@ -195,30 +195,30 @@ public class ProServiceImpl implements ProService {
         return response;
     }
 
-    @Override
-    public Map<String, Object> getItemList(Long subCateNo, String location, int pg) {
-        Pageable pageable = PageRequest.of(pg - 1, 1);
-        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location);
-
-        List<ItemResponse> proList = proPage.stream().map(pro -> new ItemResponse(
-                pro.getProNo(),
-                pro.getMember().getName(),
-                pro.getMember().getProfileImage(),
-                pro.getIntro(), pro.getOneIntro(),
-                pro.getMainCategory().getMainCateNo(),
-                pro.getMainCategory().getMainCateName(),
-                pro.getStar(),
-                pro.getMember().getAddress(),
-                pro.getProItems()
-        )).toList();
-
-        // 응답 데이터 구성
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", proList); // 실제 데이터 리스트
-        response.put("currentPage", proPage.getNumber()); // 현재 페이지
-        response.put("totalPages", proPage.getTotalPages()); // 전체 페이지 수
-        response.put("totalElements", proPage.getTotalElements()); // 전체 요소 수
-
-        return response;
-    }
+//    @Override
+//    public Map<String, Object> getItemList(Long subCateNo, String location, int pg) {
+//        Pageable pageable = PageRequest.of(pg - 1, 1);
+//        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location);
+//
+//        List<ItemResponse> proList = proPage.stream().map(pro -> new ItemResponse(
+//                pro.getProNo(),
+//                pro.getMember().getName(),
+//                pro.getMember().getProfileImage(),
+//                pro.getIntro(), pro.getOneIntro(),
+//                pro.getMainCategory().getMainCateNo(),
+//                pro.getMainCategory().getMainCateName(),
+//                pro.getStar(),
+//                pro.getMember().getAddress(),
+//                pro.getProItems()
+//        )).toList();
+//
+//        // 응답 데이터 구성
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("content", proList); // 실제 데이터 리스트
+//        response.put("currentPage", proPage.getNumber()); // 현재 페이지
+//        response.put("totalPages", proPage.getTotalPages()); // 전체 페이지 수
+//        response.put("totalElements", proPage.getTotalElements()); // 전체 요소 수
+//
+//        return response;
+//    }
 }

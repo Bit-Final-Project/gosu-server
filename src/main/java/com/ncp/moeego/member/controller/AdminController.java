@@ -90,7 +90,7 @@ public class AdminController {
     //고수 권한 페이지
     @GetMapping("/admin/pro/approval")
     public ResponseEntity<List<MemberSummaryDTO>> proApproval() {
-        List<MemberSummaryDTO> pendingProMembers = adminService.getPendingProMembers();
+        List<MemberSummaryDTO> pendingProMembers = adminService.getPendingProMembers(MemberStatus.ROLE_PEND_PRO);
         return ResponseEntity.ok(pendingProMembers);
     }
     
@@ -116,6 +116,19 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("취소 실패");
         }
     }
+    
+    
+    // 고수 박탈 버튼 클릭시
+    @PostMapping("/admin/member/pro/cancel/{memberNo}")
+    public ResponseEntity<String> revokePro(@PathVariable("memberNo") Long memberNo) {
+        try {
+            adminService.revokeMember(memberNo);  // 서비스에서 박탈 처리
+            return ResponseEntity.ok("박탈 처리 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("박탈 처리 오류");
+        }
+    }
+    
     
     // 일반 회원 조회
     @GetMapping("/admin/member/user")
