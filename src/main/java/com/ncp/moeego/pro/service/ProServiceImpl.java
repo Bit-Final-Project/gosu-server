@@ -200,7 +200,7 @@ public class ProServiceImpl implements ProService {
 
     @Override
     public Map<String, Object> getItemList(Long subCateNo, String location, int pg) {
-        Pageable pageable = PageRequest.of(pg - 1, 1);
+        Pageable pageable = PageRequest.of(pg - 1, 5);
         Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location);
 
         List<ItemResponse> proList = proPage.stream().map(pro -> new ItemResponse(
