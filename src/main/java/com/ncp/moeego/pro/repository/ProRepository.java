@@ -43,6 +43,16 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
             """)
     Page<Pro> findFilteredPros(@Param("memberStatus") MemberStatus memberStatus, Pageable pageable, @Param("subCateNo") Long subCateNo, @Param("location") String location);
 
+    @Query("""
+            select p from Pro p
+            left join p.member m
+            where p.member.memberStatus = 'ROLE_PRO' 
+            and (m.name like %:value%)
+            or (p.intro like %:value%)
+            or (p.oneIntro like %:value%)
+            """)
+    Page<Pro> findSearchValue(Pageable pageable, @Param("value") String value);
+
 	Optional<Pro> findByMemberMemberNo(Long memberNo);
 
 	Pro findByMember_MemberNo(Long memberNo);
