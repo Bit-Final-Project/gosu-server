@@ -24,4 +24,5 @@ public interface ReservationTimeRepository extends JpaRepository<ReservationTime
                 where rt.reservation.proItem.proItemNo =:proItemNo
             """)
     List<ReservationTime> findExistingReservation(@Param("proItemNo") Long proItemNo);
+
 }

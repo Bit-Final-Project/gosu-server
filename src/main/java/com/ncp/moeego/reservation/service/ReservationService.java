@@ -9,4 +9,5 @@ public interface ReservationService {
     String makeReservation(ReservationRequest reservationRequest);
 
     List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo);
+
 }
