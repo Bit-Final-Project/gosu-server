@@ -50,6 +50,8 @@ public interface AdminService {
 
 	List<ArticleImageDTO> getArticlesWithImages();
 
+	boolean writeArticle(ArticleDTO articleDTO);
+
 
 
 

@@ -166,7 +166,35 @@ public class AdminController {
         return adminService.getArticlesWithImages();
     }
     
-    
+    // 이벤트 및 공지 등록
+    @PostMapping("/admin/article/write")
+    public ResponseEntity<String> writeArticle(
+            @ModelAttribute ArticleDTO articleDTO,  // 텍스트 필드를 ArticleDTO로 처리
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) { // 파일만 별도로 처리
+    	
+    	System.out.println("ArticleDTO : " + articleDTO);
+    	for (MultipartFile multipartFile : images) {
+			System.out.println(multipartFile.getName());
+		}
+        try {
+            // ArticleDTO에 이미지 파일 리스트 설정
+            articleDTO.setImageFiles(images == null ? List.of() : images);
+
+            boolean result = adminService.writeArticle(articleDTO);
+            
+            if (result) {
+	            return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
+	        } else {
+	            return ResponseEntity.badRequest().body("게시글 작성 중 오류가 발생했습니다.");
+	        }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+        }
+    }
+
+
     
 
     

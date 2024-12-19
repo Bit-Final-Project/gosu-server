@@ -253,6 +253,52 @@ public class AdminServiceImpl implements AdminService {
         return memberRepository.findArticlesWithImages();
     }
 
+	@Override
+	public boolean writeArticle(ArticleDTO articleDTO) {
+		try {
+			Article article = new Article();
+			article.setSubject(articleDTO.getSubject());
+			article.setContent(articleDTO.getContent());
+			article.setView(0);
+	        article.setLikes(0);
+	        article.setWriteDate(LocalDateTime.now());
+	        article.setType(articleDTO.getType());
+	        article.setService("");
+            article.setArea("");
+            
+            Optional<Member> member = memberRepository.findById(articleDTO.getMemberNo());
+            if (member.isPresent()) {
+                article.setMember(member.get());
+            } else {
+                return false; // Member가 없으면 실패 처리
+            }
+            
+            Article savedArticle = articleRepository.save(article);
+
+            // 이미지 업로드 및 저장 (이미지가 있을 경우에만 처리)
+            if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
+                for (MultipartFile imageFile : articleDTO.getImageFiles()) {
+                    // 1. 오브젝트 스토리지에 업로드
+                    String cloudKey = objectStorageService.uploadFile(bucketName, "storage/", imageFile);
+
+                    // 2. 업로드된 이미지 정보를 DB에 저장
+                    Image image = new Image();
+                    image.setArticle(savedArticle); // 게시글과 연결
+                    image.setMember(member.get()); // 작성자와 연결
+                    image.setImageName(imageFile.getOriginalFilename());
+                    image.setImageUuidName(cloudKey); // 스토리지의 키 저장
+                    imageRepository.save(image);
+                }
+            }
+
+            return true; // 성공
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // 실패 시
+        }
+
+	}
+
 	
 	
 }
