@@ -1,6 +1,7 @@
 package com.ncp.moeego.pro.service;
 
 import com.ncp.moeego.pro.dto.*;
+import com.ncp.moeego.pro.entity.ProItem;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface ProService {
     Map<String, Object> getInitItem(Long memberNo);
 
     Map<String, Object> getItemList(Long subCateNo, String location, int pg);
+
+    ProItem getProItemById(Long proItemNo);
 }
