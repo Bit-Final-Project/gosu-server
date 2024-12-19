@@ -25,6 +25,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
         this.reservationRepository = reservationRepository;
+  
         this.memberService = memberService;
         this.proService = proService;
         this.reservationTimeRepository = reservationTimeRepository;
@@ -71,5 +72,4 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("이미 예약된 시간입니다 : " + conflictingTimes.toString());
         }
     }
-
 }
