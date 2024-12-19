@@ -166,16 +166,6 @@ public class ImageServiceImpl implements ImageService{
 		return null;  
 	}
 
-	// 리뷰관련된 이미지 UUID 값만 가져오기
-    public List<ImageDTO> getImageByReviewNo() {
-        // review_no 컬럼이 null이 아닌 이미지들을 가져오는 메서드 호출
-        List<Image> images = imageRepository.findImagesWithReviewNotNull();
-
-        // Image 엔티티를 ImageDTO로 변환하여 반환
-        return images.stream()
-                     .map(image -> new ImageDTO(image.getReview().getReviewNo(), image.getImageUuidName())) // ImageDTO 생성
-                     .collect(Collectors.toList());
-    }
 
 
 	
