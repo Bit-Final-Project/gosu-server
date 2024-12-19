@@ -212,7 +212,9 @@ public class ProServiceImpl implements ProService {
                 pro.getStar(),
                 pro.getReviewCount(),
                 pro.getMember().getAddress(),
-                pro.getProItems()
+                pro.getProItems(),
+                pro.getMember().getEmail(),
+                pro.getMember().getPhone()
         )).toList();
 
         // 응답 데이터 구성
