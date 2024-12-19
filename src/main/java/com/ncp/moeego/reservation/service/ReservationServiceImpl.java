@@ -52,5 +52,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     public void isExist(ReservationRequest reservationRequest) {
 
+
     }
 }
