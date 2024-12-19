@@ -2,7 +2,10 @@ package com.ncp.moeego.pro.controller;
 
 import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
-import com.ncp.moeego.pro.dto.*;
+import com.ncp.moeego.pro.dto.FavoriteDeleteRequest;
+import com.ncp.moeego.pro.dto.FavoriteResponse;
+import com.ncp.moeego.pro.dto.PostItemRequest;
+import com.ncp.moeego.pro.dto.ProJoinRequest;
 import com.ncp.moeego.pro.service.ProServiceImpl;
 import com.ncp.moeego.review.bean.ItemReviewResponse;
 import com.ncp.moeego.review.service.ReviewService;
@@ -102,7 +105,7 @@ public class ProController {
     // 달인 서비스 상세보기
     @GetMapping("/item/detail")
     public ResponseEntity<?> getItemDetails(@RequestParam("proItemNo") Long proItemNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
-        Page<ItemReviewResponse> reviewResponsePage = reviewServiceImpl.getReviewsByItemNo(proItemNo,pg);
+        Page<ItemReviewResponse> reviewResponsePage = reviewServiceImpl.getReviewsByItemNo(proItemNo, pg);
         Map<String, Object> response = new HashMap<>();
         response.put("content", reviewResponsePage.getContent());
         response.put("totalPages", reviewResponsePage.getTotalPages());
