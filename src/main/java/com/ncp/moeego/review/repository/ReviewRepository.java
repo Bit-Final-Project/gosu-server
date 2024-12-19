@@ -2,6 +2,8 @@ package com.ncp.moeego.review.repository;
 
 import java.util.List;
 
+import com.ncp.moeego.review.bean.ItemReviewResponse;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ncp.moeego.review.entity.Review;
+
+import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>{
@@ -51,6 +55,14 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
 	@Query("SELECT COALESCE(SUM(r.star), 0) FROM Review r WHERE r.proItem.proItemNo = :proItemNo")
 	float sumStarByProItemNo(@Param("proItemNo") Long proItemNo);
 
+
+	@Query("""
+			select new com.ncp.moeego.review.bean.ItemReviewResponse(
+			r.reviewNo,r.reviewContent, r.star, r.writeDate, r.proItem.pro.member.name, r.proItem.subject, r.member.name, r.proItem.proItemNo, r.member.memberNo
+			) from Review r
+			where r.proItem.proItemNo = :proItemNo
+			""")
+	Page<ItemReviewResponse> findReviewsByProItem_ProItemNo(@Param("proItemNo") Long proItemNo, Pageable pageable);
 
 
 }

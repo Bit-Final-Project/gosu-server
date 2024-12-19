@@ -4,6 +4,9 @@ import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.service.impl.MemberServiceImpl;
 import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.service.ProServiceImpl;
+import com.ncp.moeego.review.bean.ItemReviewResponse;
+import com.ncp.moeego.review.service.ReviewService;
+import com.ncp.moeego.review.service.ReviewServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,10 +23,14 @@ public class ProController {
 
     private final ProServiceImpl proService;
     private final MemberServiceImpl memberService;
+    private final ReviewService reviewService;
+    private final ReviewServiceImpl reviewServiceImpl;
 
-    public ProController(ProServiceImpl proService, MemberServiceImpl memberService) {
+    public ProController(ProServiceImpl proService, MemberServiceImpl memberService, ReviewService reviewService, ReviewServiceImpl reviewServiceImpl) {
         this.proService = proService;
         this.memberService = memberService;
+        this.reviewService = reviewService;
+        this.reviewServiceImpl = reviewServiceImpl;
     }
 
     @PostMapping("/join")
@@ -94,10 +101,14 @@ public class ProController {
 
     // 달인 서비스 상세보기
     @GetMapping("/item/detail")
-    public ResponseEntity<?> getItemDetails(@RequestParam("proItemNo") Long proItemNo) {
-        ItemDetailResponse itemDetailResponse = proService.getItemDetails(proItemNo);
-
-        return ResponseEntity.ok(ApiResponse.success("조회 성공", itemDetailResponse));
+    public ResponseEntity<?> getItemDetails(@RequestParam("proItemNo") Long proItemNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+        Page<ItemReviewResponse> reviewResponsePage = reviewServiceImpl.getReviewsByItemNo(proItemNo,pg);
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", reviewResponsePage.getContent());
+        response.put("totalPages", reviewResponsePage.getTotalPages());
+        response.put("currentPage", reviewResponsePage.getNumber());
+        response.put("totalElements", reviewResponsePage.getTotalElements());
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", response));
 
     }
 

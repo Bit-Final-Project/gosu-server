@@ -2,10 +2,13 @@ package com.ncp.moeego.review.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,7 @@ import com.ncp.moeego.ncp.service.ObjectStorageService;
 import com.ncp.moeego.pro.entity.ProItem;
 import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
+import com.ncp.moeego.review.bean.ItemReviewResponse;
 import com.ncp.moeego.review.bean.ReviewDTO;
 import com.ncp.moeego.review.entity.Review;
 import com.ncp.moeego.review.repository.ReviewRepository;
@@ -220,6 +224,34 @@ public class ReviewServiceImpl implements ReviewService {
 		return false;
 	}
 
+	public Page<ItemReviewResponse> getReviewsByItemNo(Long proItemNo, int pg) {
+        Pageable pageable = PageRequest.of(pg - 1, 5);
+        Page<ItemReviewResponse> reviewPage = reviewRepository.findReviewsByProItem_ProItemNo(proItemNo, pageable);
+
+        // 리뷰 번호 추출
+        List<Long> reviewNos = reviewPage.getContent().stream().map(ItemReviewResponse::getReviewNo).toList();
+
+        // 이미지 데이터를 가져오고 map으로 변환
+        List<Object[]> imageData = imageRepository.findImageUuidsByReviewNos(reviewNos);
+
+        Map<Long, List<String>> imageMap = imageData.stream()
+                .collect(Collectors.groupingBy(
+                        data -> (Long) data[0], // reviewNo
+                        Collectors.mapping(
+                                data -> (String) data[1], // imageUuidName
+                                Collectors.toList()
+                        )
+                ));
+
+        //리뷰 객체에 이미지 uuid 셋팅
+        reviewPage.getContent().forEach(item -> {
+            List<String> imageUuids = imageMap.getOrDefault(item.getReviewNo(), List.of());
+            item.setImageUuidNames(imageUuids);
+        });
+
+        return reviewPage;
+
+    }
 
 
 }

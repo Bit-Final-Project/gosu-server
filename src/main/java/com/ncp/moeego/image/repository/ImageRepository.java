@@ -1,6 +1,7 @@
 package com.ncp.moeego.image.repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,7 @@ import com.ncp.moeego.review.entity.Review;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Long>{
+public interface ImageRepository extends JpaRepository<Image, Long> {
 
 	List<Image> findByArticle_ArticleNo(Long articleNo);
 
@@ -28,7 +29,7 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 	void deleteByImageUuidName(@Param("profileImage") String profileImage);
 
 	// uuid값 가져오기
-	
+
 	// 게시글 번호 기준으로 이미지 리스트 조회
 	List<Image> findByArticle(Article article);
 
@@ -42,5 +43,8 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 
 	// 리뷰 번호에 맞는 이미지 조회
 	List<Image> findByReview(Review review);
+
+	@Query("select i.review.reviewNo, i.imageUuidName From Image i where i.review.reviewNo IN :reviewNos")
+	List<Object[]> findImageUuidsByReviewNos(@Param("reviewNos") List<Long> reviewNos);
 
 }
