@@ -70,7 +70,6 @@ public class ReviewController {
 
 	    return ResponseEntity.ok(response);
 	}
-
 	
 	// 리뷰 삭제
 	@DeleteMapping("/review/delete/{reviewNo}")

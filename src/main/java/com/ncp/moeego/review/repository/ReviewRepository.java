@@ -43,6 +43,14 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
 	@Query("SELECT i.imageUuidName FROM Image i WHERE i.review.reviewNo = :reviewNo")
 	List<String> findImageUuidsByReviewNo(@Param("reviewNo") Long reviewNo);
 
+	// ProItem의 리뷰 개수
+	@Query("SELECT COUNT(r) FROM Review r WHERE r.proItem.proItemNo = :proItemNo")
+	int countByProItemNo(@Param("proItemNo") Long proItemNo);
+
+	// ProItem의 star 합계 (null일 경우 0 반환)
+	@Query("SELECT COALESCE(SUM(r.star), 0) FROM Review r WHERE r.proItem.proItemNo = :proItemNo")
+	float sumStarByProItemNo(@Param("proItemNo") Long proItemNo);
+
 
 
 }
