@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/reservation")
 public class ReservationController {
 
-
     public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
@@ -30,6 +29,5 @@ public class ReservationController {
         String message = reservationService.makeReservation(reservationRequest);
         return ResponseEntity.ok(ApiResponse.success(message));
     }
-
 
 }
