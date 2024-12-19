@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/reservation")
 public class ReservationController {
 
-
     public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
@@ -27,9 +26,8 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<?> makeReservation(@RequestBody ReservationRequest reservationRequest) {
         log.info("예약 요청 memberNo: {}, proItemNo: {}, reservationDate: {}, startTimes: {} ", reservationRequest.getMemberNo(), reservationRequest.getProItemNo(), reservationRequest.getStartDate(), reservationRequest.getStartTimes());
-        reservationService.makeReservation(reservationRequest);
-        return ResponseEntity.ok(ApiResponse.success("예약 성공"));
+        String message = reservationService.makeReservation(reservationRequest);
+        return ResponseEntity.ok(ApiResponse.success(message));
     }
-
 
 }

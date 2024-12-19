@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -18,14 +19,13 @@ import java.util.List;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final ReservationTimeRepository timeRepository;
+    private final ReservationTimeRepository reservationTimeRepository;
     private final MemberService memberService;
     private final ProService proService;
-    private final ReservationTimeRepository reservationTimeRepository;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, ReservationTimeRepository timeRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
         this.reservationRepository = reservationRepository;
-        this.timeRepository = timeRepository;
+  
         this.memberService = memberService;
         this.proService = proService;
         this.reservationTimeRepository = reservationTimeRepository;
@@ -33,7 +33,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public void makeReservation(ReservationRequest reservationRequest) {
+    public String makeReservation(ReservationRequest reservationRequest) {
+
+        isExist(reservationRequest);
+
         Reservation reservation = new Reservation();
         reservation.setMember(memberService.getMemberById(reservationRequest.getMemberNo()));
         reservation.setProItem(proService.getProItemById(reservationRequest.getProItemNo()));
@@ -48,10 +51,25 @@ public class ReservationServiceImpl implements ReservationService {
         }).toList();
 
         reservationTimeRepository.saveAll(reservationTimes);
+        return "예약 성공";
     }
 
     public void isExist(ReservationRequest reservationRequest) {
 
+        // proItem+startDate 으로 DB 조회
+        List<ReservationTime> existingReservations = reservationTimeRepository.findExistingReservation(reservationRequest.getProItemNo(), reservationRequest.getStartDate());
+        log.info(existingReservations.toString());
 
+        // 조회된 List 에서 startTime 만 추출
+        List<LocalTime> existingStartTimes = existingReservations.stream().map(ReservationTime::getStartTime).toList();
+        log.info(existingStartTimes.toString());
+
+        // reservationRequest 와 existingStartTimes 비교
+
+        List<LocalTime> conflictingTimes = reservationRequest.getStartTimes().stream().filter(existingStartTimes::contains).toList();
+
+        if (!conflictingTimes.isEmpty()) {
+            throw new IllegalArgumentException("이미 예약된 시간입니다 : " + conflictingTimes.toString());
+        }
     }
 }
