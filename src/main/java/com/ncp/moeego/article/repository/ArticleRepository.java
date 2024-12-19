@@ -51,25 +51,29 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     // 전체 게시글 댓글 수 가져오는 쿼리
     @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo " +
-            "AND c.commentStatus != 'DELETED' " +  // 여기서 'DELETED' 댓글만 제외 현식이 요청사항 ^^...
+            "AND c.commentStatus <> 'DELETED' " +  // 여기서 'DELETED' 댓글만 제외 현식이 요청사항 ^^...
             "WHERE a.type NOT IN (0, 1) " +      // 게시글 type이 0, 1인 것 제외 현식이 요청사항 ^^...
             "GROUP BY a.articleNo")
     Page<Object[]> findArticlesWithCommentCount(Pageable pageable);
 
     // 타입별 댓글 수 가져오는 쿼리
-    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus != 'DELETED' WHERE a.type = :type GROUP BY a")
+    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE a.type = :type GROUP BY a")
     Page<Object[]> findTypeArticlesWithCommentCount(@Param("type") int type, Pageable pageable);
 
+    // 검색 값 가져오는 쿼리
+    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE (a.content like %:value% or a.subject like %:value% or :value is null) and a.type = 2 GROUP BY a")
+    Page<Object[]> findSearchArticles(@Param("value") String value, Pageable pageable);
+
     // 내가 작성한 글 댓글 수 가져오는 쿼리
-    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus != 'DELETED' WHERE a.member.memberNo = :memberNo GROUP BY a")
+    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE a.member.memberNo = :memberNo GROUP BY a")
     Page<Object[]> findMyArticlesWithCommentCount(@Param("memberNo") Long memberNo, Pageable pageable);
 
     // 상세 페이지 댓글 수 가져오는 쿼리
-    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus != 'DELETED' WHERE a.articleNo = :articleNo GROUP BY a")
+    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE a.articleNo = :articleNo GROUP BY a")
     Optional<Object[]> findArticleWithCommentCount(@Param("articleNo") Long articleNo);
 
     // 좋아요 순 댓글 수 가져오는 쿼리
-    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus != 'DELETED' GROUP BY a ORDER BY a.likes DESC")
+    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' GROUP BY a ORDER BY a.likes DESC")
     Page<Object[]> findHotArticlesWithCommentCount(Pageable pageable);
 
 }

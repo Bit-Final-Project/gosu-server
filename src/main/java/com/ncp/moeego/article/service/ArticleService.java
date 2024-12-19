@@ -40,6 +40,8 @@ public interface ArticleService {
     // Type 별 게시판 조회
     public Page<ArticleDTO> getTypeArticles(int pg, int pageSize, int type);
 
+    // 게시판 검색
+    public Page<ArticleDTO> getSearchArticles(String value, int pg, int pageSize);
 
     public Page<ArticleDTO> getMyArticles(Long member_no, int pg, int pageSize);
 
