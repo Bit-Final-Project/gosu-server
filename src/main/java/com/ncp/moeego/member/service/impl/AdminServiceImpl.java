@@ -7,16 +7,27 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
+import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.cancel.entity.Cancel;
+import com.ncp.moeego.image.entity.Image;
+import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
@@ -24,6 +35,7 @@ import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.AdminService;
+import com.ncp.moeego.ncp.service.ObjectStorageService;
 import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
@@ -40,7 +52,13 @@ public class AdminServiceImpl implements AdminService {
     private final ProRepository proRepository;
     private final ProItemRepository proItemRepository;
     private final ArticleRepository articleRepository;
+    private final ImageRepository imageRepository;
 
+    // 네이버 클라우드
+    private final ObjectStorageService objectStorageService;
+
+    private String bucketName = "moeego";
+    
     @Override
     public int getRoleUserCount() {
         return memberRepository.countByMemberStatus(MemberStatus.ROLE_USER);
@@ -234,6 +252,7 @@ public class AdminServiceImpl implements AdminService {
 	public List<ArticleImageDTO> getArticlesWithImages() {
         return memberRepository.findArticlesWithImages();
     }
+
 	
 	
 }

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
@@ -46,6 +49,8 @@ public interface AdminService {
 	void revokeMember(Long memberNo);
 
 	List<ArticleImageDTO> getArticlesWithImages();
+
+
 
 
 	
