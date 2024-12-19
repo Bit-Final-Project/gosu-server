@@ -2,6 +2,7 @@ package com.ncp.moeego.reservation.service;
 
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.service.ProService;
+import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
 import com.ncp.moeego.reservation.entity.Reservation;
 import com.ncp.moeego.reservation.entity.ReservationTime;
@@ -51,6 +52,18 @@ public class ReservationServiceImpl implements ReservationService {
 
         reservationTimeRepository.saveAll(reservationTimes);
         return "예약 성공";
+    }
+
+    @Override
+    public List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo) {
+        List<ReservationTime> reservationTimes = reservationTimeRepository.findExistingReservation(proItemNo);
+
+        return reservationTimes.stream().map(reservationTime -> ExistingDateTimeResponse.builder()
+                        .startDate(reservationTime.getStartDate())
+                        .startTime(reservationTime.getStartTime())
+                        .build())
+                .toList();
+
     }
 
     public void isExist(ReservationRequest reservationRequest) {

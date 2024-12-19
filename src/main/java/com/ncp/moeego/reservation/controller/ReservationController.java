@@ -19,8 +19,10 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping
-    public ResponseEntity<?> getReservation() {
-        return ResponseEntity.ok(ApiResponse.success("예약 조회 성공"));
+    public ResponseEntity<?> getExistingDateTime(@RequestParam Long proItemNo) {
+
+        return ResponseEntity.ok(ApiResponse.success("예약 조회 성공", reservationService.getReservationByProItem(proItemNo)));
+
     }
 
     @PostMapping
