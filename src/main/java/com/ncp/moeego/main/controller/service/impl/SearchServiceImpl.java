@@ -1,5 +1,7 @@
 package com.ncp.moeego.main.controller.service.impl;
 
+import com.ncp.moeego.article.bean.ArticleDTO;
+import com.ncp.moeego.article.service.ArticleService;
 import com.ncp.moeego.main.controller.service.SearchService;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.pro.dto.ItemResponse;
@@ -19,9 +21,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SearchServiceImpl implements SearchService {
     private final ProRepository proRepository;
+    private final ArticleService articleService;
 
     @Override
-    public Map<String, Object> getSearchList(String value, int pg) {
+    public Map<String, Object> getSearchProList(String value, int pg) {
         Pageable pageable = PageRequest.of(pg - 1, 3);
         Page<Pro> proPage = proRepository.findSearchValue(pageable, value);
 
@@ -46,6 +49,20 @@ public class SearchServiceImpl implements SearchService {
         response.put("currentPage", proPage.getNumber()); // 현재 페이지
         response.put("totalPages", proPage.getTotalPages()); // 전체 페이지 수
         response.put("totalElements", proPage.getTotalElements()); // 전체 요소 수
+
+        return response;
+    }
+
+    @Override
+    public Map<String, Object> getSearchArticleList(String value, int pg) {
+        Page<ArticleDTO> articlePage = articleService.getSearchArticles(value, pg, 3);
+
+        // 응답 데이터 구성
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", articlePage.getContent());  // 현재 페이지의 콘텐츠 (게시글 목록)
+        response.put("totalPages", articlePage.getTotalPages());  // 전체 페이지 수
+        response.put("currentPage", articlePage.getNumber());  // 현재 페이지 번호
+        response.put("totalElements", articlePage.getTotalElements());  // 전체 게시글 수
 
         return response;
     }

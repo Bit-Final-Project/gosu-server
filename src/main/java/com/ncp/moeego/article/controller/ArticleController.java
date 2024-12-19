@@ -22,13 +22,10 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class ArticleController {
 
 	private final ArticleService articleService;
-	
-	@Autowired
-	private ImageService imageService;
+	private final ImageService imageService;
 
 	// 한 페이지에 출력할 게시글 수
 	private int pageSize = 10;

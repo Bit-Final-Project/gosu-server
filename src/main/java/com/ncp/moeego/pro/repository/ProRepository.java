@@ -47,9 +47,9 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
             select p from Pro p
             left join p.member m
             where p.member.memberStatus = 'ROLE_PRO' 
-            and (m.name like %:value%)
-            or (p.intro like %:value%)
-            or (p.oneIntro like %:value%)
+            and (:value is null or m.name like %:value%)
+            or (:value is null or p.intro like %:value%)
+            or (:value is null or p.oneIntro like %:value%)
             """)
     Page<Pro> findSearchValue(Pageable pageable, @Param("value") String value);
 

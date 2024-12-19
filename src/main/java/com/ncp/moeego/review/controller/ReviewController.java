@@ -27,11 +27,9 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class ReviewController {
 
-	private final ReviewService reviewService;  
-	private final ImageService imageService;
+	private final ReviewService reviewService;
 	
 	private int pageSize = 5;
 	
