@@ -18,14 +18,12 @@ import java.util.List;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final ReservationTimeRepository timeRepository;
+    private final ReservationTimeRepository reservationTimeRepository;
     private final MemberService memberService;
     private final ProService proService;
-    private final ReservationTimeRepository reservationTimeRepository;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, ReservationTimeRepository timeRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
         this.reservationRepository = reservationRepository;
-        this.timeRepository = timeRepository;
         this.memberService = memberService;
         this.proService = proService;
         this.reservationTimeRepository = reservationTimeRepository;
@@ -33,7 +31,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public void makeReservation(ReservationRequest reservationRequest) {
+    public String makeReservation(ReservationRequest reservationRequest) {
+
         Reservation reservation = new Reservation();
         reservation.setMember(memberService.getMemberById(reservationRequest.getMemberNo()));
         reservation.setProItem(proService.getProItemById(reservationRequest.getProItemNo()));
@@ -48,10 +47,11 @@ public class ReservationServiceImpl implements ReservationService {
         }).toList();
 
         reservationTimeRepository.saveAll(reservationTimes);
+        return null;
     }
 
     public void isExist(ReservationRequest reservationRequest) {
 
-
     }
+
 }
