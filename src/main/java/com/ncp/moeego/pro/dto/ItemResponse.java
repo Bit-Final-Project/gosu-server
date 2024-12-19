@@ -19,8 +19,10 @@ public class ItemResponse {
     private Long reviewCount;
     private String address;
     private List<ProItem> proItems;
+    private String email;
+    private String phone;
 
-    public ItemResponse(Long proNo, String name, String profileImage, String intro, String oneIntro, Long mainCateNo, String mainCateName, float star, Long reviewCount, String address, List<ProItem> proItems) {
+    public ItemResponse(Long proNo, String name, String profileImage, String intro, String oneIntro, Long mainCateNo, String mainCateName, float star, Long reviewCount, String address, List<ProItem> proItems, String email, String phone) {
         this.proNo = proNo;
         this.name = name;
         this.profileImage = profileImage;
@@ -32,6 +34,8 @@ public class ItemResponse {
         this.reviewCount = reviewCount;
         this.address = address;
         this.proItems = proItems;
+        this.email = email;
+        this.phone = phone;
     }
 
 
