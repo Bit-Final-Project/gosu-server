@@ -227,4 +227,9 @@ public class ProServiceImpl implements ProService {
         return response;
     }
 
+    @Override
+    public ProItem getProItemById(Long proItemNo) {
+        return proItemRepository.findById(proItemNo).orElseThrow(()->new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo+"번 서비스"));
+    }
+
 }
