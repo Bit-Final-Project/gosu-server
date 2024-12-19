@@ -1,15 +1,14 @@
 package com.ncp.moeego.pro.controller;
 
 import com.ncp.moeego.common.ApiResponse;
-import com.ncp.moeego.member.service.impl.MemberServiceImpl;
+import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.dto.FavoriteDeleteRequest;
 import com.ncp.moeego.pro.dto.FavoriteResponse;
 import com.ncp.moeego.pro.dto.PostItemRequest;
 import com.ncp.moeego.pro.dto.ProJoinRequest;
-import com.ncp.moeego.pro.service.ProServiceImpl;
+import com.ncp.moeego.pro.service.ProService;
 import com.ncp.moeego.review.bean.ItemReviewResponse;
 import com.ncp.moeego.review.service.ReviewService;
-import com.ncp.moeego.review.service.ReviewServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,17 +23,16 @@ import java.util.Map;
 @RequestMapping("/pro")
 public class ProController {
 
-    private final ProServiceImpl proService;
-    private final MemberServiceImpl memberService;
-    private final ReviewService reviewService;
-    private final ReviewServiceImpl reviewServiceImpl;
+    private final ProService proService;
+    private final MemberService memberService;
 
-    public ProController(ProServiceImpl proService, MemberServiceImpl memberService, ReviewService reviewService, ReviewServiceImpl reviewServiceImpl) {
+    public ProController(ProService proService, MemberService memberService, ReviewService reviewService) {
         this.proService = proService;
         this.memberService = memberService;
         this.reviewService = reviewService;
-        this.reviewServiceImpl = reviewServiceImpl;
     }
+
+    private final ReviewService reviewService;
 
     @PostMapping("/join")
     public ResponseEntity<?> proJoin(@RequestBody ProJoinRequest proJoinRequest) {
@@ -105,7 +103,7 @@ public class ProController {
     // 달인 서비스 상세보기
     @GetMapping("/item/detail")
     public ResponseEntity<?> getItemDetails(@RequestParam("proItemNo") Long proItemNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
-        Page<ItemReviewResponse> reviewResponsePage = reviewServiceImpl.getReviewsByItemNo(proItemNo, pg);
+        Page<ItemReviewResponse> reviewResponsePage = reviewService.getReviewsByItemNo(proItemNo, pg);
         Map<String, Object> response = new HashMap<>();
         response.put("content", reviewResponsePage.getContent());
         response.put("totalPages", reviewResponsePage.getTotalPages());

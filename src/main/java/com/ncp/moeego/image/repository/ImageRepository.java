@@ -47,4 +47,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 	@Query("select i.review.reviewNo, i.imageUuidName From Image i where i.review.reviewNo IN :reviewNos")
 	List<Object[]> findImageUuidsByReviewNos(@Param("reviewNos") List<Long> reviewNos);
 
+	@Query("SELECT i FROM Image i WHERE i.review.reviewNo IN :reviewNos")
+	List<Image> findImagesByReviewNos(@Param("reviewNos") List<Long> reviewNos);
 }

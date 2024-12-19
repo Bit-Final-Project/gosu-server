@@ -3,7 +3,6 @@ package com.ncp.moeego.pro.repository;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.pro.dto.FavoriteResponse;
-import com.ncp.moeego.pro.dto.ItemResponse;
 import com.ncp.moeego.pro.entity.Pro;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,11 +54,11 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
 
 	Optional<Pro> findByMemberMemberNo(Long memberNo);
 
-	Pro findByMember_MemberNo(Long memberNo);
+    Pro findByMember_MemberNo(Long memberNo);
 
-	// Pro 업데이트
-	@Modifying
-	@Query("UPDATE Pro p SET p.reviewCount = :totalReviewCount, p.star = :averageStar WHERE p.proNo = :proNo")
-	void updateStatistics(@Param("proNo") Long proNo, @Param("totalReviewCount") int totalReviewCount, @Param("averageStar") float averageStar);
+    // Pro 업데이트
+    @Modifying
+    @Query("UPDATE Pro p SET p.reviewCount = :totalReviewCount, p.star = :averageStar WHERE p.proNo = :proNo")
+    void updateStatistics(@Param("proNo") Long proNo, @Param("totalReviewCount") int totalReviewCount, @Param("averageStar") float averageStar);
 
 }
