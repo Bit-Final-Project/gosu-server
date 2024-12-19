@@ -18,7 +18,6 @@ public interface ImageService {
 
 	public String getUploadedUuid(Long memberNo);
 
-	public List<ImageDTO> getImageByReviewNo();
 
 
 }

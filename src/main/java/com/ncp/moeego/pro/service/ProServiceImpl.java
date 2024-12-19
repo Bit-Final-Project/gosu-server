@@ -67,7 +67,6 @@ public class ProServiceImpl implements ProService {
         } catch (Exception e) {
             log.error("회원가입 실패 : {}", e.getMessage());
             throw e;
-
         }
     }
 
@@ -211,8 +210,11 @@ public class ProServiceImpl implements ProService {
                 pro.getMainCategory().getMainCateNo(),
                 pro.getMainCategory().getMainCateName(),
                 pro.getStar(),
+                pro.getReviewCount(),
                 pro.getMember().getAddress(),
-                pro.getProItems()
+                pro.getProItems(),
+                pro.getMember().getEmail(),
+                pro.getMember().getPhone()
         )).toList();
 
         // 응답 데이터 구성

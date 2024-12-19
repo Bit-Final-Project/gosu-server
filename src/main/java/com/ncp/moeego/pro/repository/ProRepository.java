@@ -8,6 +8,7 @@ import com.ncp.moeego.pro.entity.Pro;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -45,5 +46,10 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
 	Optional<Pro> findByMemberMemberNo(Long memberNo);
 
 	Pro findByMember_MemberNo(Long memberNo);
+
+	// Pro 업데이트
+	@Modifying
+	@Query("UPDATE Pro p SET p.reviewCount = :totalReviewCount, p.star = :averageStar WHERE p.proNo = :proNo")
+	void updateStatistics(@Param("proNo") Long proNo, @Param("totalReviewCount") int totalReviewCount, @Param("averageStar") float averageStar);
 
 }

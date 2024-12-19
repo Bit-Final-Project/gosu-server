@@ -9,6 +9,7 @@ import com.ncp.moeego.pro.entity.ProItem;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -36,4 +37,17 @@ public interface ProItemRepository extends JpaRepository<ProItem, Long> {
     List<ProItem> findByPro_Member_MemberNo(Long memberNo);
 
 	List<ProItem> findByPro_ProNo(Long proNo);
+	
+	// ProItem 업데이트
+	@Modifying
+	@Query("UPDATE ProItem p SET p.reviewCount = :reviewCount, p.star = :averageStar WHERE p.proItemNo = :proItemNo")
+	void updateStatistics(@Param("proItemNo") Long proItemNo, @Param("reviewCount") int reviewCount, @Param("averageStar") float averageStar);
+
+	// Pro의 reviewCount 합계 (null일 경우 0 반환)
+	@Query("SELECT COALESCE(SUM(p.reviewCount), 0) FROM ProItem p WHERE p.pro.proNo = :proNo")
+	int sumReviewCountByProNo(@Param("proNo") Long proNo);
+
+	// Pro의 star 합계 (null일 경우 0 반환)
+	@Query("SELECT COALESCE(SUM(p.star * p.reviewCount), 0) FROM ProItem p WHERE p.pro.proNo = :proNo")
+	float sumStarByProNo(@Param("proNo") Long proNo);
 }
