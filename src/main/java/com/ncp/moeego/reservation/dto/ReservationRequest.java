@@ -1,5 +1,6 @@
 package com.ncp.moeego.reservation.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,8 +12,15 @@ import java.util.List;
 @Builder
 public class ReservationRequest {
 
-    Long memberNo;
+    private Long memberNo;
     private Long proItemNo;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
+
+    @JsonFormat(pattern = "HH:mm:ss")
     private List<LocalTime> startTimes;
+
+    public ReservationRequest() {
+    }
 }
