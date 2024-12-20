@@ -10,4 +10,5 @@ public interface ReservationService {
 
     List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo);
 
+    void getMyReservations(String email, Integer year);
 }

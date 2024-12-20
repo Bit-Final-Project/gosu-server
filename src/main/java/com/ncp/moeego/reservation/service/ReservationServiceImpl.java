@@ -1,5 +1,7 @@
 package com.ncp.moeego.reservation.service;
 
+import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.service.ProService;
 import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
@@ -26,7 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
         this.reservationRepository = reservationRepository;
-  
+
         this.memberService = memberService;
         this.proService = proService;
         this.reservationTimeRepository = reservationTimeRepository;
@@ -86,4 +88,29 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("이미 예약된 시간입니다 : " + conflictingTimes.toString());
         }
     }
+
+    @Override
+    public void getMyReservations(String email, Integer year) {
+        Member member = memberService.getMemberByEmail(email);
+
+        if (member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
+            getMyReservationsRolePro(member, year);
+        } else if (member.getMemberStatus().equals(MemberStatus.ROLE_USER)) {
+            getMyReservationsRoleUser(member, year);
+
+        } else {
+            throw new IllegalArgumentException("예약내역을 조회할 수 없는 회원입니다.");
+        }
+    }
+
+    private void getMyReservationsRolePro(Member member, Integer year) {
+        
+
+    }
+
+
+    private void getMyReservationsRoleUser(Member member, Integer year) {
+
+    }
+
 }
