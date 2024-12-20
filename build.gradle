@@ -53,6 +53,8 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.610'
     //email 인증
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    //Jackson 의존성
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {
