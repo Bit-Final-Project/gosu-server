@@ -1,10 +1,12 @@
 package com.ncp.moeego.reservation.controller;
 
 import com.ncp.moeego.common.ApiResponse;
+import com.ncp.moeego.member.bean.MemberDetails;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
 import com.ncp.moeego.reservation.service.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -30,6 +32,15 @@ public class ReservationController {
         log.info("예약 요청 memberNo: {}, proItemNo: {}, reservationDate: {}, startTimes: {} ", reservationRequest.getMemberNo(), reservationRequest.getProItemNo(), reservationRequest.getStartDate(), reservationRequest.getStartTimes());
         String message = reservationService.makeReservation(reservationRequest);
         return ResponseEntity.ok(ApiResponse.success(message));
+    }
+
+    @GetMapping("/mypage")
+    public ResponseEntity<?> getMyReservations(Authentication authentication) {
+        log.info("내 예약 보기");
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        log.info("로그인 정보 : {}", memberDetails.getName());
+        log.info("로그인 이메일 : {}", authentication.getName());
+        return ResponseEntity.ok(ApiResponse.success("하위"));
     }
 
 }
