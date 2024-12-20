@@ -38,6 +38,21 @@ public class CustomFormSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         String memberStatus = authentication.getAuthorities().iterator().next().getAuthority();
 
+        //탈퇴 회원 상태 처리
+        if(memberStatus.equals("ROLE_CANCEL")) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 상태 코드 설정
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "탈퇴한 회원입니다.");
+            errorResponse.put("code", HttpServletResponse.SC_BAD_REQUEST);
+
+            // 에러 메시지를 JSON으로 반환
+            new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+            return;
+        }
+
         // access
         String access = jwtUtil.createJwt("access", jwtDTO, memberStatus, 60 * 10 * 1000L);
         response.setHeader("access", access);
