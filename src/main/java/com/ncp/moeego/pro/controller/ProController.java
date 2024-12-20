@@ -22,6 +22,7 @@ public class ProController {
 
     private final ProService proService;
     private final MemberService memberService;
+    private final ReviewService reviewService;
 
     public ProController(ProService proService, MemberService memberService, ReviewService reviewService) {
         this.proService = proService;
@@ -29,7 +30,6 @@ public class ProController {
         this.reviewService = reviewService;
     }
 
-    private final ReviewService reviewService;
 
     @PostMapping("/join")
     public ResponseEntity<?> proJoin(@RequestBody ProJoinRequest proJoinRequest) {
@@ -63,7 +63,7 @@ public class ProController {
     }
 
     @PostMapping("/favorite")
-    public ResponseEntity<?> postFavorites(@RequestBody FavoritePostRequest favoritePostRequest){
+    public ResponseEntity<?> postFavorites(@RequestBody FavoritePostRequest favoritePostRequest) {
         log.info("postFavorites 요청: memberNo:{}, proNo:{}", favoritePostRequest.getMemberNo(), favoritePostRequest.getProNo());
         return ResponseEntity.ok(ApiResponse.success(proService.postFavorites(favoritePostRequest)));
 
@@ -88,6 +88,7 @@ public class ProController {
 
     }
 
+    // 서비스 등록 폼 진입 시 초기값 반환
     @GetMapping("/item/init")
     public ResponseEntity<?> getItemInit(@RequestParam("memberNo") Long memberNo) {
         log.info("달인 서비스 등록 요청: " + memberNo);
@@ -105,6 +106,7 @@ public class ProController {
     }
 
     // 달인 서비스 상세보기
+    // 위에 리스트 반환시 상세정보 다 넣어서 반환했기때문에 해당 서비스의 리뷰만 리턴
     @GetMapping("/item/detail")
     public ResponseEntity<?> getItemDetails(@RequestParam("proItemNo") Long proItemNo, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
         Page<ItemReviewResponse> reviewResponsePage = reviewService.getReviewsByItemNo(proItemNo, pg);
