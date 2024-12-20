@@ -2,10 +2,7 @@ package com.ncp.moeego.pro.controller;
 
 import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.service.MemberService;
-import com.ncp.moeego.pro.dto.FavoriteDeleteRequest;
-import com.ncp.moeego.pro.dto.FavoriteResponse;
-import com.ncp.moeego.pro.dto.PostItemRequest;
-import com.ncp.moeego.pro.dto.ProJoinRequest;
+import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.service.ProService;
 import com.ncp.moeego.review.bean.ItemReviewResponse;
 import com.ncp.moeego.review.service.ReviewService;
@@ -63,6 +60,13 @@ public class ProController {
         data.put("totalElements", favoritePage.getTotalElements());
 
         return ResponseEntity.ok(ApiResponse.success("조회성공", data));
+    }
+
+    @PostMapping("/favorite")
+    public ResponseEntity<?> postFavorites(@RequestBody FavoritePostRequest favoritePostRequest){
+        log.info("postFavorites 요청: memberNo:{}, proNo:{}", favoritePostRequest.getMemberNo(), favoritePostRequest.getProNo());
+        return ResponseEntity.ok(ApiResponse.success(proService.postFavorites(favoritePostRequest)));
+
     }
 
     @DeleteMapping("/favorite")
