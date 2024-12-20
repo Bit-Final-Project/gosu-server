@@ -37,7 +37,7 @@ public class ReservationController {
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<?> getMyReservations(Authentication authentication, @RequestParam(required = false) Integer year) {
+    public ResponseEntity<?> getReservations(Authentication authentication, @RequestParam(required = false) Integer year) {
         log.info("요청한 연도 : {}", year);
         if (year == null) {
             year = LocalDate.now().getYear();
@@ -49,7 +49,7 @@ public class ReservationController {
         log.info("로그인 정보 : {}", memberDetails.getName());
         log.info("로그인 이메일 : {}", authentication.getName());
 
-        reservationService.getMyReservations(authentication.getName(),year);
+        reservationService.getReservations(authentication.getName(),year);
 
 
         return ResponseEntity.ok(ApiResponse.success("하위"));

@@ -1,6 +1,7 @@
 package com.ncp.moeego.pro.service;
 
 import com.ncp.moeego.pro.dto.*;
+import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import org.springframework.data.domain.Page;
 
@@ -25,4 +26,6 @@ public interface ProService {
     ProItem getProItemById(Long proItemNo);
 
     String postFavorites(FavoritePostRequest favoritePostRequest);
+
+    Pro getProByMemberNo(Long memberNo);
 }

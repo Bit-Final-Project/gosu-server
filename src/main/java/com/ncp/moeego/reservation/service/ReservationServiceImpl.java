@@ -1,10 +1,13 @@
 package com.ncp.moeego.reservation.service;
 
 import com.ncp.moeego.member.entity.Member;
-import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.MemberService;
+import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.service.ProService;
+import com.ncp.moeego.pro.service.ProServiceImpl;
 import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
+import com.ncp.moeego.reservation.dto.MyReservationResponse;
+import com.ncp.moeego.reservation.dto.ReceivedReservationResponse;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
 import com.ncp.moeego.reservation.entity.Reservation;
 import com.ncp.moeego.reservation.entity.ReservationTime;
@@ -25,13 +28,15 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationTimeRepository reservationTimeRepository;
     private final MemberService memberService;
     private final ProService proService;
+    private final ProServiceImpl proServiceImpl;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository, ProServiceImpl proServiceImpl) {
         this.reservationRepository = reservationRepository;
 
         this.memberService = memberService;
         this.proService = proService;
         this.reservationTimeRepository = reservationTimeRepository;
+        this.proServiceImpl = proServiceImpl;
     }
 
     @Transactional
@@ -90,27 +95,36 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void getMyReservations(String email, Integer year) {
-        Member member = memberService.getMemberByEmail(email);
+    public void getReservations(String email, Integer year) {
+//        Member member = memberService.getMemberByEmail(email);
+        Member member = memberService.getMemberByEmail("codelily98@naver.com");
+        switch (member.getMemberStatus()) {
+            case ROLE_PRO -> {
+                getReceivedReservations(proService.getProByMemberNo(member.getMemberNo()), year);
+                getMyReservations(member, year);
+            }
+            case ROLE_USER -> getMyReservations(member, year);
 
-        if (member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
-            getMyReservationsRolePro(member, year);
-        } else if (member.getMemberStatus().equals(MemberStatus.ROLE_USER)) {
-            getMyReservationsRoleUser(member, year);
+            default -> throw new IllegalArgumentException("예약 내역을 조회할 수 없는 회원입니다.");
 
-        } else {
-            throw new IllegalArgumentException("예약내역을 조회할 수 없는 회원입니다.");
         }
-    }
-
-    private void getMyReservationsRolePro(Member member, Integer year) {
-        
 
     }
 
+    private void getReceivedReservations(Pro pro, Integer year) {
+        List<ReservationTime> reservationTimes = reservationTimeRepository.findReceivedReservations(pro.getProNo(), year);
+        log.info(reservationTimes.toString());
+        reservationTimes.stream()
+                .map(reservationTime -> ReceivedReservationResponse.builder()
+                        .memberName(reservationTime.getReservation().getMember().getName())
+                        .proItemName(reservationTime.getReservation().getProItem().getSubject())
+                        .startDate(reservationTime.getStartDate()));
+        //레전드코드발생
+    }
 
-    private void getMyReservationsRoleUser(Member member, Integer year) {
-
+    private void getMyReservations(Member member, Integer year) {
+        List<ReservationTime> reservationTimes = reservationTimeRepository.findMyReservations(member.getMemberNo(), year);
+        log.info(reservationTimes.toString());
     }
 
 }

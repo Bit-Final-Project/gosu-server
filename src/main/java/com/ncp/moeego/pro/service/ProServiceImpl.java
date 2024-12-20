@@ -165,7 +165,7 @@ public class ProServiceImpl implements ProService {
         return "달인 서비스 등록 성공";
     }
 
-    public Pro getProByMember(Long memberNo) {
+    public Pro getProByMemberNo(Long memberNo) {
         Member member = memberService.getMemberById(memberNo);
         Pro pro = proRepository.findByMember(member);
         if (pro == null) {
@@ -193,7 +193,7 @@ public class ProServiceImpl implements ProService {
         if (!member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
             throw new IllegalArgumentException(member.getName() + " 회원은 달인이 아닙니다.");
         }
-        Pro pro = getProByMember(memberNo);
+        Pro pro = getProByMemberNo(memberNo);
 
         Map<String, Object> response = new HashMap<>();
         response.put("proNo", pro.getProNo());

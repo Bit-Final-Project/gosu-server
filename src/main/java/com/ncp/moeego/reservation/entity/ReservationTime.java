@@ -1,7 +1,10 @@
 package com.ncp.moeego.reservation.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,6 +19,7 @@ public class ReservationTime {
     @Column(name = "reservation_time_no")
     private Long reservationTimeNo;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "reservation_no", nullable = false)
     private Reservation reservation;
