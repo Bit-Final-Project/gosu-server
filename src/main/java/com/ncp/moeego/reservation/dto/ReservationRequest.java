@@ -24,5 +24,4 @@ public class ReservationRequest {
 
     @JsonFormat(pattern = "HH:mm:ss")
     private List<LocalTime> startTimes;
-
 }
