@@ -55,4 +55,10 @@ public interface ArticleService {
     public boolean deleteArticle(Long articleNo);
 
 
+	public boolean updateView(Long articleNo);
+
+
+	public boolean updateLike(Long articleNo);
+
+
 }
