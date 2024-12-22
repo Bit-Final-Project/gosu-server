@@ -25,4 +25,6 @@ public interface ProService {
     Map<String, Object> getItemList(Long subCateNo, String location, int pg);
 
     ProItem getProItemById(Long proItemNo);
+    
+    String postFavorites(FavoritePostRequest favoritePostRequest);
 }

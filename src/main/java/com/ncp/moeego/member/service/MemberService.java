@@ -4,6 +4,7 @@ import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.bean.SignOutDTO;
 import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.entity.MemberStatus;
 
 public interface MemberService {
     boolean write(JoinDTO joinDTO);
@@ -18,4 +19,7 @@ public interface MemberService {
     ApiResponse updatePwd(String email, String pwd);
     ApiResponse updateAddress(String email, String address);
     ApiResponse updatePhone(String email, String phone);
+    Long getMemberNo(String email);
+
+    void setMemberStatus(Long memberNo, MemberStatus memberStatus);
 }
