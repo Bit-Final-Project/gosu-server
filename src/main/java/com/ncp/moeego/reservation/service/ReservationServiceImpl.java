@@ -133,6 +133,7 @@ public class ReservationServiceImpl implements ReservationService {
                         .proName(reservation.getProItem().getPro().getMember().getName())
                         .proItemNo(reservation.getProItem().getPro().getProNo())
                         .proItemName(reservation.getProItem().getSubject())
+                        .reservationNo(reservation.getReservationNo())
                         .startDate(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartDate()).findFirst().orElse(null))
                         .startTimes(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartTime()).toList())
                         .build())
@@ -144,6 +145,13 @@ public class ReservationServiceImpl implements ReservationService {
     public Long getReservationCountByProItem(Long proItemNo) {
         Long count = reservationRepository.countReservationsByProItem(proItemNo);
         return count != null && count > 0 ? count : 0; // 예약이 없으면 0 반환
+    }
+
+    @Override
+    public String deleteReservation(String email, Long reservationNo) {
+        Member member = memberService.getMemberByEmail(email);
+        reservationRepository.deleteByMemberAndReservationNo(member, reservationNo);
+        return "예약 취소 성공";
     }
 
 }
