@@ -69,13 +69,6 @@ public class ProController {
 
     }
 
-    @PostMapping("/favorite")
-    public ResponseEntity<?> postFavorites(@RequestBody FavoritePostRequest favoritePostRequest) {
-        log.info("postFavorites 요청: memberNo:{}, proNo:{}", favoritePostRequest.getMemberNo(), favoritePostRequest.getProNo());
-        return ResponseEntity.ok(ApiResponse.success(proService.postFavorites(favoritePostRequest)));
-
-    }
-
     @DeleteMapping("/favorite")
     public ResponseEntity<?> deleteFavorites(@RequestBody FavoriteDeleteRequest favoriteDeleteRequest) {
         log.info("deleteFavorites 요청: memberNo={}, proNoList={}", favoriteDeleteRequest.getMemberNo(), favoriteDeleteRequest.getProNo());

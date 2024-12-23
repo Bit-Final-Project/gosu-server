@@ -48,15 +48,6 @@ public class ReservationController {
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<?> getMyReservations(Authentication authentication) {
-        log.info("내 예약 보기");
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        log.info("로그인 정보 : {}", memberDetails.getName());
-        log.info("로그인 이메일 : {}", authentication.getName());
-        return ResponseEntity.ok(ApiResponse.success("하위"));
-    }
-
-    @GetMapping("/mypage")
     public ResponseEntity<?> getReservations(Authentication authentication, @RequestParam(required = false) Integer year) {
         log.info("요청한 연도 : {}", year);
         if (year == null) {
