@@ -10,6 +10,6 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
                 .exposedHeaders("Set-Cookie")
-                .allowedOrigins("http://175.45.194.160:80"); // 두 도메인 모두 허용
+                .allowedOrigins("http://175.106.98.94:80"); // 두 도메인 모두 허용
     }
 }
