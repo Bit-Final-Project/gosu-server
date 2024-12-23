@@ -39,4 +39,9 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReservationTime> reservationTimes = new ArrayList<>();
 
+    public void addReservationTime(ReservationTime reservationTime) {
+        reservationTimes.add(reservationTime);
+        reservationTime.setReservation(this);
+    }
+    
 }

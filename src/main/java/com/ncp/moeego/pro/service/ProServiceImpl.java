@@ -4,6 +4,7 @@ import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
 import com.ncp.moeego.category.service.SubCategoryServiceImpl;
+import com.ncp.moeego.favorite.entity.Favorite;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.Member;
@@ -121,6 +122,22 @@ public class ProServiceImpl implements ProService {
 
         return proRepository.findByProNoIn(proNoList, pageable);
     }
+    
+    @Transactional
+    @Override
+    public String postFavorites(FavoritePostRequest favoritePostRequest) {
+
+        Pro pro = getProById(favoritePostRequest.getProNo());
+        Member member = memberService.getMemberById(favoritePostRequest.getMemberNo());
+        if (!favoriteRepository.findByProAndMember(pro, member).isEmpty()) {
+            throw new IllegalArgumentException("이미 찜한 달인입니다.");
+        }
+        Favorite favorite = new Favorite();
+        favorite.setMember(member);
+        favorite.setPro(pro);
+        favoriteRepository.save(favorite);
+        return "달인 찜하기 성공";
+    }
 
     @Transactional
     @Override
@@ -229,7 +246,11 @@ public class ProServiceImpl implements ProService {
 
     @Override
     public ProItem getProItemById(Long proItemNo) {
-        return proItemRepository.findById(proItemNo).orElseThrow(()->new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo+"번 서비스"));
+        return proItemRepository.findById(proItemNo).orElseThrow(() -> new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo + "번 서비스"));
+    }
+    
+    public Pro getProById(Long proNo) {
+        return proRepository.findById(proNo).orElseThrow(() -> new IllegalArgumentException("해당 달인을 찾을 수 없습니다. proNo : " + proNo));
     }
 
 }
