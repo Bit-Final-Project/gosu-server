@@ -23,4 +23,5 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     
     List<Favorite> findByProAndMember(Pro pro, Member member);
 
+    List<Favorite> findByProAndMember(Pro pro, Member member);
 }

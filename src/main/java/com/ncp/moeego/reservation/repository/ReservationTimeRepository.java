@@ -1,6 +1,5 @@
 package com.ncp.moeego.reservation.repository;
 
-import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
 import com.ncp.moeego.reservation.entity.ReservationTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,5 +30,6 @@ public interface ReservationTimeRepository extends JpaRepository<ReservationTime
             LocalDate startDate, 
             LocalTime startTime
     );
+
 
 }

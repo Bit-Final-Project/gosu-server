@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Slf4j
 @RestController
 @RequestMapping("/reservation")
@@ -52,6 +54,22 @@ public class ReservationController {
         log.info("로그인 정보 : {}", memberDetails.getName());
         log.info("로그인 이메일 : {}", authentication.getName());
         return ResponseEntity.ok(ApiResponse.success("하위"));
+    }
+
+    @GetMapping("/mypage")
+    public ResponseEntity<?> getReservations(Authentication authentication, @RequestParam(required = false) Integer year) {
+        log.info("요청한 연도 : {}", year);
+        if (year == null) {
+            year = LocalDate.now().getYear();
+        }
+
+        log.info("조회할 연도 : {}", year);
+
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        log.info("로그인 정보 : {}", memberDetails.getName());
+        log.info("로그인 이메일 : {}", authentication.getName());
+
+        return ResponseEntity.ok(ApiResponse.success("예약내역 조회 성공", reservationService.getReservations(authentication.getName(), year)));
     }
 
 }

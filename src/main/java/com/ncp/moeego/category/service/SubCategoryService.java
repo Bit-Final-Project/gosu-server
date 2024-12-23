@@ -8,7 +8,7 @@ import java.util.List;
 public interface SubCategoryService {
 
 
-    public List<SubCategoryDTO> getSubCategoriesByMainCategory(Long mainCateNo);
+    List<SubCategoryDTO> getSubCategoriesByMainCategory(Long mainCateNo);
 
     SubCategory getSubCategoryById(Long subCateNo);
 
