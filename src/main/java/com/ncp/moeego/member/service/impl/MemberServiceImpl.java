@@ -73,6 +73,7 @@ public class MemberServiceImpl implements MemberService {
         return getMemberById(memberNo).getProfileImage();
     }
 
+    @Override
     public Long getMemberNo(String email) {
         return memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.")).getMemberNo();
     }

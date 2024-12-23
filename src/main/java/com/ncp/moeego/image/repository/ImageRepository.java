@@ -29,6 +29,13 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 	void deleteByImageUuidName(@Param("profileImage") String profileImage);
 
 	// uuid값 가져오기
+	@Query("select i.imageUuidName from Image i where i.article.articleNo = :articleNo ")
+	List<String> findByUuid(@Param("articleNo") Long articleNo);
+	
+	// 관리자 이미지 UUID로 삭제
+	@Modifying
+    @Query("DELETE FROM Image i WHERE i.imageUuidName = :imageUuidName")
+    int deleteImageByUuidName(@Param("imageUuidName") String imageUuidName);
 
 	// 게시글 번호 기준으로 이미지 리스트 조회
 	List<Image> findByArticle(Article article);
@@ -49,4 +56,12 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
 	@Query("SELECT i FROM Image i WHERE i.review.reviewNo IN :reviewNos")
 	List<Image> findImagesByReviewNos(@Param("reviewNos") List<Long> reviewNos);
+
+	// 관리자 UUID 중복 확인
+	@Query("SELECT CASE WHEN COUNT(i) > 0 THEN true ELSE false END FROM Image i WHERE i.imageUuidName = :imageUuidName")
+	boolean existsByImageUuidName(@Param("imageUuidName") String cloudKey);
+
+	// 관리자 삭제 - 이미지 조회
+	@Query("SELECT i FROM Image i WHERE i.article.articleNo = :articleNo")
+	List<Image> findByArticleArticleNo(@Param("articleNo") Long articleNo);
 }

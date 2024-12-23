@@ -12,19 +12,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.ncp.moeego.MoeegoApplication;
 
 import com.ncp.moeego.article.service.ArticleService;
+import com.ncp.moeego.member.bean.ArticleImageDTO;
+import com.ncp.moeego.member.service.AdminService;
 
 @SpringBootTest(classes = MoeegoApplication.class)
 class ArticleTest {
 	
 	@Autowired
 	private ArticleService articleService;
-
+	@Autowired
+	private AdminService adminService;
 	
 	// 전체 게시판 가져오기 + 페이징
 	@Test
-	@Disabled
 	void contextLoads() {
-
+		long articleNo = 42L;
+		ArticleImageDTO article = adminService.getArticle(articleNo);
+		System.out.println(article.toString());
+        
+        
 	}
 	
 	

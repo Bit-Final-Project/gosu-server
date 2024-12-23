@@ -1,16 +1,21 @@
 package com.ncp.moeego.member.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -19,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
+import com.ncp.moeego.article.service.ArticleService;
 import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
@@ -26,6 +32,7 @@ import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.AdminService;
+import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.entity.Pro;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +43,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 	
 	private final AdminService adminService;
+	private final MemberService memberService;
+	private final ArticleService articleService;
 	
     @PostMapping("/admin")
     public ResponseEntity adminP() {
@@ -163,24 +172,24 @@ public class AdminController {
     // 이벤트 및 공지 페이지 조회
     @GetMapping("/admin/article")
     public List<ArticleImageDTO> getArticlesWithImages() {
-        return adminService.getArticlesWithImages();
+        return adminService.getArticles();
     }
     
     // 이벤트 및 공지 등록
     @PostMapping("/admin/article/write")
     public ResponseEntity<String> writeArticle(
-            @ModelAttribute ArticleDTO articleDTO,  // 텍스트 필드를 ArticleDTO로 처리
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) { // 파일만 별도로 처리
+            @ModelAttribute ArticleImageDTO articleImageDTO,  // 텍스트 필드를 ArticleDTO로 처리
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            Authentication authentication) { // 파일만 별도로 처리
     	
-    	System.out.println("ArticleDTO : " + articleDTO);
-    	for (MultipartFile multipartFile : images) {
-			System.out.println(multipartFile.getName());
-		}
+    	//memberNo 토큰값에서 가져옴
+    	articleImageDTO.setMemberNo(memberService.getMemberNo(authentication.getName()));
+    	System.out.println("images : " + images);
         try {
             // ArticleDTO에 이미지 파일 리스트 설정
-            articleDTO.setImageFiles(images == null ? List.of() : images);
-
-            boolean result = adminService.writeArticle(articleDTO);
+        	articleImageDTO.setImageFiles(images == null ? List.of() : images);
+        	
+            boolean result = adminService.writeArticle(articleImageDTO);
             
             if (result) {
 	            return ResponseEntity.ok("게시글이 성공적으로 작성되었습니다.");
@@ -194,11 +203,75 @@ public class AdminController {
         }
     }
 
+    // 공지 및 게시글 수정
+    @PutMapping("/admin/article/update/{articleNo}")
+    public ResponseEntity<String> updateArticle(
+            @PathVariable("articleNo") Long articleNo,  // URL 경로에서 게시글 번호를 받습니다.
+            @ModelAttribute ArticleImageDTO articleImageDTO,  // 수정할 게시글 정보
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,  // 수정시 추가될 이미지 파일
+            @RequestParam(value = "removeImages", required = false) List<String> removeImages, // 삭제할 이미지 UUID 리스트
+            Authentication authentication) { // 파일만 별도로 처리
+
+        System.out.println("글 번호 : " + articleNo);
+        System.out.println("articleNo (null 체크) : " + (articleNo == null ? "null" : articleNo));
+
+        // memberNo 토큰값에서 가져옴
+        articleImageDTO.setMemberNo(memberService.getMemberNo(authentication.getName()));
+        articleImageDTO.setArticleNo(articleNo);  // 경로 변수로 받은 articleNo를 DTO에 설정
+
+        try {
+            // ArticleDTO에 이미지 파일 리스트 설정
+            articleImageDTO.setImageFiles(images == null ? new ArrayList<>() : images);  // 새로 추가된 이미지
+            articleImageDTO.setRemoveImageUuidNames(removeImages == null ? new ArrayList<>() : removeImages);  // 삭제할 이미지 UUID 설정
+
+            // 이미지를 처리하는 서비스 호출
+            boolean result = adminService.updateArticle(articleImageDTO);
+
+            if (result) {
+                return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
+            } else {
+                return ResponseEntity.badRequest().body("게시글 수정 중 오류가 발생했습니다.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+        }
+    }
 
     
+    // 공지 및 이벤트 게시글 삭제
+    @DeleteMapping("/admin/article/delete/{articleNo}")
+    public ResponseEntity<String> deleteArticle(
+            @PathVariable("articleNo") Long articleNo,
+            Authentication authentication) {
+
+        System.out.println("삭제할 글 번호 : " + articleNo);
+        System.out.println("articleNo (null 체크) : " + (articleNo == null ? "null" : articleNo));
+
+        try {
+            // memberNo 토큰값에서 가져옴
+            Long memberNo = memberService.getMemberNo(authentication.getName());
+
+            // 게시글 삭제 서비스 호출
+            boolean result = adminService.deleteArticle(articleNo, memberNo);
+
+            if (result) {
+                return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
+            } else {
+                return ResponseEntity.badRequest().body("게시글 삭제 중 오류가 발생했습니다.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+        }
+    }
+
 
     
+   
     
-    
+
     
 }

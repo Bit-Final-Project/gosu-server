@@ -16,7 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -248,25 +251,21 @@ public class AdminServiceImpl implements AdminService {
         return memberRepository.findAllCancelDetails();
     }
 
-	// 이벤트 및 공지 페이지 조회
-	public List<ArticleImageDTO> getArticlesWithImages() {
-        return memberRepository.findArticlesWithImages();
-    }
-
+	// 공지/이벤트 게시글 등록
 	@Override
-	public boolean writeArticle(ArticleDTO articleDTO) {
+	public boolean writeArticle(ArticleImageDTO articleImageDTO) {
 		try {
 			Article article = new Article();
-			article.setSubject(articleDTO.getSubject());
-			article.setContent(articleDTO.getContent());
+			article.setSubject(articleImageDTO.getSubject());
+			article.setContent(articleImageDTO.getContent());
 			article.setView(0);
 	        article.setLikes(0);
 	        article.setWriteDate(LocalDateTime.now());
-	        article.setType(articleDTO.getType());
+	        article.setType(articleImageDTO.getType());
 	        article.setService("");
             article.setArea("");
             
-            Optional<Member> member = memberRepository.findById(articleDTO.getMemberNo());
+            Optional<Member> member = memberRepository.findById(articleImageDTO.getMemberNo());
             if (member.isPresent()) {
                 article.setMember(member.get());
             } else {
@@ -276,10 +275,13 @@ public class AdminServiceImpl implements AdminService {
             Article savedArticle = articleRepository.save(article);
 
             // 이미지 업로드 및 저장 (이미지가 있을 경우에만 처리)
-            if (articleDTO.getImageFiles() != null && !articleDTO.getImageFiles().isEmpty()) {
-                for (MultipartFile imageFile : articleDTO.getImageFiles()) {
+            if (articleImageDTO.getImageFiles() != null && !articleImageDTO.getImageFiles().isEmpty()) {
+                for (MultipartFile imageFile : articleImageDTO.getImageFiles()) {
+                    System.out.println("Uploading file: " + imageFile.getOriginalFilename());
                     // 1. 오브젝트 스토리지에 업로드
                     String cloudKey = objectStorageService.uploadFile(bucketName, "storage/", imageFile);
+
+                    System.out.println("Uploaded file cloud key: " + cloudKey);
 
                     // 2. 업로드된 이미지 정보를 DB에 저장
                     Image image = new Image();
@@ -298,10 +300,132 @@ public class AdminServiceImpl implements AdminService {
         }
 
 	}
+	
+	// 공지 게시글 조회
+	public List<ArticleImageDTO> getArticles() {
+		List<ArticleImageDTO> list = new ArrayList<>();
+		List<Article> articleList = articleRepository.findAllEventArticle();
+		for (Article article : articleList) {
+			List<String> uuidList = imageRepository.findByUuid(article.getArticleNo());
+			ArticleImageDTO articleDTO = new ArticleImageDTO(article, uuidList);
+			list.add(articleDTO);
+		}
+		return list;
+	}
+	
+	// 공지 상세 게시글 조회
+	public ArticleImageDTO getArticle(Long articleNo) {
+		Article article = articleRepository.findByArticleNo(articleNo);
+		List<String> uuidList = imageRepository.findByUuid(article.getArticleNo());
+		ArticleImageDTO articleImageDTO = new ArticleImageDTO(article, uuidList);
+		return articleImageDTO;
+	}
+	
+	// 공지 및 이벤트 게시글 수정
+	@Override
+	@Transactional
+	public boolean updateArticle(ArticleImageDTO articleImageDTO) {
+	    try {
+	        // 기존 게시글 조회
+	        Optional<Article> existingArticleOpt = articleRepository.findById(articleImageDTO.getArticleNo());
+	        if (!existingArticleOpt.isPresent()) {
+	            return false;  // 게시글이 존재하지 않으면 실패
+	        }
+
+	        Article existingArticle = existingArticleOpt.get();
+
+	        // 기존 게시글 수정
+	        existingArticle.setSubject(articleImageDTO.getSubject());
+	        existingArticle.setContent(articleImageDTO.getContent());
+	        existingArticle.setType(articleImageDTO.getType());
+	        // 수정된 정보는 반영하고, 조회수(view) 및 좋아요(likes)는 수정하지 않음
+
+	        articleRepository.save(existingArticle);  // 변경사항 저장
+
+	        // 삭제할 이미지 처리
+	        if (articleImageDTO.getRemoveImageUuidNames() != null && !articleImageDTO.getRemoveImageUuidNames().isEmpty()) {
+	            for (String removeImageUuid : articleImageDTO.getRemoveImageUuidNames()) {
+	                // DB에서 이미지 삭제
+	                int deleted = imageRepository.deleteImageByUuidName(removeImageUuid);
+	                if (deleted > 0) {
+	                    // NCP 스토리지에서 이미지 삭제
+	                    objectStorageService.deleteFile(removeImageUuid, bucketName, "storage/");
+	                }
+	            }
+	        }
+
+	        // 새로운 이미지 업로드
+	        if (articleImageDTO.getImageFiles() != null && !articleImageDTO.getImageFiles().isEmpty()) {
+	            for (MultipartFile imageFile : articleImageDTO.getImageFiles()) {
+	                // 1. NCP Object Storage에 이미지 업로드
+	                String cloudKey = objectStorageService.uploadFile(bucketName, "storage/", imageFile);
+
+	                // 2. UUID 중복 체크
+	                if (imageRepository.existsByImageUuidName(cloudKey)) {
+	                    continue;  // 이미 존재하는 UUID는 저장하지 않음
+	                }
+
+	                // 3. 업로드된 이미지 정보 DB에 저장
+	                Image newImage = new Image();
+	                newImage.setArticle(existingArticle); // 게시글과 연결
+	                newImage.setMember(existingArticle.getMember()); // 작성자와 연결
+	                newImage.setImageName(imageFile.getOriginalFilename());
+	                newImage.setImageUuidName(cloudKey); // 스토리지의 키 저장
+	                imageRepository.save(newImage);  // 새 이미지 저장
+	            }
+	        }
+
+	        return true;  // 수정 성공
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;  // 실패 시
+	    }
+	}
+	
+	
+	// 공지 및 이벤트 게시글 삭제
+	@Override
+	@Transactional
+	public boolean deleteArticle(Long articleNo, Long memberNo) {
+	    try {
+	        // 기존 게시글 조회
+	        Optional<Article> existingArticleOpt = articleRepository.findById(articleNo);
+	        if (!existingArticleOpt.isPresent()) {
+	            return false;  // 게시글이 존재하지 않으면 실패
+	        }
+
+	        Article existingArticle = existingArticleOpt.get();
+
+	        // 작성자 검증
+	        if (!existingArticle.getMember().getMemberNo().equals(memberNo)) {
+	            return false;  // 작성자가 아닌 경우 삭제 불가
+	        }
+
+	        // 게시글에 연결된 이미지 삭제
+	        List<Image> images = imageRepository.findByArticleArticleNo(articleNo);
+	        for (Image image : images) {
+	            // DB에서 이미지 삭제
+	            imageRepository.delete(image);
+	            // NCP 스토리지에서 이미지 삭제
+	            objectStorageService.deleteFile(image.getImageUuidName(), bucketName, "storage/");
+	        }
+
+	        // 게시글 삭제
+	        articleRepository.delete(existingArticle);
+
+	        return true;  // 삭제 성공
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;  // 실패 시
+	    }
+	}
+
+
+
 
 	
-	
 }
+
 
 	
 

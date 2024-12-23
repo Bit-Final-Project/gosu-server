@@ -18,4 +18,5 @@ public interface MemberService {
     ApiResponse updatePwd(String email, String pwd);
     ApiResponse updateAddress(String email, String address);
     ApiResponse updatePhone(String email, String phone);
+	Long getMemberNo(String email);
 }

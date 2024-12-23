@@ -3,6 +3,7 @@ package com.ncp.moeego.member.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,11 +35,9 @@ public interface AdminService {
 
 	List<Map<String, Object>> getWeekMemberData();
 
-
 	List<Map<String, Object>> getProMemberJoinData(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 	List<Map<String, Object>> getCancelledMemberData(LocalDateTime startDateTime, LocalDateTime endDateTime);
-
 
 	List<Member> getUserMembers();
 
@@ -48,15 +47,18 @@ public interface AdminService {
 
 	void revokeMember(Long memberNo);
 
-	List<ArticleImageDTO> getArticlesWithImages();
+	boolean writeArticle(ArticleImageDTO articleImageDTO);
 
-	boolean writeArticle(ArticleDTO articleDTO);
-
-
-
-
+	List<ArticleImageDTO> getArticles();
 	
+	ArticleImageDTO getArticle(Long articleNo);
 
-	
+	boolean updateArticle(ArticleImageDTO articleImageDTO);
+
+	boolean deleteArticle(Long articleNo, Long memberNo);
+
+
+
+
 	
 }
