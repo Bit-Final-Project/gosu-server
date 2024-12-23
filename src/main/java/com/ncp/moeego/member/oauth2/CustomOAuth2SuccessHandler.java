@@ -50,7 +50,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String origin = request.getHeader("Origin");
         if (origin == null) {
             // Origin 헤더가 없으면 기본값으로 localhost 사용
-            origin = "http://175.45.194.160:80";
+            origin = "https://www.moeego.site";
         }
 
         // redirect query param 인코딩 후 전달
