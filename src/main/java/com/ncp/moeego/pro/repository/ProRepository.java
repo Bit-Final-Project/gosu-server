@@ -20,14 +20,14 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
 
     @Query(
             """
-                    SELECT new com.ncp.moeego.pro.dto.FavoriteResponse(
-                                p.proNo, p.member.name, p.member.profileImage,p.mainCategory.mainCateNo,
-                                p.star, p.oneIntro
-                                )
-                    From Pro p
-                    Where p.proNo IN :proNo
-                    
-                    """
+            SELECT new com.ncp.moeego.pro.dto.FavoriteResponse(
+                        p.proNo, p.member.name, p.member.profileImage,p.mainCategory.mainCateNo,
+                        p.star, p.oneIntro
+                        )
+            From Pro p
+            Where p.proNo IN :proNo
+            
+            """
     )
     Page<FavoriteResponse> findByProNoIn(@Param("proNo") List<Long> proNo, Pageable pageable);
 
@@ -36,23 +36,18 @@ public interface ProRepository extends JpaRepository<Pro, Long> {
     @Query("""
             select distinct p from Pro p
             left join p.proItems pi
-            left join p.member m
             where p.member.memberStatus = :memberStatus
             and (:location is null or p.member.address like %:location%)
             and (:subCateNo is null or pi.subCategory.subCateNo = :subCateNo)
-            and (:value is null or m.name like %:value%)
-            or (:value is null or p.intro like %:value%)
-            or (:value is null or p.oneIntro like %:value%)
-            """)
+            and (:value is null or (p.member.name like %:value% or p.intro like %:value% or p.oneIntro like %:value%))
+    """)
     Page<Pro> findFilteredPros(@Param("memberStatus") MemberStatus memberStatus, Pageable pageable, @Param("subCateNo") Long subCateNo, @Param("location") String location, @Param("value") String value);
 
     @Query("""
             select p from Pro p
             left join p.member m
             where p.member.memberStatus = 'ROLE_PRO' 
-            and (:value is null or m.name like %:value%)
-            or (:value is null or p.intro like %:value%)
-            or (:value is null or p.oneIntro like %:value%)
+            and (:value is null or (m.name like %:value% or p.intro like %:value% or p.oneIntro like %:value%))
             """)
     Page<Pro> findSearchValue(Pageable pageable, @Param("value") String value);
 

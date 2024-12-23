@@ -103,7 +103,7 @@ public class ProController {
     // 달인 서비스 리스트
     @GetMapping("/item")
     public ResponseEntity<?> getItemList(@RequestParam(value = "subCateNo", required = false) Long subCateNo, @RequestParam(value = "location", required = false) String location, @RequestParam(value = "value", required = false) String value, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
-        log.info(location + subCateNo);
+        log.info(location + subCateNo + value);
         return ResponseEntity.ok(ApiResponse.success("조회 성공", proService.getItemList(subCateNo, location, value, pg)));
 
     }
