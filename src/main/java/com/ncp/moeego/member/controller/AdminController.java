@@ -19,13 +19,11 @@ import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.AdminService;
-import com.ncp.moeego.pro.entity.Pro;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class AdminController {
 	
 	private final AdminService adminService;
