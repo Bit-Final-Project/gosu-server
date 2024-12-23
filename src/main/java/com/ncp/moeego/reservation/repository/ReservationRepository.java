@@ -2,6 +2,7 @@ package com.ncp.moeego.reservation.repository;
 
 import com.ncp.moeego.reservation.entity.Reservation;
 import com.ncp.moeego.reservation.entity.ReservationTime;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                    and YEAR(rt.startDate) = :year
             """)
     List<Reservation> findReceivedReservations(@Param("proNo") Long proNo, @Param("year") Integer year);
+           
+	// Get count of reservations for a given proItemNo
+	@Query("SELECT COUNT(r) FROM Reservation r WHERE r.proItem.proItemNo = :proItemNo")
+	Long countReservationsByProItem(@Param("proItemNo") Long proItemNo);
+
 }

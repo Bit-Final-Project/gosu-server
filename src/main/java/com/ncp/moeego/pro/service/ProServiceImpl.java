@@ -3,7 +3,7 @@ package com.ncp.moeego.pro.service;
 import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
-import com.ncp.moeego.category.service.SubCategoryService;
+import com.ncp.moeego.category.service.SubCategoryService
 import com.ncp.moeego.favorite.entity.Favorite;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
@@ -111,6 +111,22 @@ public class ProServiceImpl implements ProService {
 
         return proRepository.findByProNoIn(proNoList, pageable);
     }
+    
+    @Transactional
+    @Override
+    public String postFavorites(FavoritePostRequest favoritePostRequest) {
+
+        Pro pro = getProById(favoritePostRequest.getProNo());
+        Member member = memberService.getMemberById(favoritePostRequest.getMemberNo());
+        if (!favoriteRepository.findByProAndMember(pro, member).isEmpty()) {
+            throw new IllegalArgumentException("이미 찜한 달인입니다.");
+        }
+        Favorite favorite = new Favorite();
+        favorite.setMember(member);
+        favorite.setPro(pro);
+        favoriteRepository.save(favorite);
+        return "달인 찜하기 성공";
+    }
 
     @Transactional
     @Override
@@ -204,9 +220,9 @@ public class ProServiceImpl implements ProService {
     }
 
     @Override
-    public Map<String, Object> getItemList(Long subCateNo, String location, int pg) {
+    public Map<String, Object> getItemList(Long subCateNo, String location, String value, int pg) {
         Pageable pageable = PageRequest.of(pg - 1, 5);
-        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location);
+        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location, value);
 
         List<ItemResponse> proList = proPage.stream().map(pro -> new ItemResponse(
                 pro.getProNo(),
@@ -236,11 +252,11 @@ public class ProServiceImpl implements ProService {
     @Override
     public ProItem getProItemById(Long proItemNo) {
         return proItemRepository.findById(proItemNo).orElseThrow(() -> new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo + "번 서비스"));
+
     }
 
     public Pro getProById(Long proNo) {
         return proRepository.findById(proNo).orElseThrow(() -> new IllegalArgumentException("해당 달인을 찾을 수 없습니다. proNo : " + proNo));
     }
-
 
 }

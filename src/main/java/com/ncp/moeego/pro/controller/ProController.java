@@ -61,6 +61,13 @@ public class ProController {
 
         return ResponseEntity.ok(ApiResponse.success("조회성공", data));
     }
+    
+    @PostMapping("/favorite")
+    public ResponseEntity<?> postFavorites(@RequestBody FavoritePostRequest favoritePostRequest) {
+        log.info("postFavorites 요청: memberNo:{}, proNo:{}", favoritePostRequest.getMemberNo(), favoritePostRequest.getProNo());
+        return ResponseEntity.ok(ApiResponse.success(proService.postFavorites(favoritePostRequest)));
+
+    }
 
     @PostMapping("/favorite")
     public ResponseEntity<?> postFavorites(@RequestBody FavoritePostRequest favoritePostRequest) {
@@ -99,9 +106,9 @@ public class ProController {
 
     // 달인 서비스 리스트
     @GetMapping("/item")
-    public ResponseEntity<?> getItemList(@RequestParam(value = "subCateNo", required = false) Long subCateNo, @RequestParam(value = "location", required = false) String location, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
-        log.info(location + subCateNo);
-        return ResponseEntity.ok(ApiResponse.success("조회 성공", proService.getItemList(subCateNo, location, pg)));
+    public ResponseEntity<?> getItemList(@RequestParam(value = "subCateNo", required = false) Long subCateNo, @RequestParam(value = "location", required = false) String location, @RequestParam(value = "value", required = false) String value, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+        log.info(location + subCateNo + value);
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", proService.getItemList(subCateNo, location, value, pg)));
 
     }
 
