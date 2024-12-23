@@ -352,5 +352,46 @@ public class ArticleServiceImpl implements ArticleService {
             return false;
         }
     }
+    
+    //조회수
+    @Override
+    public boolean updateView(Long articleNo) {
+        try {
+            // 특정 게시글 조회
+            Article article = articleRepository.findById(articleNo)
+                    .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + articleNo));
 
+            // 조회수 증가
+            article.setView(article.getView() + 1);
+
+            // 변경된 데이터 저장
+            articleRepository.save(article);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    //좋아요
+    @Override
+    public boolean updateLike(Long articleNo) {
+    	try {
+            // 특정 게시글 조회
+            Article article = articleRepository.findById(articleNo)
+                    .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + articleNo));
+
+            // 조회수 증가
+            article.setLikes(article.getLikes() + 1);
+
+            // 변경된 데이터 저장
+            articleRepository.save(article);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
