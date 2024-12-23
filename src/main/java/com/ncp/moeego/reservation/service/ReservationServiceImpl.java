@@ -134,8 +134,8 @@ public class ReservationServiceImpl implements ReservationService {
                         .proItemNo(reservation.getProItem().getPro().getProNo())
                         .proItemName(reservation.getProItem().getSubject())
                         .reservationNo(reservation.getReservationNo())
-                        .startDate(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartDate()).findFirst().orElse(null))
-                        .startTimes(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartTime()).toList())
+                        .startDate(reservation.getReservationTimes().stream().map(ReservationTime::getStartDate).findFirst().orElse(null))
+                        .startTimes(reservation.getReservationTimes().stream().map(ReservationTime::getStartTime).toList())
                         .build())
                 .toList();
     }
