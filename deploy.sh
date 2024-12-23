@@ -2,7 +2,7 @@
 
 # 1. 환경 설정
 PROJECT_DIR="/home/user/myproject"    # 실제 Spring Boot 프로젝트 경로
-YML_SOURCE="/local/path/to/application.yml"    # .yml 파일의 로컬 경로
+YML_SOURCE="/workspace/backend/src/main/resources/application.yml" # .yml 파일의 실제 경로
 YML_TARGET="$PROJECT_DIR/src/main/resources/application.yml"  # 서버에서의 위치
 JAR_FILE="moeego-server.jar"     # 빌드된 JAR 파일 이름
 
@@ -35,4 +35,3 @@ echo "Starting new container..."
 docker run -d --name moeego-server -p 8080:8080 moeego-server || { echo "Docker run failed"; exit 1; }
 
 echo "Deployment completed successfully."
-
