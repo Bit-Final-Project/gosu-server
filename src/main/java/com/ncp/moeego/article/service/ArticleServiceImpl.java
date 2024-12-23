@@ -1,17 +1,5 @@
 package com.ncp.moeego.article.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.repository.ArticleRepository;
@@ -22,8 +10,17 @@ import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.ncp.service.ObjectStorageService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -94,6 +91,29 @@ public class ArticleServiceImpl implements ArticleService {
     // Article을 ArticleDTO로 변환하는 공통 메서드
     private ArticleDTO convertToArticleDTO(Article article, Long commentCount) {
         String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
+        List<String> imageUuids = imageRepository.findByArticle(article).stream().map(Image::getImageUuidName).toList();
+        return ArticleDTO.builder()
+                .articleNo(article.getArticleNo())
+                .memberNo(article.getMember().getMemberNo())
+                .subject(article.getSubject())
+                .content(article.getContent())
+                .view(article.getView())
+                .type(article.getType())
+                .writeDate(article.getWriteDate())
+                .likes(article.getLikes())
+                .elapsedTime(elapsedTime)
+                .memberName(article.getMember().getName())
+                .service(article.getService())
+                .area(article.getArea())
+                .commentCount(commentCount.intValue())
+                .imageUuids(imageUuids)
+                .build();
+
+    }
+
+ /*   // Article을 ArticleDTO로 변환하는 공통 메서드
+    private ArticleDTO convertToArticleDTO(Article article, Long commentCount) {
+        String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
         String memberName = getMemberNameByMemberNo(article.getMember().getMemberNo());
 
         return new ArticleDTO(
@@ -111,7 +131,7 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getArea(),
                 commentCount.intValue()
         );
-    }
+    }*/
 
     // 좋아요 순으로 조회(인기 게시글)
     @Override
@@ -352,7 +372,7 @@ public class ArticleServiceImpl implements ArticleService {
             return false;
         }
     }
-    
+
     //조회수
     @Override
     public boolean updateView(Long articleNo) {
@@ -373,11 +393,11 @@ public class ArticleServiceImpl implements ArticleService {
             return false;
         }
     }
-    
+
     //좋아요
     @Override
     public boolean updateLike(Long articleNo) {
-    	try {
+        try {
             // 특정 게시글 조회
             Article article = articleRepository.findById(articleNo)
                     .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + articleNo));
