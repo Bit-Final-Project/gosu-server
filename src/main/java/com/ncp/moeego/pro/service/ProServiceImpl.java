@@ -3,7 +3,7 @@ package com.ncp.moeego.pro.service;
 import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
-import com.ncp.moeego.category.service.SubCategoryService
+import com.ncp.moeego.category.service.SubCategoryService;
 import com.ncp.moeego.favorite.entity.Favorite;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
@@ -112,22 +112,6 @@ public class ProServiceImpl implements ProService {
         return proRepository.findByProNoIn(proNoList, pageable);
     }
     
-    @Transactional
-    @Override
-    public String postFavorites(FavoritePostRequest favoritePostRequest) {
-
-        Pro pro = getProById(favoritePostRequest.getProNo());
-        Member member = memberService.getMemberById(favoritePostRequest.getMemberNo());
-        if (!favoriteRepository.findByProAndMember(pro, member).isEmpty()) {
-            throw new IllegalArgumentException("이미 찜한 달인입니다.");
-        }
-        Favorite favorite = new Favorite();
-        favorite.setMember(member);
-        favorite.setPro(pro);
-        favoriteRepository.save(favorite);
-        return "달인 찜하기 성공";
-    }
-
     @Transactional
     @Override
     public String postFavorites(FavoritePostRequest favoritePostRequest) {

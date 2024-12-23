@@ -30,7 +30,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationTimeRepository reservationTimeRepository;
     private final MemberService memberService;
     private final ProService proService;
-    private final ProServiceImpl proServiceImpl;
+
 
     public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService,
                                   ProService proService, ReservationTimeRepository reservationTimeRepository) {
@@ -38,7 +38,7 @@ public class ReservationServiceImpl implements ReservationService {
         this.memberService = memberService;
         this.proService = proService;
         this.reservationTimeRepository = reservationTimeRepository;
-        this.proServiceImpl = proServiceImpl;
+
     }
 
     @Transactional
@@ -138,13 +138,12 @@ public class ReservationServiceImpl implements ReservationService {
                         .build())
                 .toList();
         return myReservations;
-    
+    }
     // 예약 수 조회
     @Override
     public Long getReservationCountByProItem(Long proItemNo) {
         Long count = reservationRepository.countReservationsByProItem(proItemNo);
         return count != null && count > 0 ? count : 0; // 예약이 없으면 0 반환
     }
-
 
 }
