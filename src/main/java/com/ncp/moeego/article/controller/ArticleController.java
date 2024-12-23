@@ -196,4 +196,39 @@ public class ArticleController {
 	    }
 	}
 	
+	// 조회수 증가
+	@PutMapping("/article/hit")
+	public ResponseEntity<String> updateArticleViewCount(@RequestParam("articleNo") Long articleNo) {
+	    try {
+	        // 서비스 호출
+	        boolean result = articleService.updateView(articleNo);
+
+	        if (result) {
+	            return ResponseEntity.ok("조회수가 성공적으로 증가되었습니다.");
+	        } else {
+	            return ResponseEntity.badRequest().body("조회수 증가 중 오류가 발생했습니다.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+	    }
+	}
+	
+	// 좋아요 증가
+	@PutMapping("/article/like")
+	public ResponseEntity<String> updateArticleLikeCount(@RequestParam("articleNo") Long articleNo) {
+	    try {
+	        // 서비스 호출
+	        boolean result = articleService.updateLike(articleNo);
+
+	        if (result) {
+	            return ResponseEntity.ok("좋아요가 성공적으로 증가되었습니다.");
+	        } else {
+	            return ResponseEntity.badRequest().body("좋아요 증가 중 오류가 발생했습니다.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+	    }
+	}
 }

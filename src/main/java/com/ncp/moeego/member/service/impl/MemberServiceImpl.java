@@ -56,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
     }
-    
+
     @Override
     public Member getMemberByEmail(String email) {
     	return memberRepository.findByEmail(email)
@@ -78,6 +78,7 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.")).getMemberNo();
     }
 
+    @Override
     @Transactional
     public void setMemberStatus(Long memberNo, MemberStatus memberStatus) {
         Member member = memberRepository.findById(memberNo).orElseThrow(()-> new IllegalArgumentException("Invalid memberNo"));

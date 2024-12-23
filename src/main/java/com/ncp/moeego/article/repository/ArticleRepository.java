@@ -85,7 +85,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Object[]> findArticleWithCommentCount(@Param("articleNo") Long articleNo);
 
     // 좋아요 순 댓글 수 가져오는 쿼리
-    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' GROUP BY a ORDER BY a.likes DESC")
+    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE a.type NOT IN (0,1) GROUP BY a ORDER BY a.likes DESC")
     Page<Object[]> findHotArticlesWithCommentCount(Pageable pageable);
 
     // 공지 및 게시글 삭제

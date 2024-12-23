@@ -1,6 +1,7 @@
 package com.ncp.moeego.pro.service;
 
 import com.ncp.moeego.pro.dto.*;
+import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import org.springframework.data.domain.Page;
 
@@ -9,8 +10,6 @@ import java.util.Map;
 
 public interface ProService {
     String proJoin(ProJoinRequest proJoinRequest);
-
-    String proApply(ProApplyRequest request);
 
     Page<FavoriteResponse> getFavorites(Long memberNo, int pg);
 
@@ -22,7 +21,12 @@ public interface ProService {
 
     Map<String, Object> getInitItem(Long memberNo);
 
-    Map<String, Object> getItemList(Long subCateNo, String location, int pg);
+    Map<String, Object> getItemList(Long subCateNo, String location, String value, int pg);
 
     ProItem getProItemById(Long proItemNo);
+
+    String postFavorites(FavoritePostRequest favoritePostRequest);
+
+    Pro getProByMemberNo(Long memberNo);
+
 }

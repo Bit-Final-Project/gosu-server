@@ -24,9 +24,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                         subCategory.getMainCategory().getMainCateNo(), // MainCategory의 ID 추출
                         subCategory.getSubCateName()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
+    @Override
     public SubCategory getSubCategoryById(Long subCateNo) {
         return subCategoryRepository.findById(subCateNo).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 서브카테고리: " + subCateNo));
     }
