@@ -4,11 +4,12 @@ import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ReservationService {
     String makeReservation(ReservationRequest reservationRequest);
 
     List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo);
 
-    void getReservations(String email, Integer year);
+    Map<String, Object> getReservations(String email, Integer year);
 }

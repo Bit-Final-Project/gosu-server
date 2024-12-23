@@ -24,17 +24,5 @@ public interface ReservationTimeRepository extends JpaRepository<ReservationTime
             """)
     List<ReservationTime> findExistingReservation(@Param("proItemNo") Long proItemNo);
 
-    @Query("""
-                   select rt from ReservationTime rt
-                   where rt.reservation.proItem.pro.proNo =:proNo
-                   and YEAR(rt.startDate) = :year
-            """)
-    List<ReservationTime> findReceivedReservations(@Param("proNo") Long proNo, @Param("year") Integer year);
 
-    @Query("""
-                select rt from ReservationTime rt
-                where rt.reservation.member.memberNo =:memberNo
-                and YEAR(rt.startDate) = :year
-            """)
-    List<ReservationTime> findMyReservations(@Param("memberNo") Long memberNo, @Param("year") Integer year);
 }

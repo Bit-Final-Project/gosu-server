@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class ReceivedReservationResponse {
+    private Long memberNo;
     private String memberName; // 고객명
     private String proItemName;
     private LocalDate startDate;

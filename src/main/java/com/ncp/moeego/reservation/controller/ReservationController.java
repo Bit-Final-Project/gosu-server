@@ -49,10 +49,7 @@ public class ReservationController {
         log.info("로그인 정보 : {}", memberDetails.getName());
         log.info("로그인 이메일 : {}", authentication.getName());
 
-        reservationService.getReservations(authentication.getName(),year);
-
-
-        return ResponseEntity.ok(ApiResponse.success("하위"));
+        return ResponseEntity.ok(ApiResponse.success("예약내역 조회 성공", reservationService.getReservations(authentication.getName(), year)));
     }
 
 }

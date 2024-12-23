@@ -19,6 +19,7 @@ public class ReservationTime {
     @Column(name = "reservation_time_no")
     private Long reservationTimeNo;
 
+    @JsonBackReference
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "reservation_no", nullable = false)

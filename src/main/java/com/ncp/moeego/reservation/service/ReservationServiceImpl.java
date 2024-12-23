@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -95,36 +97,57 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void getReservations(String email, Integer year) {
-//        Member member = memberService.getMemberByEmail(email);
-        Member member = memberService.getMemberByEmail("codelily98@naver.com");
+    public Map<String, Object> getReservations(String email, Integer year) {
+        Map<String, Object> response = new HashMap<>();
+
+        Member member = memberService.getMemberByEmail(email);
         switch (member.getMemberStatus()) {
             case ROLE_PRO -> {
-                getReceivedReservations(proService.getProByMemberNo(member.getMemberNo()), year);
-                getMyReservations(member, year);
+                List<ReceivedReservationResponse> receivedReservations = getReceivedReservations(proService.getProByMemberNo(member.getMemberNo()), year);
+                List<MyReservationResponse> myReservations = getMyReservations(member, year);
+                response.put("receivedReservations", receivedReservations);
+                response.put("myReservations", myReservations);
             }
-            case ROLE_USER -> getMyReservations(member, year);
+            case ROLE_USER -> {
+                List<MyReservationResponse> myReservations = getMyReservations(member, year);
+                response.put("myReservations", myReservations);
+            }
 
             default -> throw new IllegalArgumentException("예약 내역을 조회할 수 없는 회원입니다.");
 
+
         }
 
+        return response;
     }
 
-    private void getReceivedReservations(Pro pro, Integer year) {
-        List<ReservationTime> reservationTimes = reservationTimeRepository.findReceivedReservations(pro.getProNo(), year);
-        log.info(reservationTimes.toString());
-        reservationTimes.stream()
-                .map(reservationTime -> ReceivedReservationResponse.builder()
-                        .memberName(reservationTime.getReservation().getMember().getName())
-                        .proItemName(reservationTime.getReservation().getProItem().getSubject())
-                        .startDate(reservationTime.getStartDate()));
-        //레전드코드발생
+    private List<ReceivedReservationResponse> getReceivedReservations(Pro pro, Integer year) {
+        List<Reservation> reservations = reservationRepository.findReceivedReservations(pro.getProNo(), year);
+        List<ReceivedReservationResponse> receivedReservations = reservations.stream().map(reservation -> ReceivedReservationResponse.builder()
+                        .memberNo(reservation.getMember().getMemberNo())
+                        .memberName(reservation.getMember().getName())
+                        .proItemName(reservation.getProItem().getSubject())
+                        .startDate(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartDate()).findFirst().orElse(null))
+                        .startTimes(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartTime()).toList())
+                        .build())
+                .toList();
+        return receivedReservations;
+
     }
 
-    private void getMyReservations(Member member, Integer year) {
-        List<ReservationTime> reservationTimes = reservationTimeRepository.findMyReservations(member.getMemberNo(), year);
-        log.info(reservationTimes.toString());
+    private List<MyReservationResponse> getMyReservations(Member member, Integer year) {
+        List<Reservation> reservations = reservationRepository.findMyReservations(member.getMemberNo(), year);
+        List<MyReservationResponse> myReservations = reservations.stream().map(reservation -> MyReservationResponse.builder()
+                        .proNo(reservation.getProItem().getPro().getProNo())
+                        .proName(reservation.getProItem().getPro().getMember().getName())
+                        .proItemNo(reservation.getProItem().getPro().getProNo())
+                        .proItemName(reservation.getProItem().getSubject())
+                        .startDate(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartDate()).findFirst().orElse(null))
+                        .startTimes(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartTime()).toList())
+                        .build())
+                .toList();
+        return myReservations;
     }
+
 
 }
