@@ -147,6 +147,7 @@ public class ReservationServiceImpl implements ReservationService {
         return count != null && count > 0 ? count : 0; // 예약이 없으면 0 반환
     }
 
+    // 예약 취소
     @Override
     public String deleteReservation(String email, Long reservationNo) {
         Member member = memberService.getMemberByEmail(email);
