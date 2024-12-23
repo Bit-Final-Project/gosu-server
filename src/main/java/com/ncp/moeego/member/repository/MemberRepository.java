@@ -1,8 +1,11 @@
 package com.ncp.moeego.member.repository;
 
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.cancel.entity.Cancel;
+import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.SignOutDTO;
+import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
@@ -108,8 +111,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
-
-
-    
     
 }

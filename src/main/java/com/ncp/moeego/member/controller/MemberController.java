@@ -77,6 +77,7 @@ public class MemberController {
         try {
             String name = payload.get("nickname");
             String email = authentication.getName(); // JWT에서 사용자 이메일 추출
+            System.out.println(email);
             String updatedName = memberService.updateName(email, name);
             return ResponseEntity.ok(ApiResponse.success("회원 이름이 성공적으로 변경되었습니다.", Map.of("updateName", updatedName)));
         } catch (UsernameNotFoundException e) {

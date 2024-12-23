@@ -1,10 +1,14 @@
 package com.ncp.moeego.article.repository;
 
 import com.ncp.moeego.article.entity.Article;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +22,15 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     // 1번 (이벤트 게시글) 만 가져오기
     @Query("select t from Article t where t.type = :type")
     List<Article> findAllByType(@Param("type") int type);
-
+    
+    // 0, 1(공지, 이벤트) 가져오기
+    @Query("select a from Article a where a.type in (0, 1)")
+    List<Article> findAllEventArticle();
+    
+    // 관리자 수정 부분 해당 게시글 조회
+    @Query("select a from Article a where a.articleNo = :articleNo")
+    Article findByArticleNo(@Param("articleNo") Long articleNo);
+    
     // 아티클 넘버가 10번인 게시글 가져오기
     @Query("select t from Article t where t.articleNo = :num")
     Article findByArticleNo(@Param("num") int num);
@@ -75,5 +87,14 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     // 좋아요 순 댓글 수 가져오는 쿼리
     @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE a.type NOT IN (0,1) GROUP BY a ORDER BY a.likes DESC")
     Page<Object[]> findHotArticlesWithCommentCount(Pageable pageable);
+
+    // 공지 및 게시글 삭제
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Article a WHERE a.articleNo = :articleNo AND a.member.memberNo = :memberNo")
+    int deleteArticleByArticleNoAndMemberNo(@Param("articleNo") Long articleNo, @Param("memberNo") Long memberNo);
+
+
+
 
 }
