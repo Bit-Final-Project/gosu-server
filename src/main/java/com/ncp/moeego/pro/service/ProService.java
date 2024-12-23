@@ -10,6 +10,8 @@ import java.util.Map;
 public interface ProService {
     String proJoin(ProJoinRequest proJoinRequest);
 
+    String proApply(ProApplyRequest request);
+
     Page<FavoriteResponse> getFavorites(Long memberNo, int pg);
 
     String deleteFavorites(Long memNo, List<Long> proNo);
@@ -23,6 +25,6 @@ public interface ProService {
     Map<String, Object> getItemList(Long subCateNo, String location, int pg);
 
     ProItem getProItemById(Long proItemNo);
-
+    
     String postFavorites(FavoritePostRequest favoritePostRequest);
 }

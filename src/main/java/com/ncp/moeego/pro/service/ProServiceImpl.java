@@ -3,19 +3,21 @@ package com.ncp.moeego.pro.service;
 import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
-import com.ncp.moeego.category.service.SubCategoryService;
+import com.ncp.moeego.category.service.SubCategoryServiceImpl;
 import com.ncp.moeego.favorite.entity.Favorite;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
-import com.ncp.moeego.member.service.MemberService;
+import com.ncp.moeego.member.repository.MemberRepository;
+import com.ncp.moeego.member.service.impl.MemberServiceImpl;
 import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
+import com.ncp.moeego.review.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,24 +33,27 @@ import java.util.Map;
 @Slf4j
 public class ProServiceImpl implements ProService {
 
-    private final MemberService memberService;
-    private final SubCategoryService subCategoryService;
+    private final MemberServiceImpl memberService;
+    private final SubCategoryServiceImpl subCategoryService;
     private final ProRepository proRepository;
-    private final ProItemRepository proItemRepository;
-    private final FavoriteRepository favoriteRepository;
     private final MainCategoryRepository mainCategoryRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final ProItemRepository proItemRepository;
     private final SubCategoryRepository subCategoryRepository;
+    private final MemberRepository memberRepository;
+    private final ReviewRepository reviewRepository;
 
-    public ProServiceImpl(MemberService memberService, SubCategoryService subCategoryService, ProRepository proRepository, ProItemRepository proItemRepository, FavoriteRepository favoriteRepository, MainCategoryRepository mainCategoryRepository, SubCategoryRepository subCategoryRepository) {
+    public ProServiceImpl(MemberServiceImpl memberService, SubCategoryServiceImpl subCategoryService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, ProItemRepository proItemRepository, SubCategoryRepository subCategoryRepository, MemberRepository memberRepository, ReviewRepository reviewRepository) {
         this.memberService = memberService;
         this.subCategoryService = subCategoryService;
         this.proRepository = proRepository;
-        this.proItemRepository = proItemRepository;
-        this.favoriteRepository = favoriteRepository;
         this.mainCategoryRepository = mainCategoryRepository;
+        this.favoriteRepository = favoriteRepository;
+        this.proItemRepository = proItemRepository;
         this.subCategoryRepository = subCategoryRepository;
+        this.memberRepository = memberRepository;
+        this.reviewRepository = reviewRepository;
     }
-
 
     @Transactional
     @Override
@@ -64,6 +69,12 @@ public class ProServiceImpl implements ProService {
             log.error("회원가입 실패 : {}", e.getMessage());
             throw e;
         }
+    }
+
+    @Transactional
+    @Override
+    public String proApply(ProApplyRequest request) {
+        return "";
     }
 
     public void proJoinExecute(ProJoinRequest proJoinRequest) {
@@ -111,7 +122,7 @@ public class ProServiceImpl implements ProService {
 
         return proRepository.findByProNoIn(proNoList, pageable);
     }
-
+    
     @Transactional
     @Override
     public String postFavorites(FavoritePostRequest favoritePostRequest) {
@@ -237,10 +248,9 @@ public class ProServiceImpl implements ProService {
     public ProItem getProItemById(Long proItemNo) {
         return proItemRepository.findById(proItemNo).orElseThrow(() -> new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo + "번 서비스"));
     }
-
+    
     public Pro getProById(Long proNo) {
         return proRepository.findById(proNo).orElseThrow(() -> new IllegalArgumentException("해당 달인을 찾을 수 없습니다. proNo : " + proNo));
     }
-
 
 }

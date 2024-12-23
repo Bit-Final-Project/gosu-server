@@ -10,4 +10,6 @@ public interface ReservationService {
 
     List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo);
 
+    Long getReservationCountByProItem(Long proItemNo); // 예약 수 조회 메서드
+
 }

@@ -33,6 +33,17 @@ public class ReservationController {
         String message = reservationService.makeReservation(reservationRequest);
         return ResponseEntity.ok(ApiResponse.success(message));
     }
+    
+    // 예약 총 수 조회
+    @GetMapping("/total")
+    public ResponseEntity<?> getReservationCount(@RequestParam("proItemNo") Long proItemNo) {
+        Long count = reservationService.getReservationCountByProItem(proItemNo);
+        
+        if (count == 0) {
+            return ResponseEntity.ok(ApiResponse.success("예약된 정보가 없습니다.", null));
+        }
+        return ResponseEntity.ok(ApiResponse.success("예약 수 조회 성공", count));
+    }
 
     @GetMapping("/mypage")
     public ResponseEntity<?> getMyReservations(Authentication authentication) {
