@@ -14,6 +14,7 @@ public class MyReservationResponse {
     private String proName;
     private Long proItemNo;
     private String proItemName;
+    private Long reservationNo;
 
     private LocalDate startDate;
     private List<LocalTime> startTimes;
