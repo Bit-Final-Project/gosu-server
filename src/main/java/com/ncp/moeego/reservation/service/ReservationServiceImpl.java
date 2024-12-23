@@ -153,6 +153,7 @@ public class ReservationServiceImpl implements ReservationService {
         Member member = memberService.getMemberByEmail(email);
         reservationRepository.deleteByMemberAndReservationNo(member, reservationNo);
         return "예약 취소 성공";
+
     }
 
 }
