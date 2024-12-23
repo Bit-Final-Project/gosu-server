@@ -61,7 +61,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Page<Object[]> findTypeArticlesWithCommentCount(@Param("type") int type, Pageable pageable);
 
     // 검색 값 가져오는 쿼리
-    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE (a.content like %:value% or a.subject like %:value% or :value is null) and a.type = 2 GROUP BY a")
+    @Query("SELECT a, COUNT(c) FROM Article a LEFT JOIN Comment c ON a.articleNo = c.article.articleNo AND c.commentStatus <> 'DELETED' WHERE (a.content like %:value% or a.subject like %:value% or :value is null) and a.type in (2, 3, 4) GROUP BY a")
     Page<Object[]> findSearchArticles(@Param("value") String value, Pageable pageable);
 
     // 내가 작성한 글 댓글 수 가져오는 쿼리
