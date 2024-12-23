@@ -1,5 +1,6 @@
 package com.ncp.moeego.reservation.repository;
 
+import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.reservation.entity.Reservation;
 import com.ncp.moeego.reservation.entity.ReservationTime;
 import java.util.List;
@@ -31,4 +32,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 	@Query("SELECT COUNT(r) FROM Reservation r WHERE r.proItem.proItemNo = :proItemNo")
 	Long countReservationsByProItem(@Param("proItemNo") Long proItemNo);
 
+    void deleteByMemberAndReservationNo(Member member, Long reservationNo);
 }
