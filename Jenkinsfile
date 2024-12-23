@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('Build') { // Gradle 빌드
             steps {
+                sh 'chmod +x gradlew' // gradlew에 실행 권한 추가
                 sh './gradlew build'
             }
         }
@@ -18,8 +19,9 @@ pipeline {
                 sh 'docker run -d -p 8080:8080 --name moeego-server moeego-server' // 새로운 컨테이너 실행
             }
         }
-        stage('Run Deploy Script') { // deploy.sh 실행 
+        stage('Run Deploy Script') { // deploy.sh 실행
             steps {
+                sh 'chmod +x deploy.sh' // deploy.sh에 실행 권한 추가
                 sh './deploy.sh'
             }
         }
