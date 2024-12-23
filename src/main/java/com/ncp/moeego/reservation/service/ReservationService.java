@@ -15,4 +15,5 @@ public interface ReservationService {
   
     Long getReservationCountByProItem(Long proItemNo); // 예약 수 조회 메서드
 
+    String deleteReservation(String email, Long reservationNo);
 }

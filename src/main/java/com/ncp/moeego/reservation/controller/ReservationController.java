@@ -35,6 +35,14 @@ public class ReservationController {
         String message = reservationService.makeReservation(reservationRequest);
         return ResponseEntity.ok(ApiResponse.success(message));
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteReservation(Authentication authentication, @RequestParam("reservationNo") Long reservationNo) {
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        log.info("예약취소 요청 멤버 이름: {}, 예약 번호: {}", memberDetails.getName(), reservationNo);
+        String message = reservationService.deleteReservation(authentication.getName(),reservationNo);
+        return ResponseEntity.ok(ApiResponse.success(message));
+    }
     
     // 예약 총 수 조회
     @GetMapping("/total")
