@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 1. 환경 설정
-PROJECT_DIR="/home/user/myproject"    # 실제 Spring Boot 프로젝트 경로
-YML_SOURCE="/workspace/backend/src/main/resources/application.yml" # .yml 파일의 실제 경로
+PROJECT_DIR="/var/jenkins_home/workspace/backend"    # Spring Boot 프로젝트 경로
+YML_SOURCE="/var/jenkins_home/workspace/backend/src/main/resources/application.yml" # .yml 파일의 실제 경로
 YML_TARGET="$PROJECT_DIR/src/main/resources/application.yml"  # 서버에서의 위치
 JAR_FILE="moeego-server.jar"     # 빌드된 JAR 파일 이름
 
