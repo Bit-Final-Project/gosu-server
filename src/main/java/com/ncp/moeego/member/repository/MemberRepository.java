@@ -17,6 +17,8 @@ import com.ncp.moeego.pro.entity.ProItem;
 
 import jakarta.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -49,7 +51,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "LEFT JOIN Pro p ON p.member = m " +
             "WHERE m.memberStatus = :status " +
             "GROUP BY m.memberNo, m.name, m.memberStatus, p.oneIntro, p.mainCategory.mainCateName")
-    List<MemberSummaryDTO> findMemberSummaryByStatus(@Param("status") MemberStatus status);
+    List<MemberSummaryDTO> findMemberSummaryByStatus(Pageable pageable , @Param("status") MemberStatus status);
     
     // 일주일 치 회원 가입 수
     List<Member> findByJoinDateBetween(LocalDateTime startDate, LocalDateTime endDate);
@@ -63,11 +65,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Cancel> findByCancelDateBetween(@Param("startDate") LocalDateTime startDateTime, @Param("endDate") LocalDateTime endDateTime);
 
 
-    // 모든 일반 회원 조회
-    @Query("SELECT m FROM Member m")
-    List<Member> findAllUser();  // 일반 회원 조회
+    // 일반 회원 조회 (memberStatus = 'ROLE_USER' 기준)
+    @Query("SELECT m FROM Member m WHERE m.memberStatus = 'ROLE_USER'")
+    Page<Member> findUserMembers(Pageable pageable);
 
-    //고수 회원 조회
+    // 고수 회원 조회 (memberStatus = 'ROLE_PRO' 기준)
     @Query("SELECT DISTINCT new com.ncp.moeego.member.bean.ProDTO( "
             + "p.member.memberNo, "
             + "p.member.name, "
@@ -85,12 +87,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         + "WHERE m.memberStatus = 'ROLE_PRO' "
         + "AND pi.itemStatus = 'ACTIVE' "
         + "AND mc.mainCateName IS NOT NULL")
-	List<ProDTO> findProMembersWithRolePro();
-	
-    // 탈퇴 회원 조회
+    Page<ProDTO> findProMembersWithRolePro(Pageable pageable);
+
+    // 탈퇴 회원 조회 (memberStatus = 'ROLE_CANCEL' 기준)
     @Query("SELECT new com.ncp.moeego.member.bean.CancelDTO(m.name, m.phone, m.email , c.cancelNo, c.cancelDate, c.reason) " +
-            "FROM Cancel c JOIN c.member m")
-     List<CancelDTO> findAllCancelDetails();
+            "FROM Cancel c JOIN c.member m WHERE m.memberStatus = 'ROLE_CANCEL'")
+    Page<CancelDTO> findCancelledMembers(Pageable pageable);
 
     // 회원 프로필 이미지 업로드
     @Modifying

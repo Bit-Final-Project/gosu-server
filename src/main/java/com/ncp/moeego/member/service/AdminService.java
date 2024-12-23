@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ncp.moeego.article.bean.ArticleDTO;
@@ -27,7 +29,7 @@ public interface AdminService {
 
 	int getRoleProCount();
 
-	List<MemberSummaryDTO> getPendingProMembers(MemberStatus rolePendPro);
+	List<MemberSummaryDTO> getPendingProMembers(Pageable pageable, MemberStatus rolePendPro);
 
 	boolean approveMember(Long id);
 
@@ -39,12 +41,11 @@ public interface AdminService {
 
 	List<Map<String, Object>> getCancelledMemberData(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-	List<Member> getUserMembers();
-
-	List<ProDTO> getProMembersWithDetails();
-
-	List<CancelDTO> getCancelMembersWithDetails();
-
+	Page<Member> getUserMembers(Pageable pageable);
+	Page<ProDTO> getProMembersWithDetails(Pageable pageable);
+	Page<CancelDTO> getCancelMembersWithDetails(Pageable pageable);
+	
+	
 	void revokeMember(Long memberNo);
 
 	boolean writeArticle(ArticleImageDTO articleImageDTO);

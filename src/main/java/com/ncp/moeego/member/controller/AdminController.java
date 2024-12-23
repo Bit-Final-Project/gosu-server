@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -105,8 +108,12 @@ public class AdminController {
     
     //고수 권한 페이지
     @GetMapping("/admin/pro/approval")
-    public ResponseEntity<List<MemberSummaryDTO>> proApproval() {
-        List<MemberSummaryDTO> pendingProMembers = adminService.getPendingProMembers(MemberStatus.ROLE_PEND_PRO);
+    public ResponseEntity<List<MemberSummaryDTO>> proApproval(
+    		@RequestParam(value = "page", defaultValue = "1") int page, 
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+    	
+    	Pageable pageable = PageRequest.of(page - 1, size);
+        List<MemberSummaryDTO> pendingProMembers = adminService.getPendingProMembers(pageable,MemberStatus.ROLE_PEND_PRO);
         return ResponseEntity.ok(pendingProMembers);
     }
     
@@ -146,25 +153,36 @@ public class AdminController {
     }
     
     
-    // 일반 회원 조회
+    // 일반 회원 조회 ( 페이징 처리 )
     @GetMapping("/admin/member/user")
-    public ResponseEntity<List<Member>> getUserMembers() {
-        List<Member> userData = adminService.getUserMembers();
+    public ResponseEntity<Page<Member>> getUserMembers(
+    		@RequestParam(value = "page", defaultValue = "1") int page, 
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Member> userData = adminService.getUserMembers(pageable);
         return ResponseEntity.ok(userData);
     }
 
-    
-    // 고수 회원 조회
+    // 고수 회원 조회 ( 페이징 처리 )
     @GetMapping("/admin/member/pro")
-    public ResponseEntity<List<ProDTO>> getProMembersWithDetails() {
-        List<ProDTO> proMembers = adminService.getProMembersWithDetails();
+    public ResponseEntity<Page<ProDTO>> getProMembersWithDetails(
+    		@RequestParam(value = "page", defaultValue = "1") int page, 
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page -1, size);
+        Page<ProDTO> proMembers = adminService.getProMembersWithDetails(pageable);
         return ResponseEntity.ok(proMembers);
     }
-    
-    // 탈퇴 회원 조회
+
+    // 탈퇴 회원 조회 ( 페이징 처리 )
     @GetMapping("/admin/member/cancel")
-    public ResponseEntity<List<CancelDTO>> getCancelMembersWithDetails() {
-        List<CancelDTO> cancelMembers = adminService.getCancelMembersWithDetails();
+    public ResponseEntity<Page<CancelDTO>> getCancelMembersWithDetails(
+    		@RequestParam(value = "page", defaultValue = "1") int page, 
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page -1, size);
+        Page<CancelDTO> cancelMembers = adminService.getCancelMembersWithDetails(pageable);
         return ResponseEntity.ok(cancelMembers);
     }
 

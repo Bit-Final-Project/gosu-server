@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -78,8 +80,8 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public List<MemberSummaryDTO> getPendingProMembers(MemberStatus status) {
-	    return memberRepository.findMemberSummaryByStatus(status);
+	public List<MemberSummaryDTO> getPendingProMembers(Pageable pageable, MemberStatus status) {
+	    return memberRepository.findMemberSummaryByStatus(pageable,status);
 	}
 
 	@Override
@@ -235,21 +237,20 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	
-	// 일반 회원 조회
-    public List<Member> getUserMembers() {
-        return memberRepository.findAllUser();
-    }
+	// 일반 회원 조회 (memberStatus = 'ROLE_USER' 기준)
+	public Page<Member> getUserMembers(Pageable pageable) {
+	    return memberRepository.findUserMembers(pageable);  // 'ROLE_USER' 회원만 조회
+	}
 
-    // 고수 회원 조회
-    public List<ProDTO> getProMembersWithDetails() {
-        return memberRepository.findProMembersWithRolePro();
-    }
+	// 고수 회원 조회 (memberStatus = 'ROLE_PRO' 기준)
+	public Page<ProDTO> getProMembersWithDetails(Pageable pageable) {
+	    return memberRepository.findProMembersWithRolePro(pageable);  // 'ROLE_PRO' 고수 회원만 조회
+	}
 
-    // 탈퇴 회원 조회
-	@Override
-	public List<CancelDTO> getCancelMembersWithDetails() {
-        return memberRepository.findAllCancelDetails();
-    }
+	// 탈퇴 회원 조회 (memberStatus = 'ROLE_CANCEL' 기준)
+	public Page<CancelDTO> getCancelMembersWithDetails(Pageable pageable) {
+	    return memberRepository.findCancelledMembers(pageable);  // 'ROLE_CANCEL' 탈퇴 회원만 조회
+	}
 
 	// 공지/이벤트 게시글 등록
 	@Override
@@ -304,8 +305,8 @@ public class AdminServiceImpl implements AdminService {
 	// 공지 게시글 조회
 	public List<ArticleImageDTO> getArticles() {
 		List<ArticleImageDTO> list = new ArrayList<>();
-		List<Article> articleList = articleRepository.findAllEventArticle();
-		for (Article article : articleList) {
+		List<Article> articlePage = articleRepository.findAllEventArticle();
+		for (Article article : articlePage) {
 			List<String> uuidList = imageRepository.findByUuid(article.getArticleNo());
 			ArticleImageDTO articleDTO = new ArticleImageDTO(article, uuidList);
 			list.add(articleDTO);
