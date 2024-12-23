@@ -4,7 +4,6 @@ import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.service.ProService;
-import com.ncp.moeego.pro.service.ProServiceImpl;
 import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
 import com.ncp.moeego.reservation.dto.MyReservationResponse;
 import com.ncp.moeego.reservation.dto.ReceivedReservationResponse;
@@ -32,8 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ProService proService;
 
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService,
-                                  ProService proService, ReservationTimeRepository reservationTimeRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, MemberService memberService, ProService proService, ReservationTimeRepository reservationTimeRepository) {
         this.reservationRepository = reservationRepository;
         this.memberService = memberService;
         this.proService = proService;
@@ -68,19 +66,19 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional(readOnly = true)
     public List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo) {
         List<ReservationTime> reservationTimes = reservationTimeRepository.findExistingReservation(proItemNo);
-        return reservationTimes.stream().map(rt -> 
-            ExistingDateTimeResponse.builder()
-                .startDate(rt.getStartDate())
-                .startTime(rt.getStartTime())
-                .build())
-            .toList();
+        return reservationTimes.stream().map(rt ->
+                        ExistingDateTimeResponse.builder()
+                                .startDate(rt.getStartDate())
+                                .startTime(rt.getStartTime())
+                                .build())
+                .toList();
     }
 
     private void checkForConflictingReservations(ReservationRequest reservationRequest) {
         List<LocalTime> conflictingTimes = reservationRequest.getStartTimes().stream()
-            .filter(startTime -> reservationTimeRepository.existsByReservation_ProItem_ProItemNoAndStartDateAndStartTime(
-                reservationRequest.getProItemNo(), reservationRequest.getStartDate(), startTime))
-            .toList();
+                .filter(startTime -> reservationTimeRepository.existsByReservation_ProItem_ProItemNoAndStartDateAndStartTime(
+                        reservationRequest.getProItemNo(), reservationRequest.getStartDate(), startTime))
+                .toList();
 
         if (!conflictingTimes.isEmpty()) {
             throw new IllegalArgumentException("이미 예약된 시간입니다: " + conflictingTimes);
@@ -99,6 +97,7 @@ public class ReservationServiceImpl implements ReservationService {
                 response.put("receivedReservations", receivedReservations);
                 response.put("myReservations", myReservations);
             }
+
             case ROLE_USER -> {
                 List<MyReservationResponse> myReservations = getMyReservations(member, year);
                 response.put("myReservations", myReservations);
@@ -106,39 +105,40 @@ public class ReservationServiceImpl implements ReservationService {
 
             default -> throw new IllegalArgumentException("예약 내역을 조회할 수 없는 회원입니다.");
 
-
         }
 
         return response;
     }
 
     private List<ReceivedReservationResponse> getReceivedReservations(Pro pro, Integer year) {
+
         List<Reservation> reservations = reservationRepository.findReceivedReservations(pro.getProNo(), year);
-        List<ReceivedReservationResponse> receivedReservations = reservations.stream().map(reservation -> ReceivedReservationResponse.builder()
+
+        return reservations.stream().map(reservation -> ReceivedReservationResponse.builder()
                         .memberNo(reservation.getMember().getMemberNo())
                         .memberName(reservation.getMember().getName())
                         .proItemName(reservation.getProItem().getSubject())
-                        .startDate(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartDate()).findFirst().orElse(null))
-                        .startTimes(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartTime()).toList())
+                        .startDate(reservation.getReservationTimes().stream().map(ReservationTime::getStartDate).findFirst().orElse(null))
+                        .startTimes(reservation.getReservationTimes().stream().map(ReservationTime::getStartTime).toList())
                         .build())
                 .toList();
-        return receivedReservations;
-
     }
 
     private List<MyReservationResponse> getMyReservations(Member member, Integer year) {
+
         List<Reservation> reservations = reservationRepository.findMyReservations(member.getMemberNo(), year);
-        List<MyReservationResponse> myReservations = reservations.stream().map(reservation -> MyReservationResponse.builder()
+
+        return reservations.stream().map(reservation -> MyReservationResponse.builder()
                         .proNo(reservation.getProItem().getPro().getProNo())
                         .proName(reservation.getProItem().getPro().getMember().getName())
                         .proItemNo(reservation.getProItem().getPro().getProNo())
                         .proItemName(reservation.getProItem().getSubject())
-                        .startDate(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartDate()).findFirst().orElse(null))
-                        .startTimes(reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartTime()).toList())
+                        .startDate(reservation.getReservationTimes().stream().map(ReservationTime::getStartDate).findFirst().orElse(null))
+                        .startTimes(reservation.getReservationTimes().stream().map(ReservationTime::getStartTime).toList())
                         .build())
                 .toList();
-        return myReservations;
     }
+
     // 예약 수 조회
     @Override
     public Long getReservationCountByProItem(Long proItemNo) {
