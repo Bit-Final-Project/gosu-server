@@ -1,6 +1,7 @@
 package com.ncp.moeego.reservation.service;
 
 import com.ncp.moeego.member.entity.Member;
+import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
@@ -98,22 +99,13 @@ public class ReservationServiceImpl implements ReservationService {
         Map<String, Object> response = new HashMap<>();
         /*email = "gustlr887@naver.com";*/
         Member member = memberService.getMemberByEmail(email);
-        switch (member.getMemberStatus()) {
-            case ROLE_PRO -> {
-                List<ReservationResponse> receivedReservations = getReceivedReservations(proService.getProByMemberNo(member.getMemberNo()), year);
-                List<ReservationResponse> myReservations = getMyReservations(member, year);
-                response.put("receivedReservations", receivedReservations);
-                response.put("myReservations", myReservations);
-            }
-
-            case ROLE_USER -> {
-                List<ReservationResponse> myReservations = getMyReservations(member, year);
-                response.put("myReservations", myReservations);
-            }
-
-            default -> throw new IllegalArgumentException("예약 내역을 조회할 수 없는 회원입니다.");
-
+        if (member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
+            List<ReservationResponse> receivedReservations = getReceivedReservations(proService.getProByMemberNo(member.getMemberNo()), year);
+            response.put("receivedReservations", receivedReservations);
         }
+
+        List<ReservationResponse> myReservations = getMyReservations(member, year);
+        response.put("myReservations", myReservations);
 
         return response;
     }
