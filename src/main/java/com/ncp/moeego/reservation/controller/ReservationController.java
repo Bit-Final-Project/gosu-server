@@ -40,15 +40,15 @@ public class ReservationController {
     public ResponseEntity<?> deleteReservation(Authentication authentication, @RequestParam("reservationNo") Long reservationNo) {
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         log.info("예약취소 요청 멤버 이름: {}, 예약 번호: {}", memberDetails.getName(), reservationNo);
-        String message = reservationService.deleteReservation(authentication.getName(),reservationNo);
+        String message = reservationService.deleteReservation(authentication.getName(), reservationNo);
         return ResponseEntity.ok(ApiResponse.success(message));
     }
-    
+
     // 예약 총 수 조회
     @GetMapping("/total")
     public ResponseEntity<?> getReservationCount(@RequestParam("proItemNo") Long proItemNo) {
         Long count = reservationService.getReservationCountByProItem(proItemNo);
-        
+
         if (count == 0) {
             return ResponseEntity.ok(ApiResponse.success("예약된 정보가 없습니다.", null));
         }
