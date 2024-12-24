@@ -3,6 +3,7 @@ package com.ncp.moeego.reservation.service;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.entity.Pro;
+import com.ncp.moeego.pro.entity.ProItem;
 import com.ncp.moeego.pro.service.ProService;
 import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
@@ -41,6 +42,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     @Override
     public String makeReservation(ReservationRequest reservationRequest) {
+        checkForConflictingMemberNo(reservationRequest);
         checkForConflictingReservations(reservationRequest);
 
         Reservation reservation = new Reservation();
@@ -59,6 +61,13 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRepository.save(reservation);
 
         return "예약 성공";
+    }
+
+    private void checkForConflictingMemberNo(ReservationRequest reservationRequest) {
+        ProItem proItem = proService.getProItemById(reservationRequest.getProItemNo());
+        if (reservationRequest.getMemberNo().equals(proItem.getPro().getMember().getMemberNo())) {
+            throw new IllegalArgumentException("본인의 서비스를 예약 할 수 없습니다");
+        }
     }
 
     @Override
