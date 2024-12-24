@@ -96,7 +96,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Map<String, Object> getReservations(String email, Integer year) {
         Map<String, Object> response = new HashMap<>();
-
+        /*email = "gustlr887@naver.com";*/
         Member member = memberService.getMemberByEmail(email);
         switch (member.getMemberStatus()) {
             case ROLE_PRO -> {
