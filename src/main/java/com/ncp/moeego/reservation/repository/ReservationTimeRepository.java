@@ -12,19 +12,7 @@ import java.util.List;
 
 @Repository
 public interface ReservationTimeRepository extends JpaRepository<ReservationTime, Long> {
-    @Query("""
-            select rt from ReservationTime rt
-            where rt.reservation.proItem.proItemNo =:proItemNo and
-            rt.startDate = :startDate
-            """)
-    List<ReservationTime> findExistingReservation(@Param("proItemNo") Long proItemNo, @Param("startDate") LocalDate startDate);
 
-    @Query("""
-                select rt from ReservationTime rt
-                where rt.reservation.proItem.proItemNo =:proItemNo
-            """)
-    List<ReservationTime> findExistingReservation(@Param("proItemNo") Long proItemNo);
-    
     boolean existsByReservation_ProItem_ProItemNoAndStartDateAndStartTime(
             Long proItemNo, 
             LocalDate startDate, 

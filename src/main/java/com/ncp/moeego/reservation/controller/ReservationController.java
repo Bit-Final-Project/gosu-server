@@ -23,9 +23,9 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping
-    public ResponseEntity<?> getExistingDateTime(@RequestParam("proItemNo") Long proItemNo) {
+    public ResponseEntity<?> getExistingDateTime(@RequestParam("proNo") Long proNo) {
 
-        return ResponseEntity.ok(ApiResponse.success("예약 조회 성공", reservationService.getReservationByProItem(proItemNo)));
+        return ResponseEntity.ok(ApiResponse.success("예약가능 시간대 조회 성공", reservationService.getReservationByPro(proNo)));
 
     }
 
@@ -56,7 +56,7 @@ public class ReservationController {
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<?> getReservations(Authentication authentication, @RequestParam(required = false) Integer year) {
+    public ResponseEntity<?> getReservations(Authentication authentication, @RequestParam(value = "year", required = false) Integer year) {
         log.info("요청한 연도 : {}", year);
         if (year == null) {
             year = LocalDate.now().getYear();

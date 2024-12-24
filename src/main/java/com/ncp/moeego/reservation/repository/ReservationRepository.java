@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -32,4 +33,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Long countReservationsByProItem(@Param("proItemNo") Long proItemNo);
 
     void deleteByMemberAndReservationNo(Member member, Long reservationNo);
+
+
+    @Query("""
+                select r from Reservation r
+                            join r.reservationTimes rt
+                where r.proItem.pro.proNo =:proNo
+                           and rt.startDate >= :today
+            """)
+    List<Reservation> findExistingReservation(@Param("proNo") Long proNo, @Param("today") LocalDate today);
+
 }

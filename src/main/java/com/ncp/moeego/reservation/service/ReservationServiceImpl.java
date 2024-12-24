@@ -6,7 +6,6 @@ import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import com.ncp.moeego.pro.service.ProService;
-import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
 import com.ncp.moeego.reservation.dto.ReservationResponse;
 import com.ncp.moeego.reservation.entity.Reservation;
@@ -17,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +39,33 @@ public class ReservationServiceImpl implements ReservationService {
         this.reservationTimeRepository = reservationTimeRepository;
 
     }
+
+    @Override
+    public List<ReservationResponse> getReservationByPro(Long proNo) {
+        List<Reservation> reservations = reservationRepository.findExistingReservation(proNo, LocalDate.now());
+        log.info(reservations.toString());
+        log.info(reservations.stream().map(reservation -> ReservationResponse.builder()
+                .startDate(reservation.getReservationTimes().stream().map(ReservationTime::getStartDate).findFirst().orElse(null))
+                .startTimes(reservation.getReservationTimes().stream().map(ReservationTime::getStartTime).toList())
+                .build()).toList().toString());
+        return reservations.stream().map(reservation -> ReservationResponse.builder()
+                .startDate(reservation.getReservationTimes().stream().map(ReservationTime::getStartDate).findFirst().orElse(null))
+                .startTimes(reservation.getReservationTimes().stream().map(ReservationTime::getStartTime).toList())
+                .build()).toList();
+
+    }
+
+/*    @Override
+    @Transactional(readOnly = true)
+    public List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo) {
+        List<ReservationTime> reservationTimes = reservationTimeRepository.findExistingReservation(proItemNo);
+        return reservationTimes.stream().map(rt ->
+                        ExistingDateTimeResponse.builder()
+                                .startDate(rt.getStartDate())
+                                .startTime(rt.getStartTime())
+                                .build())
+                .toList();
+    }*/
 
     @Transactional
     @Override
@@ -71,17 +98,6 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo) {
-        List<ReservationTime> reservationTimes = reservationTimeRepository.findExistingReservation(proItemNo);
-        return reservationTimes.stream().map(rt ->
-                        ExistingDateTimeResponse.builder()
-                                .startDate(rt.getStartDate())
-                                .startTime(rt.getStartTime())
-                                .build())
-                .toList();
-    }
 
     private void checkForConflictingReservations(ReservationRequest reservationRequest) {
         List<LocalTime> conflictingTimes = reservationRequest.getStartTimes().stream()
@@ -157,5 +173,6 @@ public class ReservationServiceImpl implements ReservationService {
         return "예약 취소 성공";
 
     }
+
 
 }
