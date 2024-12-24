@@ -1,6 +1,5 @@
 package com.ncp.moeego.reservation.service;
 
-import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
 import com.ncp.moeego.reservation.dto.ReservationResponse;
 

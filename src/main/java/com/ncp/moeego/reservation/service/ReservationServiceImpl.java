@@ -43,29 +43,19 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<ReservationResponse> getReservationByPro(Long proNo) {
         List<Reservation> reservations = reservationRepository.findExistingReservation(proNo, LocalDate.now());
+
         log.info(reservations.toString());
         log.info(reservations.stream().map(reservation -> ReservationResponse.builder()
                 .startDate(reservation.getReservationTimes().stream().map(ReservationTime::getStartDate).findFirst().orElse(null))
                 .startTimes(reservation.getReservationTimes().stream().map(ReservationTime::getStartTime).toList())
                 .build()).toList().toString());
+
         return reservations.stream().map(reservation -> ReservationResponse.builder()
                 .startDate(reservation.getReservationTimes().stream().map(ReservationTime::getStartDate).findFirst().orElse(null))
                 .startTimes(reservation.getReservationTimes().stream().map(ReservationTime::getStartTime).toList())
                 .build()).toList();
 
     }
-
-/*    @Override
-    @Transactional(readOnly = true)
-    public List<ExistingDateTimeResponse> getReservationByProItem(Long proItemNo) {
-        List<ReservationTime> reservationTimes = reservationTimeRepository.findExistingReservation(proItemNo);
-        return reservationTimes.stream().map(rt ->
-                        ExistingDateTimeResponse.builder()
-                                .startDate(rt.getStartDate())
-                                .startTime(rt.getStartTime())
-                                .build())
-                .toList();
-    }*/
 
     @Transactional
     @Override
