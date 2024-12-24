@@ -114,7 +114,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         List<Reservation> reservations = reservationRepository.findReceivedReservations(pro.getProNo(), year);
 
-        return reservations.stream().map(reservation -> ReceivedReservationResponse.builder()
+        return reservations.stream().filter(reservation -> !reservation.getMember().getMemberNo().equals(pro.getMember().getMemberNo())).map(reservation -> ReceivedReservationResponse.builder()
                         .memberNo(reservation.getMember().getMemberNo())
                         .memberName(reservation.getMember().getName())
                         .proItemName(reservation.getProItem().getSubject())

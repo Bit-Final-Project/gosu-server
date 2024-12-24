@@ -19,12 +19,4 @@ public class MyReservationResponse {
     private LocalDate startDate;
     private List<LocalTime> startTimes;
 
-
-    /*public MyReservationResponse(Reservation reservation) {
-        this.proName = reservation.getProItem().getPro().getMember().getName();
-        this.proItemName = reservation.getProItem().getSubject();
-        this.startDate = reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartDate()).findFirst().orElse(null);
-        this.startTimes = reservation.getReservationTimes().stream().map(reservationTime -> reservationTime.getStartTime()).toList();
-    }*/
-
 }
