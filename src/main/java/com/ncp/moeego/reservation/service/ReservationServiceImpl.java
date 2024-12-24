@@ -5,9 +5,8 @@ import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.service.ProService;
 import com.ncp.moeego.reservation.dto.ExistingDateTimeResponse;
-import com.ncp.moeego.reservation.dto.MyReservationResponse;
-import com.ncp.moeego.reservation.dto.ReceivedReservationResponse;
 import com.ncp.moeego.reservation.dto.ReservationRequest;
+import com.ncp.moeego.reservation.dto.ReservationResponse;
 import com.ncp.moeego.reservation.entity.Reservation;
 import com.ncp.moeego.reservation.entity.ReservationTime;
 import com.ncp.moeego.reservation.repository.ReservationRepository;
@@ -92,14 +91,14 @@ public class ReservationServiceImpl implements ReservationService {
         Member member = memberService.getMemberByEmail(email);
         switch (member.getMemberStatus()) {
             case ROLE_PRO -> {
-                List<ReceivedReservationResponse> receivedReservations = getReceivedReservations(proService.getProByMemberNo(member.getMemberNo()), year);
-                List<MyReservationResponse> myReservations = getMyReservations(member, year);
+                List<ReservationResponse> receivedReservations = getReceivedReservations(proService.getProByMemberNo(member.getMemberNo()), year);
+                List<ReservationResponse> myReservations = getMyReservations(member, year);
                 response.put("receivedReservations", receivedReservations);
                 response.put("myReservations", myReservations);
             }
 
             case ROLE_USER -> {
-                List<MyReservationResponse> myReservations = getMyReservations(member, year);
+                List<ReservationResponse> myReservations = getMyReservations(member, year);
                 response.put("myReservations", myReservations);
             }
 
@@ -110,11 +109,11 @@ public class ReservationServiceImpl implements ReservationService {
         return response;
     }
 
-    private List<ReceivedReservationResponse> getReceivedReservations(Pro pro, Integer year) {
+    private List<ReservationResponse> getReceivedReservations(Pro pro, Integer year) {
 
         List<Reservation> reservations = reservationRepository.findReceivedReservations(pro.getProNo(), year);
 
-        return reservations.stream().map(reservation -> ReceivedReservationResponse.builder()
+        return reservations.stream().filter(reservation -> !reservation.getMember().getMemberNo().equals(pro.getMember().getMemberNo())).map(reservation -> ReservationResponse.builder()
                         .memberNo(reservation.getMember().getMemberNo())
                         .memberName(reservation.getMember().getName())
                         .proItemName(reservation.getProItem().getSubject())
@@ -124,11 +123,11 @@ public class ReservationServiceImpl implements ReservationService {
                 .toList();
     }
 
-    private List<MyReservationResponse> getMyReservations(Member member, Integer year) {
+    private List<ReservationResponse> getMyReservations(Member member, Integer year) {
 
         List<Reservation> reservations = reservationRepository.findMyReservations(member.getMemberNo(), year);
 
-        return reservations.stream().map(reservation -> MyReservationResponse.builder()
+        return reservations.stream().map(reservation -> ReservationResponse.builder()
                         .proNo(reservation.getProItem().getPro().getProNo())
                         .proName(reservation.getProItem().getPro().getMember().getName())
                         .proItemNo(reservation.getProItem().getPro().getProNo())

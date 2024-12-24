@@ -61,7 +61,7 @@ public class ProController {
 
         return ResponseEntity.ok(ApiResponse.success("조회성공", data));
     }
-    
+
     @PostMapping("/favorite")
     public ResponseEntity<?> postFavorites(@RequestBody FavoritePostRequest favoritePostRequest) {
         log.info("postFavorites 요청: memberNo:{}, proNo:{}", favoritePostRequest.getMemberNo(), favoritePostRequest.getProNo());
