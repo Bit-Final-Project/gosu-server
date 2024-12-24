@@ -121,8 +121,9 @@ public class ReservationServiceImpl implements ReservationService {
     private List<ReservationResponse> getReceivedReservations(Pro pro, Integer year) {
 
         List<Reservation> reservations = reservationRepository.findReceivedReservations(pro.getProNo(), year);
+        log.info(reservations.toString());
 
-        return reservations.stream().filter(reservation -> !reservation.getMember().getMemberNo().equals(pro.getMember().getMemberNo())).map(reservation -> ReservationResponse.builder()
+        return reservations.stream().map(reservation -> ReservationResponse.builder()
                         .memberNo(reservation.getMember().getMemberNo())
                         .memberName(reservation.getMember().getName())
                         .proItemName(reservation.getProItem().getSubject())
@@ -156,6 +157,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     // 예약 취소
+    @Transactional
     @Override
     public String deleteReservation(String email, Long reservationNo) {
         Member member = memberService.getMemberByEmail(email);
