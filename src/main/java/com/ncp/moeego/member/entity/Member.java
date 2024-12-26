@@ -1,11 +1,11 @@
 package com.ncp.moeego.member.entity;
 
+import com.ncp.moeego.map.entity.Map;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.ncp.moeego.map.entity.Map;
 
 import java.time.LocalDateTime;
 
@@ -52,4 +52,14 @@ public class Member {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Map map;
 
+    @Column(name = "email_status")
+    private Integer emailStatus;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.emailStatus == null) {
+            this.emailStatus = 0;
+        }
+
+    }
 }
