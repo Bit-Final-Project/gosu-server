@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -124,13 +125,38 @@ public class AdminController {
     }
     
     // 고수 신청 시 이메일 상태 값 확인
-    @GetMapping("")
+    @GetMapping("/admin/emailstatus/{member_no}")
+    public ResponseEntity<?> getEmailStatus(@PathVariable("member_no") long member_no) {
+    	int email_status = memberService.getMemberEmailStatus(member_no);
+    	return ResponseEntity.ok(email_status);
+    }
+    
+    @PatchMapping("/admin/emailstatus/{member_no}")
+    public ResponseEntity<?> updateEmailStatus(@PathVariable("member_no") long member_no) {
+        // 현재 상태 조회
+        int currentStatus = memberService.getMemberEmailStatus(member_no);
+        
+        if (currentStatus == 0) {
+            return ResponseEntity.badRequest().body("이미 email_status가 0입니다.");
+        }
+
+        // 상태를 0으로 변경
+        boolean updated = memberService.updateEmailStatus(member_no, 0); // 새 메서드 작성 필요
+        if (updated) {
+            return ResponseEntity.ok("email_status가 0으로 변경되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("email_status 변경 실패");
+        }
+    }
     
     // 고수 승인 버튼 클릭 시
     @PostMapping("/admin/pro/approve/{member_no}")
     public ResponseEntity<ApiResponse> approveMember(@PathVariable("member_no") long member_no) {
         // 이메일 검사
+    	log.info("member_no : " + member_no);
         String email = memberService.getMemberEmail(member_no);
+        log.info("email : " + email);
         if (email == null || email.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", "BAD_REQUEST"));
         }
@@ -149,8 +175,9 @@ public class AdminController {
             return ResponseEntity.ok(ApiResponse.success("고수 승인 완료", null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body(ApiResponse.error("승인 실패", "BAD_REQUEST"));
+                                 .body(ApiResponse.error("고수 승인 실패", "BAD_REQUEST"));
         }
+
     }
 
     
@@ -174,10 +201,10 @@ public class AdminController {
     	// member_status 상태 변경
         boolean result = adminService.cancelMember(member_no);
         if (result) {
-            return ResponseEntity.ok(ApiResponse.success("고수 승인 완료", null));
+        	return ResponseEntity.ok(ApiResponse.success("고수 취소 완료", null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body(ApiResponse.error("승인 실패", "BAD_REQUEST"));
+                                 .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
         }
     }
     

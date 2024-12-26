@@ -36,6 +36,7 @@ import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
+import com.ncp.moeego.member.controller.AdminController;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.repository.MemberRepository;
@@ -48,7 +49,9 @@ import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
@@ -88,10 +91,12 @@ public class AdminServiceImpl implements AdminService {
 	public boolean approveMember(Long member_no) {
 	    // 1. Member 테이블에서 멤버 조회
 	    Member member = memberRepository.findById(member_no).orElse(null);
+	    log.info("member : " + member);
 	    if (member != null && member.getMemberStatus() == MemberStatus.ROLE_PEND_PRO) {
 	        
 	        // 2. Member 테이블에서 상태를 ROLE_PRO로 변경
 	        member.setMemberStatus(MemberStatus.ROLE_PRO);
+	        member.setEmailStatus(1);
 	        memberRepository.save(member);  // 변경된 멤버 저장
 
 	        // 3. Pro 엔티티의 accessDate 값도 현재 날짜로 설정
@@ -139,7 +144,7 @@ public class AdminServiceImpl implements AdminService {
 	    // Member 상태 변경
 	    member.setMemberStatus(MemberStatus.ROLE_USER); // 상태 변경
 	    memberRepository.save(member); // Member 상태 변경 후 저장
-
+	    member.setEmailStatus(1);
 	    return true; // 작업 성공
 	}
 
