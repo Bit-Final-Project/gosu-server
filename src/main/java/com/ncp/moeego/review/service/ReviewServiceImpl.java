@@ -59,6 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
             String proName = (String) result[3]; // 달인 이름
             String subject = (String) result[4]; // 서비스 이름
             String memberName = (String) result[5]; // 리뷰 작성자 이름
+            String profileImage = (String) result[6]; // 프로필 이미지
 
             // 작성일 기준 경과 시간 계산
             String elapsedTime = ConvertDate.calculateDate(review.getWriteDate());
@@ -68,8 +69,9 @@ public class ReviewServiceImpl implements ReviewService {
 
             Long proItemNo = review.getProItem().getProItemNo();
 
+            // 수정된 생성자를 사용하여 DTO 반환
             return new ReviewDTO(reviewNo, proName, star, subject, review.getReviewContent(), memberName,
-                    review.getWriteDate(), elapsedTime, proItemNo, imageUuidList);
+                    review.getWriteDate(), elapsedTime, proItemNo, imageUuidList, profileImage);
         });
     }
 
@@ -99,7 +101,7 @@ public class ReviewServiceImpl implements ReviewService {
             Long proItemNo = review.getProItem().getProItemNo();
 
             return new ReviewDTO(reviewNo, proName, star, subject, review.getReviewContent(), memberName,
-                    review.getWriteDate(), elapsedTime, proItemNo, imageUuidList);
+                    review.getWriteDate(), elapsedTime, proItemNo, imageUuidList, elapsedTime);
         });
     }
 

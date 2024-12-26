@@ -115,4 +115,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
     
+    @Query(value = "SELECT profile_image FROM member WHERE member_no = :memberNo", nativeQuery = true)
+	String findProfileImageByMemberNo(@Param("memberNo") Long memberNo);
+    
 }

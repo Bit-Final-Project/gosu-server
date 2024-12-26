@@ -193,6 +193,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleRepository.findById(articleNo)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 번호입니다."));
 
+        
         // 조회된 Article 엔티티를 ArticleDTO로 변환하여 반환
         ArticleDTO articleDTO = new ArticleDTO();
         articleDTO.setArticleNo(article.getArticleNo());
@@ -203,7 +204,10 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setType(article.getType());
         articleDTO.setWriteDate(article.getWriteDate());
         articleDTO.setLikes(article.getLikes());
-
+        
+        articleDTO.setProfileImage(memberRepository.findProfileImageByMemberNo(article.getMember().getMemberNo()));
+        
+        
         String elapsedTime = ConvertDate.calculateDate(article.getWriteDate());
         String memberName = getMemberNameByMemberNo(article.getMember().getMemberNo());
 
