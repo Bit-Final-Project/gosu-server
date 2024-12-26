@@ -82,15 +82,25 @@ public class ProServiceImpl implements ProService {
                 throw new IllegalArgumentException("달인 권한이 없습니다.");
             }
             Pro pro = proRepository.findByMember(member);
-            if (pro == null) {
-                throw new IllegalArgumentException("달인 정보가 없습니다.");
-            }
             pro.setIntro(payload.get("intro"));
             pro.setOneIntro(payload.get("oneIntro"));
             proRepository.save(pro);
             return ApiResponse.success("수정이 완료되었습니다.", null);
         } catch (Exception e) {
             return ApiResponse.error("수정 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        }
+    }
+
+    //고수 승인 요청
+    @Override
+    public ApiResponse proAccess(String email, ProApplyRequest proApplyRequest) {
+        try {
+            Member member = memberRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            proApplyRequest.setMemberNo(member.getMemberNo());
+            proApplyExecute(proApplyRequest);
+            return ApiResponse.success("신청이 완료되었습니다.", null);
+        } catch (Exception e) {
+            return ApiResponse.error("달인 신청 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
         }
     }
 

@@ -6,6 +6,7 @@ import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ public interface ProService {
     String proJoin(ProJoinRequest proJoinRequest);
 
     ApiResponse updateIntro(String email, Map<String, String> payload);
+
+    ApiResponse proAccess(String email, ProApplyRequest proApplyRequest);
 
     Page<FavoriteResponse> getFavorites(Long memberNo, int pg);
 
