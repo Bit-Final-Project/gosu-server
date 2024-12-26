@@ -148,6 +148,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public ApiResponse getProCountList() {
+        return ApiResponse.success("조회 완료", memberRepository.findByProCountList());
+    }
+
+    @Override
     public boolean checkMember(String email, String pwd) {
         if(email.equals("")) return false;
         if(pwd.equals("")) return false;
