@@ -23,6 +23,8 @@ public interface MemberService {
 
     ApiResponse cancelMember(SignOutDTO signOutDTO);
 
+    ApiResponse getProCountList();
+
     String updateName(String email, String name);
 
     ApiResponse updatePwd(String email, String pwd);
