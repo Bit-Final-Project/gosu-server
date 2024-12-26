@@ -147,7 +147,7 @@ public class ProServiceImpl implements ProService {
         Pro pro = getProById(favoritePostRequest.getProNo());
         Member member = memberService.getMemberById(favoritePostRequest.getMemberNo());
         if(member.getMemberNo().equals(pro.getMember().getMemberNo())){
-            throw new IllegalArgumentException("자기 자신은 찜 할수 없습니다");
+            throw new IllegalArgumentException("자기 자신은 찜할 수 없습니다.");
         }
         if (!favoriteRepository.findByProAndMember(pro, member).isEmpty()) {
             throw new IllegalArgumentException("이미 찜한 달인입니다.");
