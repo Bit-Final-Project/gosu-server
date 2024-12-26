@@ -13,6 +13,8 @@ public interface MemberService {
 
     Member getMemberByEmail(String email);
 
+    String getMemberEmail(Long memberNo);
+    
     String getMemberName(Long memberNo);
 
     String getMemberProfileImage(Long memberNo);
@@ -34,4 +36,6 @@ public interface MemberService {
     Long getMemberNo(String email);
 
     void setMemberStatus(Long memberNo, MemberStatus memberStatus);
+
+
 }

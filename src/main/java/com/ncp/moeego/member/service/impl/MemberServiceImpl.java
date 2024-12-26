@@ -64,6 +64,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public String getMemberEmail(Long memberNo) {
+        return getMemberById(memberNo).getEmail();
+    }
+    
+    @Override
     public String getMemberName(Long memberNo) {
         return getMemberById(memberNo).getName();
     }

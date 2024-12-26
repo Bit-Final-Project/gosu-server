@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.service.ArticleService;
+import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
@@ -36,10 +37,14 @@ import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.AdminService;
 import com.ncp.moeego.member.service.MemberService;
+import com.ncp.moeego.member.service.impl.MailServiceImpl;
 import com.ncp.moeego.pro.entity.Pro;
+import com.ncp.moeego.reservation.controller.ReservationController;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173")
@@ -47,6 +52,7 @@ public class AdminController {
 	
 	private final AdminService adminService;
 	private final MemberService memberService;
+	private final MailServiceImpl mailService;
 	private final ArticleService articleService;
 	
     @PostMapping("/admin")
@@ -117,26 +123,61 @@ public class AdminController {
         return ResponseEntity.ok(pendingProMembers);
     }
     
+    // 고수 신청 시 이메일 상태 값 확인
+    @GetMapping("")
     
     // 고수 승인 버튼 클릭 시
     @PostMapping("/admin/pro/approve/{member_no}")
-    public ResponseEntity<String> approveMember(@PathVariable("member_no") long member_no) {
+    public ResponseEntity<ApiResponse> approveMember(@PathVariable("member_no") long member_no) {
+        // 이메일 검사
+        String email = memberService.getMemberEmail(member_no);
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", "BAD_REQUEST"));
+        }
+
+        // 이메일 전송
+        try {
+            mailService.accessMail(email); // 이메일 전송
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(ApiResponse.error("이메일 전송 실패", "INTERNAL_SERVER_ERROR"));
+        }
+
+        // member_status 상태 변경
         boolean result = adminService.approveMember(member_no);
         if (result) {
-            return ResponseEntity.ok("고수 승인 완료");
+            return ResponseEntity.ok(ApiResponse.success("고수 승인 완료", null));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("승인 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(ApiResponse.error("승인 실패", "BAD_REQUEST"));
         }
     }
+
     
     // 고수 취소 버튼 클릭시
     @PostMapping("/admin/pro/cancel/{member_no}")
-    public ResponseEntity<String> cancelMember(@PathVariable("member_no") long member_no) {
+    public ResponseEntity<ApiResponse> cancelMember(@PathVariable("member_no") long member_no) {
+    	// 이메일 검사
+        String email = memberService.getMemberEmail(member_no);
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", "BAD_REQUEST"));
+        }
+
+        // 이메일 전송
+        try {
+            mailService.cancelMail(email); // 이메일 전송
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(ApiResponse.error("이메일 전송 실패", "INTERNAL_SERVER_ERROR"));
+        }
+        
+    	// member_status 상태 변경
         boolean result = adminService.cancelMember(member_no);
         if (result) {
-            return ResponseEntity.ok("고수 취소 완료");
+            return ResponseEntity.ok(ApiResponse.success("고수 승인 완료", null));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("취소 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(ApiResponse.error("승인 실패", "BAD_REQUEST"));
         }
     }
     
