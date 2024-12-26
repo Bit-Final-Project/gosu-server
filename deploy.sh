@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # 1. 환경 설정
 PROJECT_DIR="/var/jenkins_home/workspace/backend"    # 실제 Spring Boot 프로젝트 경로
 YML_SOURCE="/var/jenkins_home/workspace/backend/src/main/resources/application.yml" # .yml 파일의 실제 경로
