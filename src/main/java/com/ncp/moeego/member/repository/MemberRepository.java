@@ -3,12 +3,8 @@ package com.ncp.moeego.member.repository;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.cancel.entity.Cancel;
 import com.ncp.moeego.image.entity.Image;
+import com.ncp.moeego.member.bean.*;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
-import com.ncp.moeego.member.bean.SignOutDTO;
-import com.ncp.moeego.member.bean.ArticleImageDTO;
-import com.ncp.moeego.member.bean.CancelDTO;
-import com.ncp.moeego.member.bean.MemberSummaryDTO;
-import com.ncp.moeego.member.bean.ProDTO;
 
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
@@ -64,6 +60,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT p FROM Cancel p WHERE p.cancelDate BETWEEN :startDate AND :endDate")
     List<Cancel> findByCancelDateBetween(@Param("startDate") LocalDateTime startDateTime, @Param("endDate") LocalDateTime endDateTime);
 
+    //고수 카운트 리스트
+    @Query("SELECT new com.ncp.moeego.member.bean.ProCountDTO(p.mainCategory.mainCateNo, p.mainCategory.mainCateName, count(p.proNo)) " +
+            "FROM Pro p " +
+            "GROUP BY p.mainCategory.mainCateNo, p.mainCategory.mainCateName")
+    List<ProCountDTO> findByProCountList();
 
     // 일반 회원 조회 (memberStatus = 'ROLE_USER' 기준)
     @Query("SELECT m FROM Member m WHERE m.memberStatus = 'ROLE_USER'")
