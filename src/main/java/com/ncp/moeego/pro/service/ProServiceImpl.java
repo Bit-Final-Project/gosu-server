@@ -4,11 +4,13 @@ import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
 import com.ncp.moeego.category.service.SubCategoryService;
+import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.favorite.entity.Favorite;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
+import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.ItemStatus;
@@ -16,10 +18,13 @@ import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,25 +34,17 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProServiceImpl implements ProService {
 
     private final MemberService memberService;
     private final SubCategoryService subCategoryService;
     private final ProRepository proRepository;
     private final ProItemRepository proItemRepository;
+    private final MemberRepository memberRepository;
     private final FavoriteRepository favoriteRepository;
     private final MainCategoryRepository mainCategoryRepository;
     private final SubCategoryRepository subCategoryRepository;
-
-    public ProServiceImpl(MemberService memberService, SubCategoryService subCategoryService, ProRepository proRepository, ProItemRepository proItemRepository, FavoriteRepository favoriteRepository, MainCategoryRepository mainCategoryRepository, SubCategoryRepository subCategoryRepository) {
-        this.memberService = memberService;
-        this.subCategoryService = subCategoryService;
-        this.proRepository = proRepository;
-        this.proItemRepository = proItemRepository;
-        this.favoriteRepository = favoriteRepository;
-        this.mainCategoryRepository = mainCategoryRepository;
-        this.subCategoryRepository = subCategoryRepository;
-    }
 
 
     @Transactional
@@ -74,6 +71,27 @@ public class ProServiceImpl implements ProService {
             throw new IllegalArgumentException("회원가입에 실패했습니다.");
         }
 
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse updateIntro(String email, Map<String, String> payload) {
+        try {
+            Member member = memberRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            if (!member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
+                throw new IllegalArgumentException("달인 권한이 없습니다.");
+            }
+            Pro pro = proRepository.findByMember(member);
+            if (pro == null) {
+                throw new IllegalArgumentException("달인 정보가 없습니다.");
+            }
+            pro.setIntro(payload.get("intro"));
+            pro.setOneIntro(payload.get("oneIntro"));
+            proRepository.save(pro);
+            return ApiResponse.success("수정이 완료되었습니다.", null);
+        } catch (Exception e) {
+            return ApiResponse.error("수정 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        }
     }
 
     public void proApplyExecute(ProApplyRequest proApplyRequest) {
