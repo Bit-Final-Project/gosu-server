@@ -1,5 +1,7 @@
 package com.ncp.moeego.pro.service;
 
+import com.ncp.moeego.common.ApiResponse;
+import com.ncp.moeego.member.bean.SignOutDTO;
 import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
@@ -10,6 +12,8 @@ import java.util.Map;
 
 public interface ProService {
     String proJoin(ProJoinRequest proJoinRequest);
+
+    ApiResponse updateIntro(String email, Map<String, String> payload);
 
     Page<FavoriteResponse> getFavorites(Long memberNo, int pg);
 

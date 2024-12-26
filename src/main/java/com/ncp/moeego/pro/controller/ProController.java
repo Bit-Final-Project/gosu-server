@@ -1,15 +1,20 @@
 package com.ncp.moeego.pro.controller;
 
 import com.ncp.moeego.common.ApiResponse;
+import com.ncp.moeego.member.bean.MemberDetails;
+import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.service.ProService;
 import com.ncp.moeego.review.bean.ItemReviewResponse;
 import com.ncp.moeego.review.service.ReviewService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,19 +22,13 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/pro")
 public class ProController {
 
     private final ProService proService;
     private final MemberService memberService;
     private final ReviewService reviewService;
-
-    public ProController(ProService proService, MemberService memberService, ReviewService reviewService) {
-        this.proService = proService;
-        this.memberService = memberService;
-        this.reviewService = reviewService;
-    }
-
 
     @PostMapping("/join")
     public ResponseEntity<?> proJoin(@RequestBody ProJoinRequest proJoinRequest) {
@@ -42,6 +41,35 @@ public class ProController {
     public boolean isExistingEmail(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
         return memberService.isExist(email);
+    }
+
+    //달인 신청
+    @PutMapping("/intro")
+    public ResponseEntity<?> introInit(@RequestBody Map<String, String> payload, Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
+            );
+        }
+
+        try {
+            ApiResponse response = proService.updateIntro(authentication.getName(), payload);
+            HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.resolve(Integer.parseInt(response.getErrorCode()));
+            return ResponseEntity.status(status).body(response);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name())
+            );
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("달인 권한이 없습니다.", HttpStatus.BAD_REQUEST.name())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+
     }
 
     @GetMapping("/favorite")
