@@ -5,6 +5,7 @@ import com.ncp.moeego.member.bean.MemberDetails;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.dto.*;
+import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.service.ProService;
 import com.ncp.moeego.review.bean.ItemReviewResponse;
 import com.ncp.moeego.review.service.ReviewService;
@@ -44,8 +45,59 @@ public class ProController {
     }
 
     //달인 신청
+    @PostMapping("/access")
+    public ResponseEntity<?> proAccess(@RequestBody ProApplyRequest proApplyRequest, Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
+            );
+        }
+
+        try {
+            ApiResponse response = proService.proAccess(authentication.getName(), proApplyRequest);
+            HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.resolve(Integer.parseInt(response.getErrorCode()));
+            return ResponseEntity.status(status).body(response);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name())
+            );
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    ApiResponse.error("이미 달인 권한이 있습니다.", HttpStatus.BAD_REQUEST.name())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("달인 신청 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+
+    }
+
+    //달인 소개
+    @GetMapping("/intro")
+    public ResponseEntity<?> intro(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
+            );
+        }
+
+        try {
+            Pro pro = proService.getProByMemberNo(memberService.getMemberNo(authentication.getName()));
+            Map<String, String> map = new HashMap<>();
+            map.put("intro", pro.getIntro());
+            map.put("oneIntro", pro.getOneIntro());
+            return ResponseEntity.ok(ApiResponse.success("소개를 불러오는데 성공하였습니다.", map));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResponse.error("소개를 불러오는 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
+            );
+        }
+    }
+
+    //달인 소개 수정
     @PutMapping("/intro")
-    public ResponseEntity<?> introInit(@RequestBody Map<String, String> payload, Authentication authentication) {
+    public ResponseEntity<?> introUpdate(@RequestBody Map<String, String> payload, Authentication authentication) {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     ApiResponse.error("인증 정보가 없습니다. 다시 로그인하세요.", HttpStatus.UNAUTHORIZED.name())
@@ -61,7 +113,7 @@ public class ProController {
                     ApiResponse.error("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND.name())
             );
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     ApiResponse.error("달인 권한이 없습니다.", HttpStatus.BAD_REQUEST.name())
             );
         } catch (Exception e) {
@@ -69,7 +121,6 @@ public class ProController {
                     ApiResponse.error("수정 중 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name())
             );
         }
-
     }
 
     @GetMapping("/favorite")
