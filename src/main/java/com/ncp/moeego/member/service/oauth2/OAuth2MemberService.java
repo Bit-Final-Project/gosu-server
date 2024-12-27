@@ -80,6 +80,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             String newProfileImage = oAuth2Response.getProfileImage();
             
             existData.setEmail(oAuth2Id);
+            existData.setMemberStatus(existData.getMemberStatus());
             existData.setName(oAuth2Response.getName());
             existData.setPhone(oAuth2Response.getPhone() == null ? existData.getPhone() : oAuth2Response.getPhone());
             
