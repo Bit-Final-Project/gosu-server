@@ -38,9 +38,13 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Integer expireS = 24 * 60 * 60;
         String access = jwtUtil.createJwt("access", jwtDTO, jwtDTO.getMemberStatus().name(), 60 * 10 * 1000L);
         String refresh = jwtUtil.createJwt("refresh", jwtDTO, jwtDTO.getMemberStatus().name(), expireS * 1000L);
-
+        
         // refresh 토큰 DB 저장
         refreshTokenService.saveRefresh(jwtDTO.getEmail(), jwtDTO.getName(), expireS, refresh);
+
+        // CORS 헤더 설정
+        response.setHeader("Access-Control-Allow-Origin", "http://211.188.56.236:80");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
 
         response.addCookie(CookieUtil.createCookie("access", access, 60 * 10));
         response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
