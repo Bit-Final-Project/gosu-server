@@ -41,7 +41,12 @@ public interface MemberService {
 
     void setMemberStatus(Long memberNo, MemberStatus memberStatus);
 
-	boolean updateEmailStatus(long member_no, int currentStatus);
+	boolean updateEmailStatus(String email, int currentStatus);
+
+	Integer getEmailStatusByName(String username);
+	
+
+	
 
 
 }

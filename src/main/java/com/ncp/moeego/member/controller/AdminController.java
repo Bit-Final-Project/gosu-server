@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ import com.ncp.moeego.article.service.ArticleService;
 import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
+import com.ncp.moeego.member.bean.MemberDetails;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.entity.Member;
@@ -125,23 +127,40 @@ public class AdminController {
     }
     
     // 고수 신청 시 이메일 상태 값 확인
-    @GetMapping("/admin/emailstatus/{member_no}")
-    public ResponseEntity<?> getEmailStatus(@PathVariable("member_no") long member_no) {
-    	int email_status = memberService.getMemberEmailStatus(member_no);
-    	return ResponseEntity.ok(email_status);
+    @GetMapping("/admin/emailstatus")
+    public ResponseEntity<?> getEmailStatus(Authentication authentication) {
+        // 로그인한 사용자의 이름 가져오기
+        String username = authentication.getName();
+        log.info("Authenticated user: " + username);
+
+        // 사용자 이름으로 emailStatus 가져오기
+        Integer emailStatus = memberService.getEmailStatusByName(username);
+        
+        
+        //emailStatus가 없으면 오류 반환
+        if (emailStatus == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("사용자를 찾을 수 없거나 이메일 상태를 찾을 수 없습니다.");
+        }
+
+        // emailStatus 반환
+        return ResponseEntity.ok(emailStatus);
+
     }
-    
-    @PatchMapping("/admin/emailstatus/{member_no}")
-    public ResponseEntity<?> updateEmailStatus(@PathVariable("member_no") long member_no) {
+
+    // 프론트에서 알림 아이콘 클릭 후 확인 할 시
+    @PatchMapping("/admin/emailstatus")
+    public ResponseEntity<?> updateEmailStatus(Authentication authentication) {
         // 현재 상태 조회
-        int currentStatus = memberService.getMemberEmailStatus(member_no);
+    	String username = authentication.getName();
+        int currentStatus = memberService.getEmailStatusByName(username);
         
         if (currentStatus == 0) {
             return ResponseEntity.badRequest().body("이미 email_status가 0입니다.");
         }
 
         // 상태를 0으로 변경
-        boolean updated = memberService.updateEmailStatus(member_no, 0); // 새 메서드 작성 필요
+        boolean updated = memberService.updateEmailStatus(username, 0); // 새 메서드 작성 필요
         if (updated) {
             return ResponseEntity.ok("email_status가 0으로 변경되었습니다.");
         } else {
@@ -154,11 +173,22 @@ public class AdminController {
     @PostMapping("/admin/pro/approve/{member_no}")
     public ResponseEntity<ApiResponse> approveMember(@PathVariable("member_no") long member_no) {
         // 이메일 검사
-    	log.info("member_no : " + member_no);
         String email = memberService.getMemberEmail(member_no);
-        log.info("email : " + email);
+        
         if (email == null || email.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", "BAD_REQUEST"));
+        }
+        
+        // 카카오/구글/네이버 회원 가입 한 사람들
+        if (email.contains(" ")) {
+            // 이메일이 유효하지 않으면 상태값만 변경
+            boolean result = adminService.cancelMember(member_no);
+            if (result) {
+                return ResponseEntity.ok(ApiResponse.success("고수 취소 완료 (이메일 전송 생략)", null));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                     .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
+            }
         }
 
         // 이메일 전송
@@ -186,8 +216,22 @@ public class AdminController {
     public ResponseEntity<ApiResponse> cancelMember(@PathVariable("member_no") long member_no) {
     	// 이메일 검사
         String email = memberService.getMemberEmail(member_no);
+        log.info("email : " + email);
+        
         if (email == null || email.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", "BAD_REQUEST"));
+        }
+        
+        // 카카오/구글/네이버 회원 가입 한 사람들
+        if (email.contains(" ")) {
+            // 이메일이 유효하지 않으면 상태값만 변경
+            boolean result = adminService.cancelMember(member_no);
+            if (result) {
+                return ResponseEntity.ok(ApiResponse.success("고수 취소 완료 (이메일 전송 생략)", null));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                     .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
+            }
         }
 
         // 이메일 전송
