@@ -31,7 +31,7 @@ public class ArticleDTO {
     private List<String> existingImageIds;  // 유지할 기존 이미지 ID
     private List<String> removedImageIds;   // 삭제할 이미지 ID
     private List<String> imageUuids;
-
+    private String profileImage;
 
     // 이미지 넣으려고 만든 생성자
     public ArticleDTO(Long articleNo, String subject, String content, int view, int type, LocalDateTime writeDate,
