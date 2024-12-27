@@ -7,6 +7,8 @@ import com.ncp.moeego.member.bean.oauth2.OAuth2Member;
 import com.ncp.moeego.member.bean.oauth2.OAuth2Response;
 import com.ncp.moeego.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import com.ncp.moeego.member.bean.oauth2.NaverResponse;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2MemberService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
 
@@ -81,7 +84,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             existData.setPhone(oAuth2Response.getPhone() == null ? existData.getPhone() : oAuth2Response.getPhone());
             
             // 새 프로필 이미지가 있을 때만 업데이트, 없으면 기존 이미지 유지
-            if (newProfileImage != null && !newProfileImage.isEmpty()) {
+            if (newProfileImage != null && !newProfileImage.isEmpty() && !newProfileImage.equals("http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg")) {
                 existData.setProfileImage(newProfileImage);
             } else {
                 existData.setProfileImage(currentProfileImage);
