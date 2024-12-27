@@ -102,7 +102,7 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
                         configuration.setAllowedOrigins(Arrays.asList(
-                                "https://www.moeego.site"
+                                "http://211.188.48.106"
                         ));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
