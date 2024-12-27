@@ -186,10 +186,10 @@ public class AdminController {
         	check = true;
             boolean result = adminService.approveMember(member_no, check);
             if (result) {
-                return ResponseEntity.ok(ApiResponse.success("고수 승인 완료 (이메일 전송 생략)", null));
+                return ResponseEntity.ok(ApiResponse.success("달인 승인 완료 (이메일 전송 생략)", null));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(ApiResponse.error("승인 실패", "BAD_REQUEST"));
+                                     .body(ApiResponse.error("달인 승인 실패", "BAD_REQUEST"));
             }
         }
 
@@ -204,10 +204,10 @@ public class AdminController {
         // member_status 상태 변경
         boolean result = adminService.approveMember(member_no, check);
         if (result) {
-            return ResponseEntity.ok(ApiResponse.success("고수 승인 완료", null));
+            return ResponseEntity.ok(ApiResponse.success("달인 승인 완료", null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body(ApiResponse.error("고수 승인 실패", "BAD_REQUEST"));
+                                 .body(ApiResponse.error("달인 승인 실패", "BAD_REQUEST"));
         }
 
     }
@@ -231,10 +231,10 @@ public class AdminController {
         	check = true;
             boolean result = adminService.cancelMember(member_no , check);
             if (result) {
-                return ResponseEntity.ok(ApiResponse.success("고수 취소 완료 (이메일 전송 생략)", null));
+                return ResponseEntity.ok(ApiResponse.success("달인 취소 완료 (이메일 전송 생략)", null));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
+                                     .body(ApiResponse.error("달인 취소 실패", "BAD_REQUEST"));
             }
         }
 
@@ -249,10 +249,10 @@ public class AdminController {
     	// member_status 상태 변경
         boolean result = adminService.cancelMember(member_no, check);
         if (result) {
-        	return ResponseEntity.ok(ApiResponse.success("고수 취소 완료", null));
+        	return ResponseEntity.ok(ApiResponse.success("달인 취소 완료", null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
+                                 .body(ApiResponse.error("달인 취소 실패", "BAD_REQUEST"));
         }
     }
     

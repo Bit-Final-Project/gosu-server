@@ -48,9 +48,9 @@ public class MailServiceImpl {
         try {
             message.setFrom(senderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("고수 신청 승인 되었습니다");
+            message.setSubject("달인 신청 승인 되었습니다");
             String body = "<h3>축하합니다!</h3>" +
-            			  "<h4>고수 신청이 승인 되었습니다.</h4>" +
+            			  "<h4>달인 신청이 승인 되었습니다.</h4>" +
                           "<h4>로그아웃 후 다시 로그인 해주세요.</h4>";
             message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
@@ -71,9 +71,9 @@ public class MailServiceImpl {
         try {
             message.setFrom(senderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("고수 신청 취소 되었습니다");
+            message.setSubject("달인 신청 취소 되었습니다");
             String body = "<h3>죄송합니다.</h3>" +
-            		      "<h4>고수 신청이 취소 되었습니다.</h4>";
+            		      "<h4>달인 신청이 취소 되었습니다.</h4>";
             message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
             e.printStackTrace();
