@@ -32,10 +32,12 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String memberStatus = authentication.getAuthorities().iterator().next().getAuthority();
 
         JwtDTO jwtDTO = memberInfoProvider.getJwtDtoByEmail(detailsEmail);
+        
+        System.out.println(jwtDTO.getMemberStatus().name() + jwtDTO.getName() + jwtDTO.getEmail());
 
         Integer expireS = 24 * 60 * 60;
-        String access = jwtUtil.createJwt("access", jwtDTO, memberStatus, 60 * 10 * 1000L);
-        String refresh = jwtUtil.createJwt("refresh", jwtDTO, memberStatus, expireS * 1000L);
+        String access = jwtUtil.createJwt("access", jwtDTO, jwtDTO.getMemberStatus().name(), 60 * 10 * 1000L);
+        String refresh = jwtUtil.createJwt("refresh", jwtDTO, jwtDTO.getMemberStatus().name(), expireS * 1000L);
 
         // refresh 토큰 DB 저장
         refreshTokenService.saveRefresh(jwtDTO.getEmail(), jwtDTO.getName(), expireS, refresh);

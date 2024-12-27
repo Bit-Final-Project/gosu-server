@@ -174,6 +174,7 @@ public class AdminController {
     public ResponseEntity<ApiResponse> approveMember(@PathVariable("member_no") long member_no) {
         // 이메일 검사
         String email = memberService.getMemberEmail(member_no);
+        boolean check = false;
         
         if (email == null || email.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", "BAD_REQUEST"));
@@ -182,12 +183,13 @@ public class AdminController {
         // 카카오/구글/네이버 회원 가입 한 사람들
         if (email.contains(" ")) {
             // 이메일이 유효하지 않으면 상태값만 변경
-            boolean result = adminService.cancelMember(member_no);
+        	check = true;
+            boolean result = adminService.approveMember(member_no, check);
             if (result) {
-                return ResponseEntity.ok(ApiResponse.success("고수 취소 완료 (이메일 전송 생략)", null));
+                return ResponseEntity.ok(ApiResponse.success("고수 승인 완료 (이메일 전송 생략)", null));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
+                                     .body(ApiResponse.error("승인 실패", "BAD_REQUEST"));
             }
         }
 
@@ -200,7 +202,7 @@ public class AdminController {
         }
 
         // member_status 상태 변경
-        boolean result = adminService.approveMember(member_no);
+        boolean result = adminService.approveMember(member_no, check);
         if (result) {
             return ResponseEntity.ok(ApiResponse.success("고수 승인 완료", null));
         } else {
@@ -216,6 +218,7 @@ public class AdminController {
     public ResponseEntity<ApiResponse> cancelMember(@PathVariable("member_no") long member_no) {
     	// 이메일 검사
         String email = memberService.getMemberEmail(member_no);
+        boolean check = false;
         log.info("email : " + email);
         
         if (email == null || email.isEmpty()) {
@@ -225,7 +228,8 @@ public class AdminController {
         // 카카오/구글/네이버 회원 가입 한 사람들
         if (email.contains(" ")) {
             // 이메일이 유효하지 않으면 상태값만 변경
-            boolean result = adminService.cancelMember(member_no);
+        	check = true;
+            boolean result = adminService.cancelMember(member_no , check);
             if (result) {
                 return ResponseEntity.ok(ApiResponse.success("고수 취소 완료 (이메일 전송 생략)", null));
             } else {
@@ -243,7 +247,7 @@ public class AdminController {
         }
         
     	// member_status 상태 변경
-        boolean result = adminService.cancelMember(member_no);
+        boolean result = adminService.cancelMember(member_no, check);
         if (result) {
         	return ResponseEntity.ok(ApiResponse.success("고수 취소 완료", null));
         } else {
