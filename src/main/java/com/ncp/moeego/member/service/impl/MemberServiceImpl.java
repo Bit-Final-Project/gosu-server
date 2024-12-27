@@ -11,6 +11,9 @@ import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.NoSuchElementException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -196,8 +199,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
 	@Override
-	public boolean updateEmailStatus(long member_no, int currentStatus) {
-		Member member = memberRepository.findById(member_no).orElse(null);
+	public boolean updateEmailStatus(String email, int currentStatus) {
+		Member member = memberRepository.findByEmail(email).orElse(null);
 	    if (member != null) {
 	        member.setEmailStatus(currentStatus);
 	        memberRepository.save(member); // 업데이트 처리
@@ -205,5 +208,14 @@ public class MemberServiceImpl implements MemberService {
 	    }
 	    return false;
 	}
+
+	@Override
+	public Integer getEmailStatusByName(String username) {
+		return memberRepository.findEmailStatusByName(username);
+	}
+	
+	
+
+	
 
 }

@@ -114,5 +114,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Transactional
     @Query("UPDATE Member m SET m.profileImage = null WHERE m.memberNo = :memberNo")
     void updateProfileImageToNull(@Param("memberNo") Long memberNo);
+
+    // 메일 상태 값 가져오기
+    @Query("SELECT m.emailStatus FROM Member m WHERE m.email = :username ")
+	Integer findEmailStatusByName(@Param("username") String username);
+
+
     
 }

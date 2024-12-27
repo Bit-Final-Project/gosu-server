@@ -143,8 +143,8 @@ public class AdminServiceImpl implements AdminService {
 
 	    // Member 상태 변경
 	    member.setMemberStatus(MemberStatus.ROLE_USER); // 상태 변경
+	    //member.setEmailStatus(1);
 	    memberRepository.save(member); // Member 상태 변경 후 저장
-	    member.setEmailStatus(1);
 	    return true; // 작업 성공
 	}
 
@@ -229,16 +229,16 @@ public class AdminServiceImpl implements AdminService {
 	    member.setMemberStatus(MemberStatus.ROLE_CANCEL_PRO);
 	    memberRepository.save(member);
 
-	    // 3. pro 테이블에서 해당 member_no에 연관된 pro 조회
-	    Pro pro = proRepository.findByMemberMemberNo(memberNo)
-	        .orElseThrow(() -> new IllegalArgumentException("프로 회원 정보가 존재하지 않습니다."));
-
-	    // 4. pro_item 테이블에서 해당 pro_no에 연관된 모든 pro_item 삭제
-	    List<ProItem> proItems = proItemRepository.findByPro(pro);  // pro와 연관된 pro_items 조회
-	    proItemRepository.deleteAll(proItems);  // 연관된 pro_item 삭제
-
-	    // 5. pro 테이블에서 해당 member_no에 연관된 pro 삭제
-	    proRepository.delete(pro);  // pro 삭제
+//	    // 3. pro 테이블에서 해당 member_no에 연관된 pro 조회
+//	    Pro pro = proRepository.findByMemberMemberNo(memberNo)
+//	        .orElseThrow(() -> new IllegalArgumentException("프로 회원 정보가 존재하지 않습니다."));
+//
+//	    // 4. pro_item 테이블에서 해당 pro_no에 연관된 모든 pro_item 삭제
+//	    List<ProItem> proItems = proItemRepository.findByPro(pro);  // pro와 연관된 pro_items 조회
+//	    proItemRepository.deleteAll(proItems);  // 연관된 pro_item 삭제
+//
+//	    // 5. pro 테이블에서 해당 member_no에 연관된 pro 삭제
+//	    proRepository.delete(pro);  // pro 삭제
 	}
 
 	
