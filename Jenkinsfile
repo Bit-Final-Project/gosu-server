@@ -5,37 +5,62 @@ pipeline {
         stage('Add Env') {
             steps {
                 withCredentials([file(credentialsId: 'application', variable: 'APPLICATION_YML')]) {
-                    // application.yml 파일 복사
-                    sh 'cp $APPLICATION_YML /var/jenkins_home/workspace/moeego_server/src/main/resources/application.yml'
+                    sh '''
+                        echo "Preparing application.yml..."
+                        mkdir -p /var/jenkins_home/workspace/moeego_server/src/main/resources
+                        cp $APPLICATION_YML /var/jenkins_home/workspace/moeego_server/src/main/resources/application.yml
+                        echo "application.yml copied successfully."
+                    '''
                 }
             }
         }
 
-        stage('Build') { // Gradle 빌드
+        stage('Build') {
             steps {
-                sh 'chmod +x gradlew' // gradlew에 실행 권한 추가
-                sh './gradlew build'   // Gradle 빌드
+                sh '''
+                    echo "Granting execution permission to gradlew..."
+                    chmod +x gradlew
+                    echo "Building with Gradle..."
+                    ./gradlew build
+                '''
             }
         }
 
-        stage('Docker Build') { // Docker 이미지 빌드
+        stage('Docker Build') {
             steps {
-                sh 'docker build --build-arg JAR_FILE=build/libs/testapiserver-0.0.1-SNAPSHOT.jar -t moeego-server .' // Docker 이미지 빌드
+                sh '''
+                    echo "Building Docker image..."
+                    docker build --build-arg JAR_FILE=build/libs/testapiserver-0.0.1-SNAPSHOT.jar -t moeego-server .
+                '''
             }
         }
 
-        stage('Deploy') { // Docker 배포
+        stage('Deploy') {
             steps {
-                sh 'docker stop moeego-server || true'  // 기존 컨테이너 종료
-                sh 'docker rm moeego-server || true'   // 기존 컨테이너 삭제
-                sh 'docker run -d -p 8080:8080 --name moeego-server moeego-server' // 새로운 컨테이너 실행
+                sh '''
+                    echo "Stopping existing Docker container..."
+                    docker stop moeego-server || true
+                    echo "Removing existing Docker container..."
+                    docker rm moeego-server || true
+                    echo "Starting new Docker container..."
+                    docker run -d -p 8080:8080 --name moeego-server moeego-server
+                '''
             }
         }
 
-        stage('Run Deploy Script') { // deploy.sh 실행
+        stage('Run Deploy Script') {
             steps {
-                sh 'chmod +x deploy.sh' // deploy.sh에 실행 권한 추가
-                sh './deploy.sh'        // deploy.sh 실행
+                sh '''
+                    echo "Checking deploy.sh file..."
+                    if [ ! -f ./deploy.sh ]; then
+                        echo "deploy.sh not found"
+                        exit 1
+                    fi
+                    echo "Granting execute permission to deploy.sh..."
+                    chmod +x deploy.sh
+                    echo "Executing deploy.sh..."
+                    ./deploy.sh
+                '''
             }
         }
     }
