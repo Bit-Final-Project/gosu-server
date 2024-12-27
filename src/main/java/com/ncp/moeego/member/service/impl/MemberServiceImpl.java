@@ -11,6 +11,9 @@ import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.NoSuchElementException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,13 +59,23 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(memberNo)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberNo));
     }
-    
+
     @Override
     public Member getMemberByEmail(String email) {
     	return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + email));
     }
 
+    @Override
+    public String getMemberEmail(Long memberNo) {
+        return getMemberById(memberNo).getEmail();
+    }
+    
+    @Override
+    public Integer getMemberEmailStatus(Long memberNo) {
+        return getMemberById(memberNo).getEmailStatus();
+    }
+    
     @Override
     public String getMemberName(Long memberNo) {
         return getMemberById(memberNo).getName();
@@ -73,10 +86,12 @@ public class MemberServiceImpl implements MemberService {
         return getMemberById(memberNo).getProfileImage();
     }
 
+    @Override
     public Long getMemberNo(String email) {
         return memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.")).getMemberNo();
     }
 
+    @Override
     @Transactional
     public void setMemberStatus(Long memberNo, MemberStatus memberStatus) {
         Member member = memberRepository.findById(memberNo).orElseThrow(()-> new IllegalArgumentException("Invalid memberNo"));
@@ -136,6 +151,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public ApiResponse getProCountList() {
+        return ApiResponse.success("조회 완료", memberRepository.findByProCountList());
+    }
+
+    @Override
     public boolean checkMember(String email, String pwd) {
         if(email.equals("")) return false;
         if(pwd.equals("")) return false;
@@ -177,5 +197,25 @@ public class MemberServiceImpl implements MemberService {
             return ApiResponse.error("회원 탈퇴 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
         }
     }
+
+	@Override
+	public boolean updateEmailStatus(String email, int currentStatus) {
+		Member member = memberRepository.findByEmail(email).orElse(null);
+	    if (member != null) {
+	        member.setEmailStatus(currentStatus);
+	        memberRepository.save(member); // 업데이트 처리
+	        return true;
+	    }
+	    return false;
+	}
+
+	@Override
+	public Integer getEmailStatusByName(String username) {
+		return memberRepository.findEmailStatusByName(username);
+	}
+	
+	
+
+	
 
 }

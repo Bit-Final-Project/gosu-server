@@ -107,6 +107,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         MemberDetails memberDetails = new MemberDetails(member);
+        System.out.println("filter : " + memberDetails);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 memberDetails, null, memberDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);

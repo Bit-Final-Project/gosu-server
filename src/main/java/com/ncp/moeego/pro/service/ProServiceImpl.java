@@ -3,24 +3,28 @@ package com.ncp.moeego.pro.service;
 import com.ncp.moeego.category.entity.SubCategory;
 import com.ncp.moeego.category.repository.MainCategoryRepository;
 import com.ncp.moeego.category.repository.SubCategoryRepository;
-import com.ncp.moeego.category.service.SubCategoryServiceImpl;
+import com.ncp.moeego.category.service.SubCategoryService;
+import com.ncp.moeego.common.ApiResponse;
+import com.ncp.moeego.favorite.entity.Favorite;
 import com.ncp.moeego.favorite.repository.FavoriteRepository;
 import com.ncp.moeego.member.bean.JoinDTO;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.repository.MemberRepository;
-import com.ncp.moeego.member.service.impl.MemberServiceImpl;
+import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.pro.dto.*;
 import com.ncp.moeego.pro.entity.ItemStatus;
 import com.ncp.moeego.pro.entity.Pro;
 import com.ncp.moeego.pro.entity.ProItem;
 import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
-import com.ncp.moeego.review.repository.ReviewRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,29 +34,18 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProServiceImpl implements ProService {
 
-    private final MemberServiceImpl memberService;
-    private final SubCategoryServiceImpl subCategoryService;
+    private final MemberService memberService;
+    private final SubCategoryService subCategoryService;
     private final ProRepository proRepository;
-    private final MainCategoryRepository mainCategoryRepository;
-    private final FavoriteRepository favoriteRepository;
     private final ProItemRepository proItemRepository;
-    private final SubCategoryRepository subCategoryRepository;
     private final MemberRepository memberRepository;
-    private final ReviewRepository reviewRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final MainCategoryRepository mainCategoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
 
-    public ProServiceImpl(MemberServiceImpl memberService, SubCategoryServiceImpl subCategoryService, ProRepository proRepository, MainCategoryRepository mainCategoryRepository, FavoriteRepository favoriteRepository, ProItemRepository proItemRepository, SubCategoryRepository subCategoryRepository, MemberRepository memberRepository, ReviewRepository reviewRepository) {
-        this.memberService = memberService;
-        this.subCategoryService = subCategoryService;
-        this.proRepository = proRepository;
-        this.mainCategoryRepository = mainCategoryRepository;
-        this.favoriteRepository = favoriteRepository;
-        this.proItemRepository = proItemRepository;
-        this.subCategoryRepository = subCategoryRepository;
-        this.memberRepository = memberRepository;
-        this.reviewRepository = reviewRepository;
-    }
 
     @Transactional
     @Override
@@ -70,12 +63,6 @@ public class ProServiceImpl implements ProService {
         }
     }
 
-    @Transactional
-    @Override
-    public String proApply(ProApplyRequest request) {
-        return "";
-    }
-
     public void proJoinExecute(ProJoinRequest proJoinRequest) {
         JoinDTO join = new JoinDTO(proJoinRequest);
         log.info("Join 요청: {}", join);
@@ -84,6 +71,37 @@ public class ProServiceImpl implements ProService {
             throw new IllegalArgumentException("회원가입에 실패했습니다.");
         }
 
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse updateIntro(String email, Map<String, String> payload) {
+        try {
+            Member member = memberRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            if (!member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
+                throw new IllegalArgumentException("달인 권한이 없습니다.");
+            }
+            Pro pro = proRepository.findByMember(member);
+            pro.setIntro(payload.get("intro"));
+            pro.setOneIntro(payload.get("oneIntro"));
+            proRepository.save(pro);
+            return ApiResponse.success("수정이 완료되었습니다.", null);
+        } catch (Exception e) {
+            return ApiResponse.error("수정 처리 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        }
+    }
+
+    //고수 승인 요청
+    @Override
+    public ApiResponse proAccess(String email, ProApplyRequest proApplyRequest) {
+        try {
+            Member member = memberRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            proApplyRequest.setMemberNo(member.getMemberNo());
+            proApplyExecute(proApplyRequest);
+            return ApiResponse.success("신청이 완료되었습니다.", null);
+        } catch (Exception e) {
+            return ApiResponse.error("달인 신청 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        }
     }
 
     public void proApplyExecute(ProApplyRequest proApplyRequest) {
@@ -120,6 +138,25 @@ public class ProServiceImpl implements ProService {
         }
 
         return proRepository.findByProNoIn(proNoList, pageable);
+    }
+    
+    @Transactional
+    @Override
+    public String postFavorites(FavoritePostRequest favoritePostRequest) {
+
+        Pro pro = getProById(favoritePostRequest.getProNo());
+        Member member = memberService.getMemberById(favoritePostRequest.getMemberNo());
+        if(member.getMemberNo().equals(pro.getMember().getMemberNo())){
+            throw new IllegalArgumentException("자기 자신은 찜 할수 없습니다");
+        }
+        if (!favoriteRepository.findByProAndMember(pro, member).isEmpty()) {
+            throw new IllegalArgumentException("이미 찜한 달인입니다.");
+        }
+        Favorite favorite = new Favorite();
+        favorite.setMember(member);
+        favorite.setPro(pro);
+        favoriteRepository.save(favorite);
+        return "달인 찜하기 성공";
     }
 
     @Transactional
@@ -159,7 +196,7 @@ public class ProServiceImpl implements ProService {
         return "달인 서비스 등록 성공";
     }
 
-    public Pro getProByMember(Long memberNo) {
+    public Pro getProByMemberNo(Long memberNo) {
         Member member = memberService.getMemberById(memberNo);
         Pro pro = proRepository.findByMember(member);
         if (pro == null) {
@@ -187,7 +224,7 @@ public class ProServiceImpl implements ProService {
         if (!member.getMemberStatus().equals(MemberStatus.ROLE_PRO)) {
             throw new IllegalArgumentException(member.getName() + " 회원은 달인이 아닙니다.");
         }
-        Pro pro = getProByMember(memberNo);
+        Pro pro = getProByMemberNo(memberNo);
 
         Map<String, Object> response = new HashMap<>();
         response.put("proNo", pro.getProNo());
@@ -198,9 +235,9 @@ public class ProServiceImpl implements ProService {
     }
 
     @Override
-    public Map<String, Object> getItemList(Long subCateNo, String location, int pg) {
+    public Map<String, Object> getItemList(Long subCateNo, String location, String value, int pg) {
         Pageable pageable = PageRequest.of(pg - 1, 5);
-        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location);
+        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location, value);
 
         List<ItemResponse> proList = proPage.stream().map(pro -> new ItemResponse(
                 pro.getProNo(),
@@ -229,7 +266,12 @@ public class ProServiceImpl implements ProService {
 
     @Override
     public ProItem getProItemById(Long proItemNo) {
-        return proItemRepository.findById(proItemNo).orElseThrow(()->new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo+"번 서비스"));
+        return proItemRepository.findById(proItemNo).orElseThrow(() -> new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo + "번 서비스"));
+
+    }
+
+    public Pro getProById(Long proNo) {
+        return proRepository.findById(proNo).orElseThrow(() -> new IllegalArgumentException("해당 달인을 찾을 수 없습니다. proNo : " + proNo));
     }
 
 }
