@@ -36,6 +36,7 @@ import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
+import com.ncp.moeego.member.controller.AdminController;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.repository.MemberRepository;
@@ -48,7 +49,9 @@ import com.ncp.moeego.pro.repository.ProItemRepository;
 import com.ncp.moeego.pro.repository.ProRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
@@ -88,10 +91,12 @@ public class AdminServiceImpl implements AdminService {
 	public boolean approveMember(Long member_no) {
 	    // 1. Member 테이블에서 멤버 조회
 	    Member member = memberRepository.findById(member_no).orElse(null);
+	    log.info("member : " + member);
 	    if (member != null && member.getMemberStatus() == MemberStatus.ROLE_PEND_PRO) {
 	        
 	        // 2. Member 테이블에서 상태를 ROLE_PRO로 변경
 	        member.setMemberStatus(MemberStatus.ROLE_PRO);
+	        member.setEmailStatus(1);
 	        memberRepository.save(member);  // 변경된 멤버 저장
 
 	        // 3. Pro 엔티티의 accessDate 값도 현재 날짜로 설정
@@ -138,8 +143,8 @@ public class AdminServiceImpl implements AdminService {
 
 	    // Member 상태 변경
 	    member.setMemberStatus(MemberStatus.ROLE_USER); // 상태 변경
+	    //member.setEmailStatus(1);
 	    memberRepository.save(member); // Member 상태 변경 후 저장
-
 	    return true; // 작업 성공
 	}
 
@@ -224,16 +229,16 @@ public class AdminServiceImpl implements AdminService {
 	    member.setMemberStatus(MemberStatus.ROLE_CANCEL_PRO);
 	    memberRepository.save(member);
 
-	    // 3. pro 테이블에서 해당 member_no에 연관된 pro 조회
-	    Pro pro = proRepository.findByMemberMemberNo(memberNo)
-	        .orElseThrow(() -> new IllegalArgumentException("프로 회원 정보가 존재하지 않습니다."));
-
-	    // 4. pro_item 테이블에서 해당 pro_no에 연관된 모든 pro_item 삭제
-	    List<ProItem> proItems = proItemRepository.findByPro(pro);  // pro와 연관된 pro_items 조회
-	    proItemRepository.deleteAll(proItems);  // 연관된 pro_item 삭제
-
-	    // 5. pro 테이블에서 해당 member_no에 연관된 pro 삭제
-	    proRepository.delete(pro);  // pro 삭제
+//	    // 3. pro 테이블에서 해당 member_no에 연관된 pro 조회
+//	    Pro pro = proRepository.findByMemberMemberNo(memberNo)
+//	        .orElseThrow(() -> new IllegalArgumentException("프로 회원 정보가 존재하지 않습니다."));
+//
+//	    // 4. pro_item 테이블에서 해당 pro_no에 연관된 모든 pro_item 삭제
+//	    List<ProItem> proItems = proItemRepository.findByPro(pro);  // pro와 연관된 pro_items 조회
+//	    proItemRepository.deleteAll(proItems);  // 연관된 pro_item 삭제
+//
+//	    // 5. pro 테이블에서 해당 member_no에 연관된 pro 삭제
+//	    proRepository.delete(pro);  // pro 삭제
 	}
 
 	
