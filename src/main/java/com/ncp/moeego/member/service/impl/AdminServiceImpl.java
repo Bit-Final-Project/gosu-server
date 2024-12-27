@@ -31,6 +31,7 @@ import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.repository.ArticleRepository;
 import com.ncp.moeego.cancel.entity.Cancel;
+import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.image.entity.Image;
 import com.ncp.moeego.image.repository.ImageRepository;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
@@ -88,17 +89,23 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public boolean approveMember(Long member_no) {
+	public boolean approveMember(Long member_no, boolean check) {
 	    // 1. Member 테이블에서 멤버 조회
 	    Member member = memberRepository.findById(member_no).orElse(null);
 	    log.info("member : " + member);
 	    if (member != null && member.getMemberStatus() == MemberStatus.ROLE_PEND_PRO) {
+	    	
+	    	
+	        if (check) { // 카카오/네이버 회원가입을 했을 경우
+	            member.setEmailStatus(3);
+	        }else { // 일반으로 회원가입 했을 경우
+		        member.setEmailStatus(1); 
+	        }
 	        
-	        // 2. Member 테이블에서 상태를 ROLE_PRO로 변경
+	        
 	        member.setMemberStatus(MemberStatus.ROLE_PRO);
-	        member.setEmailStatus(1);
 	        memberRepository.save(member);  // 변경된 멤버 저장
-
+	        
 	        // 3. Pro 엔티티의 accessDate 값도 현재 날짜로 설정
 	        Pro pro = proRepository.findByMember(member);  // 해당 멤버의 Pro 객체 찾기
 	        if (pro != null) {
@@ -119,13 +126,24 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Override
-	public boolean cancelMember(Long memberNo) {
+	public boolean cancelMember(Long memberNo , boolean check) {
 	    // Member 객체 가져오기
 	    Member member = memberRepository.findById(memberNo).orElse(null);
 
 	    if (member == null) {
 	        return false; // Member가 없으면 취소 실패
 	    }
+	    
+	    // 카카오/네이버 회원가입을 했을 경우
+	    if (check) { 
+            member.setEmailStatus(2);
+        }else {
+        	member.setEmailStatus(1);
+        }
+	    // Member 상태 변경
+	    member.setMemberStatus(MemberStatus.ROLE_USER); // 상태 변경
+	    memberRepository.save(member); // Member 상태 변경 후 저장
+
 
 	    // Pro 조회 (Member와 연결된 Pro 데이터)
 	    Pro pro = proRepository.findByMember_MemberNo(memberNo);
@@ -141,10 +159,6 @@ public class AdminServiceImpl implements AdminService {
 	        proRepository.delete(pro);
 	    }
 
-	    // Member 상태 변경
-	    member.setMemberStatus(MemberStatus.ROLE_USER); // 상태 변경
-	    //member.setEmailStatus(1);
-	    memberRepository.save(member); // Member 상태 변경 후 저장
 	    return true; // 작업 성공
 	}
 

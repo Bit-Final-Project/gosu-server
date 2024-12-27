@@ -31,9 +31,9 @@ public interface AdminService {
 
 	List<MemberSummaryDTO> getPendingProMembers(Pageable pageable, MemberStatus rolePendPro);
 
-	boolean approveMember(Long id);
+	boolean approveMember(Long id, boolean check);
 
-	boolean cancelMember(Long id);
+	boolean cancelMember(Long id, boolean check);
 
 	List<Map<String, Object>> getWeekMemberData();
 
