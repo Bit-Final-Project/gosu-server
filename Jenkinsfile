@@ -6,7 +6,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'application', variable: 'APPLICATION_YML')]) {
                     // application.yml 파일 복사
-                    sh 'cp $APPLICATION_YML /var/jenkins_home/workspace/moeego_server/src/main/resources/application.yml'
+                    sh 'cp $APPLICATION_YML /var/jenkins_home/workspace/backend/src/main/resources/application.yml'
                 }
             }
         }
