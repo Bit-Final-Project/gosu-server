@@ -121,4 +121,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 
     
+    @Query(value = "SELECT profile_image FROM member WHERE member_no = :memberNo", nativeQuery = true)
+	String findProfileImageByMemberNo(@Param("memberNo") Long memberNo);
+    
 }

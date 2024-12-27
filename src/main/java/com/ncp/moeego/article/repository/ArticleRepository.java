@@ -1,5 +1,6 @@
 package com.ncp.moeego.article.repository;
 
+import com.ncp.moeego.article.bean.ArticleDTO;
 import com.ncp.moeego.article.entity.Article;
 
 import jakarta.transaction.Transactional;
@@ -94,7 +95,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("DELETE FROM Article a WHERE a.articleNo = :articleNo AND a.member.memberNo = :memberNo")
     int deleteArticleByArticleNoAndMemberNo(@Param("articleNo") Long articleNo, @Param("memberNo") Long memberNo);
 
-
-
-
+//    @Query("SELECT new com.ncp.moeego.article.bean.ArticleDTO(" +
+//	       "a.articleNo, a.subject, a.content, a.view, a.type, a.writeDate, " +
+//	       "a.memberNo, a.likes, a.elapsedTime, m.name, a.service, a.area, " +
+//	       "a.commentCount, m.profileImage) " +
+//	       "FROM Article a " +
+//	       "JOIN Member m ON a.memberNo = m.memberNo " +
+//	       "WHERE a.articleNo = :articleNo")
+//	ArticleDTO findArticleWithProfileImageByArticleNo(@Param("articleNo") Long articleNo);
 }

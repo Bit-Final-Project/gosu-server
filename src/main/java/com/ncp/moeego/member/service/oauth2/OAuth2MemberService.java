@@ -1,11 +1,14 @@
 package com.ncp.moeego.member.service.oauth2;
 
 import com.ncp.moeego.member.bean.JoinDTO;
+import com.ncp.moeego.member.bean.oauth2.KakaoResponse;
 import com.ncp.moeego.member.bean.oauth2.MemberDTO;
 import com.ncp.moeego.member.bean.oauth2.OAuth2Member;
 import com.ncp.moeego.member.bean.oauth2.OAuth2Response;
 import com.ncp.moeego.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import com.ncp.moeego.member.bean.oauth2.NaverResponse;
 import com.ncp.moeego.member.entity.Member;
 import com.ncp.moeego.member.entity.MemberStatus;
@@ -22,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2MemberService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
 
@@ -35,20 +39,27 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
 
         if (registrationId.equals("naver")) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
+        } else if(registrationId.equals("kakao")){
+        	oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
         } else {
             return null;
         }
 
         //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬
-        String naverId = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
+        String oAuth2Id = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
         OAuth2Member oAuth2Member = null;
 
         //DB save
-        saveUser(oAuth2Response, naverId, MemberStatus.ROLE_USER.name());
-
+        if (registrationId.equals("naver")) {           
+        	saveNaverUser(oAuth2Response, oAuth2Id, MemberStatus.ROLE_USER.name());
+        }
+        if (registrationId.equals("kakao")) {        	
+        	saveKakaoUser(oAuth2Response, oAuth2Id, MemberStatus.ROLE_USER.name());
+        }
+        
         // Entity 목적 순수하게 유지하기 위해서 dto 로 전달..
         MemberDTO memberDTO = MemberDTO.builder()
-                .email(naverId)
+                .email(oAuth2Id)
                 .name(oAuth2Response.getName())
                 .memberStatus(MemberStatus.ROLE_USER)
                 .build();
@@ -59,12 +70,50 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         return oAuth2Member;
     }
 
-    /**
+    @Transactional
+    void saveKakaoUser(OAuth2Response oAuth2Response, String oAuth2Id, String memberStatus) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(oAuth2Id);
+
+        if (optionalMember.isPresent()) {
+            Member existData = optionalMember.get();
+            String currentProfileImage = existData.getProfileImage();
+            String newProfileImage = oAuth2Response.getProfileImage();
+            
+            existData.setEmail(oAuth2Id);
+            existData.setName(oAuth2Response.getName());
+            existData.setPhone(oAuth2Response.getPhone() == null ? existData.getPhone() : oAuth2Response.getPhone());
+            
+            // 새 프로필 이미지가 있을 때만 업데이트, 없으면 기존 이미지 유지
+            if (newProfileImage != null && !newProfileImage.isEmpty() && !newProfileImage.equals("http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg")) {
+                existData.setProfileImage(newProfileImage);
+            } else {
+                existData.setProfileImage(currentProfileImage);
+            }
+            
+            existData.setGender(oAuth2Response.getGender() == null ? 3 : oAuth2Response.getGender().equals("M") ? 1 : 2);
+            memberRepository.save(existData);
+        } else {
+            Member member = Member.builder()
+                    .email(oAuth2Id)
+                    .name(oAuth2Response.getName())
+                    .pwd("$2a$10$64GcB9yDhiWWD9LHAwKP8eyhNRyGIFoqTDdyIVjzK5DhZINXsEP/m")
+                    .address("OAuth2-address")
+                    .phone(oAuth2Response.getPhone() == null ? "OAuth2-phone" : oAuth2Response.getPhone())
+                    .gender(oAuth2Response.getGender() == null ? 3 : oAuth2Response.getGender().equals("M") ? 1 : 2)
+                    .profileImage(oAuth2Response.getProfileImage())
+                    .memberStatus(MemberStatus.valueOf(memberStatus))
+                    .joinDate(LocalDateTime.now())
+                    .build();
+            memberRepository.save(member);
+        }
+    }
+
+	/**
      * 이미 존재하는 경우 update
      * 존재하지 않는 경우 save
      */
     @Transactional
-    void saveUser(OAuth2Response response, String naverId, String memberStatus) {
+    void saveNaverUser(OAuth2Response response, String naverId, String memberStatus) {
         // DB 조회
         Optional<Member> optionalMember = memberRepository.findByEmail(naverId);
 
@@ -80,7 +129,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             Member member = Member.builder()
                     .email(naverId)
                     .name(response.getName())
-                    .pwd("OAuth2-password")
+                    .pwd("$2a$10$64GcB9yDhiWWD9LHAwKP8eyhNRyGIFoqTDdyIVjzK5DhZINXsEP/m")
                     .address("OAuth2-address")
                     .phone(response.getPhone() == null ? "OAuth2-phone" : response.getPhone())
                     .gender(response.getGender() == null ? 3 : response.getGender().equals("M") ? 1 : 2)

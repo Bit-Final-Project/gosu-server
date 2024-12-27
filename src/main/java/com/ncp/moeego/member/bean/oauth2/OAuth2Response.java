@@ -15,4 +15,5 @@ public interface OAuth2Response {
     String getProfileImage();
     //사용자 핸드폰
     String getPhone();
+
 }
