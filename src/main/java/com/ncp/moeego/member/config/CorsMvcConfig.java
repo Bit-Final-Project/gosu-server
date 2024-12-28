@@ -10,8 +10,8 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins(
-                    "http://211.188.56.236:80",     // 프론트 서버
-                    "http://211.188.48.106:8080"    // 백엔드 서버
+                    "http://110.165.18.247:80",     // 프론트 서버
+                    "http://211.188.56.143:8080"    // 백엔드 서버
                  )
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*");
