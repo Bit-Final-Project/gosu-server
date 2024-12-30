@@ -1,12 +1,18 @@
 package com.ncp.moeego.member.util;
 
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class CookieUtil {
-    public static void createCookie(HttpServletResponse response, String key, String value, Integer expiredS) {
-        // SameSite=None을 사용하여 크로스 사이트 요청에서도 쿠키 전송
-        String cookieString = String.format("%s=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None", 
-                                            key, value, expiredS);
-        response.addHeader("Set-Cookie", cookieString);
+
+    public static Cookie createCookie(String key, String value, Integer expiredS) {
+        String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
+        Cookie cookie = new Cookie(key, encodedValue);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(expiredS);
+        cookie.setSecure(true); // HTTPS에서만 전송
+        return cookie;
     }
 }
