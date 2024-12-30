@@ -86,4 +86,27 @@ public class MailServiceImpl {
         MimeMessage message = CancelMail(email);
         javaMailSender.send(message); // 이메일 전송
     }
+    
+    
+    // 고수 박탈 시 메일 전송
+    private MimeMessage RevokeMail(String mail, String reason) {
+    	MimeMessage message = javaMailSender.createMimeMessage();
+        try {
+            message.setFrom(senderEmail);
+            message.setRecipients(MimeMessage.RecipientType.TO, mail);
+            message.setSubject("달인 권한이 박탈 되었습니다");
+            String body = "<h4> 이유는 : "  + reason + "</h4>" + 
+                    	  "<p>달인 권한이 박탈 되었습니다.</p>";
+            message.setText(body, "UTF-8", "html");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return message;
+    }
+	
+    public void revokeMail(String email, String reason) {
+		MimeMessage message = RevokeMail(email, reason);
+		javaMailSender.send(message);
+		
+	}
 }
