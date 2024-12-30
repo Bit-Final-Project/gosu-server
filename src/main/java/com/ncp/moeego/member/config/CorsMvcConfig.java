@@ -10,10 +10,11 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins(
-                    "https://www.moeego.site",     // 프론트 서버
+                    "https://www.moeego.site",      // 프론트 서버
                     "https://server.moeego.site"    // 백엔드 서버
-                 )
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(true);             // 쿠키 허용
     }
 }
