@@ -7,6 +7,7 @@ import com.ncp.moeego.member.repository.MemberRepository;
 import com.ncp.moeego.member.service.MemberInfoProvider;
 import com.ncp.moeego.member.service.MemberService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -57,10 +58,13 @@ public class CustomFormSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String access = jwtUtil.createJwt("access", jwtDTO, memberStatus, 60 * 10 * 1000L);
         response.setHeader("access", access);
 
-        // refresh
+        // refresh 수정된부분
         Integer expireS = 24 * 60 * 60;
         String refresh = jwtUtil.createJwt("refresh", jwtDTO, memberStatus, expireS * 1000L);
-        response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
+       
+        Cookie refreshCookie = CookieUtil.createCookie("refresh", refresh, expireS);
+        response.addCookie(refreshCookie);
+        //response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
 
         refreshTokenService.saveRefresh(jwtDTO.getEmail(), jwtDTO.getName(), expireS, refresh);
 
