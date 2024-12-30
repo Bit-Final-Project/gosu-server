@@ -5,6 +5,7 @@ import com.ncp.moeego.member.bean.oauth2.OAuth2Member;
 import com.ncp.moeego.member.service.MemberInfoProvider;
 import com.ncp.moeego.member.service.MemberService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,17 +39,20 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Integer expireS = 24 * 60 * 60;
         String access = jwtUtil.createJwt("access", jwtDTO, jwtDTO.getMemberStatus().name(), 60 * 10 * 1000L);
         String refresh = jwtUtil.createJwt("refresh", jwtDTO, jwtDTO.getMemberStatus().name(), expireS * 1000L);
-        
+
         // refresh 토큰 DB 저장
         refreshTokenService.saveRefresh(jwtDTO.getEmail(), jwtDTO.getName(), expireS, refresh);
 
-        // CORS 헤더 설정
-        response.setHeader("Access-Control-Allow-Origin", "https://www.moeego.site");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-
-        response.addCookie(CookieUtil.createCookie("access", access, 60 * 10));
-        response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
-
+	     // 기존 코드
+	     // response.addCookie(CookieUtil.createCookie("access", access, 60 * 10));
+	     // response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
+	
+	     // 수정 후
+	     Cookie accessCookie = CookieUtil.createCookie("access", access, 60 * 10);
+	     response.addCookie(accessCookie);
+	
+	     Cookie refreshCookie = CookieUtil.createCookie("refresh", refresh, expireS);
+	     response.addCookie(refreshCookie);
         // redirect query param 인코딩 후 전달
         // 이후에 JWT 를 읽어서 데이터를 가져올 수도 있지만, JWT 파싱 비용이 많이 들기 때문에
         // 처음 JWT 발급할 때 이름을 함께 넘긴 후, 로컬 스토리지에 저장한다.
@@ -56,7 +60,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String origin = request.getHeader("Origin");
         if (origin == null) {
             // Origin 헤더가 없으면 기본값으로 localhost 사용
-            origin = "https://www.moeego.site";
+            origin = "http://localhost:5173";
         }
 
         // redirect query param 인코딩 후 전달
