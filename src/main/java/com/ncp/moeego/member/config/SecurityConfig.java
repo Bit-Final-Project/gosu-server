@@ -102,8 +102,8 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
                         configuration.setAllowedOrigins(Arrays.asList(
-                                "http://110.165.18.247:80",
-                                "http://211.188.56.143:8080"
+                                        "https://www.moeego.site",     // 프론트 서버
+                                        "https://server.moeego.site"    // 백엔드 서버
                         ));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
