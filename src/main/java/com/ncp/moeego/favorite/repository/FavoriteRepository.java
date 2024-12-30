@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
-    @Query("Select f.pro.proNo FROM Favorite f where f.member.memberNo =:memberNo")
+    @Query("SELECT f.pro.proNo FROM Favorite f WHERE f.member.memberNo = :memberNo AND f.pro.member.memberStatus = 'ROLE_PRO'")
     List<Long> findProsByMemberNo(@Param("memberNo") Long memberNo);
 
     @Modifying
