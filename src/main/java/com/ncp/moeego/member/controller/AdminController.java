@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,15 +21,19 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ncp.moeego.article.bean.ArticleDTO;
+import com.ncp.moeego.article.entity.Article;
 import com.ncp.moeego.article.service.ArticleService;
 import com.ncp.moeego.common.ApiResponse;
 import com.ncp.moeego.member.bean.ArticleImageDTO;
 import com.ncp.moeego.member.bean.CancelDTO;
+import com.ncp.moeego.member.bean.MemberDetails;
 import com.ncp.moeego.member.bean.MemberSummaryDTO;
 import com.ncp.moeego.member.bean.ProDTO;
 import com.ncp.moeego.member.entity.Member;
@@ -34,6 +41,8 @@ import com.ncp.moeego.member.entity.MemberStatus;
 import com.ncp.moeego.member.service.AdminService;
 import com.ncp.moeego.member.service.MemberService;
 import com.ncp.moeego.member.service.impl.MailServiceImpl;
+import com.ncp.moeego.pro.entity.Pro;
+import com.ncp.moeego.reservation.controller.ReservationController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +50,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class AdminController {
 	
 	private final AdminService adminService;
