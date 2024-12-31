@@ -9,6 +9,7 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setSecure(true); // HTTPS 연결에서만
         cookie.setMaxAge(expiredS);
+        cookie.setAttribute("SameSite", "None");
         return cookie;
     }
 }
