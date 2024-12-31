@@ -32,6 +32,10 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String detailsEmail = customOAuth2User.getEmail(); // DB 저장용 식별자
         String memberStatus = authentication.getAuthorities().iterator().next().getAuthority();
 
+	// 서버 콘솔로그 보기
+	System.out.println("OAuth 인증 성공 - 이메일 !!: " + detailsEmail);
+    	System.out.println("OAuth 인증 성공 - 상태 !!: " + memberStatus);
+	    
         JwtDTO jwtDTO = memberInfoProvider.getJwtDtoByEmail(detailsEmail);
         
         System.out.println(jwtDTO.getMemberStatus().name() + jwtDTO.getName() + jwtDTO.getEmail());
