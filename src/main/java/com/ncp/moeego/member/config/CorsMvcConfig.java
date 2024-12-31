@@ -12,7 +12,8 @@ public class CorsMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                     "https://www.moeego.site",
-                    "https://server.moeego.site"
+                    "https://server.moeego.site",
+                    "https://kauth.kakao.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
