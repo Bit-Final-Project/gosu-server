@@ -12,7 +12,6 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(expiredS);
-        cookie.setSecure(true); // HTTPS에서만 전송
         return cookie;
     }
 }
