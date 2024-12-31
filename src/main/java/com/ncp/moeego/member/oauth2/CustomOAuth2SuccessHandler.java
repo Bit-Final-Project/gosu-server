@@ -38,9 +38,13 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Integer expireS = 24 * 60 * 60;
         String access = jwtUtil.createJwt("access", jwtDTO, jwtDTO.getMemberStatus().name(), 60 * 10 * 1000L);
         String refresh = jwtUtil.createJwt("refresh", jwtDTO, jwtDTO.getMemberStatus().name(), expireS * 1000L);
-
+        
         // refresh 토큰 DB 저장
         refreshTokenService.saveRefresh(jwtDTO.getEmail(), jwtDTO.getName(), expireS, refresh);
+
+        // CORS 헤더 설정
+        response.setHeader("Access-Control-Allow-Origin", "https://www.moeego.site");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
 
         response.addCookie(CookieUtil.createCookie("access", access, 60 * 10));
         response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
@@ -52,7 +56,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String origin = request.getHeader("Origin");
         if (origin == null) {
             // Origin 헤더가 없으면 기본값으로 localhost 사용
-            origin = "http://localhost:5173";
+            origin = "https://www.moeego.site";
         }
 
         // redirect query param 인코딩 후 전달

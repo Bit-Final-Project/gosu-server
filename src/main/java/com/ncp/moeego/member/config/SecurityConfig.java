@@ -102,8 +102,8 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
                         configuration.setAllowedOrigins(Arrays.asList(
-                                "http://localhost:5173",
-                                "http://127.0.0.1:5173"
+                                        "https://www.moeego.site",     // 프론트 서버
+                                        "https://server.moeego.site"    // 백엔드 서버
                         ));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);

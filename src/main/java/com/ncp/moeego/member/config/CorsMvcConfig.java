@@ -7,9 +7,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsMvcConfig implements WebMvcConfigurer {
     @Override
-    public void addCorsMappings(CorsRegistry corsRegistry) {
-        corsRegistry.addMapping("/**")
-                .exposedHeaders("Set-Cookie")
-                .allowedOrigins("http://localhost:5173", "http://127.0.0.1:5173"); // 두 도메인 모두 허용
+    public void addCorsMappings(CorsRegistry registry) {
+        // API 요청용 CORS 설정
+        registry.addMapping("/api/**")
+                .allowedOrigins(
+                    "https://www.moeego.site",
+                    "https://server.moeego.site"
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+
+        // OAuth2 콜백용 CORS 설정
+        registry.addMapping("/login/oauth2/code/**")
+                .allowedOrigins(
+                    "https://www.moeego.site",
+                    "https://server.moeego.site"
+                )
+                .allowedMethods("GET", "POST")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
