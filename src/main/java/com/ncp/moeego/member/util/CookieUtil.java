@@ -13,6 +13,7 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setMaxAge(expiredS);
         cookie.setSecure(true); // HTTPS에서만 전송
+        cookie.setDomain(".moeego.site");
         return cookie;
     }
 }
