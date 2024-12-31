@@ -5,7 +5,6 @@ import jakarta.servlet.http.Cookie;
 public class CookieUtil {
     public static Cookie createCookie(String key, String value, Integer expiredS) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setDomain(".moeego.site"); // 하위 도메인 간 공유
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true); // HTTPS 연결에서만
