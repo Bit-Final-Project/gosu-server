@@ -48,9 +48,9 @@ public class MailServiceImpl {
         try {
             message.setFrom(senderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("고수 신청 승인 되었습니다");
+            message.setSubject("달인 신청 승인 되었습니다");
             String body = "<h3>축하합니다!</h3>" +
-            			  "<h4>고수 신청이 승인 되었습니다.</h4>" +
+            			  "<h4>달인 신청이 승인 되었습니다.</h4>" +
                           "<h4>로그아웃 후 다시 로그인 해주세요.</h4>";
             message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
@@ -71,9 +71,9 @@ public class MailServiceImpl {
         try {
             message.setFrom(senderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("고수 신청 취소 되었습니다");
+            message.setSubject("달인 신청 취소 되었습니다");
             String body = "<h3>죄송합니다.</h3>" +
-            		      "<h4>고수 신청이 취소 되었습니다.</h4>";
+            		      "<h4>달인 신청이 취소 되었습니다.</h4>";
             message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -86,4 +86,27 @@ public class MailServiceImpl {
         MimeMessage message = CancelMail(email);
         javaMailSender.send(message); // 이메일 전송
     }
+    
+    
+    // 고수 박탈 시 메일 전송
+    private MimeMessage RevokeMail(String mail, String reason) {
+    	MimeMessage message = javaMailSender.createMimeMessage();
+        try {
+            message.setFrom(senderEmail);
+            message.setRecipients(MimeMessage.RecipientType.TO, mail);
+            message.setSubject("달인 권한이 박탈 되었습니다");
+            String body = "<h4> 이유는 : "  + reason + "</h4>" + 
+                    	  "<p>달인 권한이 박탈 되었습니다.</p>";
+            message.setText(body, "UTF-8", "html");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return message;
+    }
+	
+    public void revokeMail(String email, String reason) {
+		MimeMessage message = RevokeMail(email, reason);
+		javaMailSender.send(message);
+		
+	}
 }

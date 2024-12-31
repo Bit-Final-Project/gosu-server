@@ -176,10 +176,10 @@ public class AdminController {
         	check = true;
             boolean result = adminService.approveMember(member_no, check);
             if (result) {
-                return ResponseEntity.ok(ApiResponse.success("고수 승인 완료 (이메일 전송 생략)", null));
+                return ResponseEntity.ok(ApiResponse.success("달인 승인 완료 (이메일 전송 생략)", null));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(ApiResponse.error("승인 실패", "BAD_REQUEST"));
+                                     .body(ApiResponse.error("달인 승인 실패", "BAD_REQUEST"));
             }
         }
 
@@ -194,10 +194,10 @@ public class AdminController {
         // member_status 상태 변경
         boolean result = adminService.approveMember(member_no, check);
         if (result) {
-            return ResponseEntity.ok(ApiResponse.success("고수 승인 완료", null));
+            return ResponseEntity.ok(ApiResponse.success("달인 승인 완료", null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body(ApiResponse.error("고수 승인 실패", "BAD_REQUEST"));
+                                 .body(ApiResponse.error("달인 승인 실패", "BAD_REQUEST"));
         }
 
     }
@@ -221,10 +221,10 @@ public class AdminController {
         	check = true;
             boolean result = adminService.cancelMember(member_no , check);
             if (result) {
-                return ResponseEntity.ok(ApiResponse.success("고수 취소 완료 (이메일 전송 생략)", null));
+                return ResponseEntity.ok(ApiResponse.success("달인 취소 완료 (이메일 전송 생략)", null));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
+                                     .body(ApiResponse.error("달인 취소 실패", "BAD_REQUEST"));
             }
         }
 
@@ -239,22 +239,45 @@ public class AdminController {
     	// member_status 상태 변경
         boolean result = adminService.cancelMember(member_no, check);
         if (result) {
-        	return ResponseEntity.ok(ApiResponse.success("고수 취소 완료", null));
+        	return ResponseEntity.ok(ApiResponse.success("달인 취소 완료", null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body(ApiResponse.error("취소 실패", "BAD_REQUEST"));
+                                 .body(ApiResponse.error("달인 취소 실패", "BAD_REQUEST"));
         }
     }
     
     
-    // 고수 박탈 버튼 클릭시
+ // 고수 박탈 버튼 클릭 시
     @PostMapping("/admin/member/pro/cancel/{memberNo}")
-    public ResponseEntity<String> revokePro(@PathVariable("memberNo") Long memberNo) {
+    public ResponseEntity<ApiResponse> revokePro(@PathVariable("memberNo") Long memberNo, 
+                                                  @RequestBody Map<String, String> body) {
+        // 이메일 검사
+        String email = memberService.getMemberEmail(memberNo);
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("이메일이 유효하지 않습니다.", "BAD_REQUEST"));
+        }
+
+        // reason 값 받기
+        String reason = body.get("reason");
+        if (reason == null || reason.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("박탈 사유를 입력해주세요.", "BAD_REQUEST"));
+        }
+
+        // 이메일 전송
         try {
-            adminService.revokeMember(memberNo);  // 서비스에서 박탈 처리
-            return ResponseEntity.ok("박탈 처리 완료");
+            mailService.revokeMail(email, reason); // 이유와 이메일을 전달하여 메일 전송
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("박탈 처리 오류");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(ApiResponse.error("이메일 전송 실패", "INTERNAL_SERVER_ERROR"));
+        }
+
+        // 박탈 처리
+        try {
+            adminService.revokeMember(memberNo); // 박탈 처리
+            return ResponseEntity.ok(ApiResponse.success("박탈 처리 완료", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(ApiResponse.error("박탈 처리 오류", "INTERNAL_SERVER_ERROR"));
         }
     }
     
