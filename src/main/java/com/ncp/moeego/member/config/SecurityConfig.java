@@ -118,6 +118,7 @@ public class SecurityConfig {
 
         // authorization
         http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/login/oauth2/code/**").permitAll()
                 .requestMatchers("/", "/login", "/join", "/logout", "/oauth2-jwt-header", "/**").permitAll()    //개발 진행을 위한 전체 권한 허용/추후 나누기("/**")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());
