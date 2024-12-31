@@ -31,7 +31,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("여기는 옵니까?");
+
+        // 로그 확인
+        System.out.println("요청 URI: " + request.getRequestURI());
+        System.out.println("요청 메서드: " + request.getMethod());
+        
         String authorizationHeader = request.getHeader("authorization");
 
         // Authorization 헤더가 없는 경우 필터 체인 통과
