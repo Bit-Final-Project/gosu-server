@@ -42,12 +42,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 상태별 회원 리스트 반환
     @Query("SELECT new com.ncp.moeego.member.bean.MemberSummaryDTO(" +
-            "m.memberNo, m.name, m.memberStatus, p.oneIntro, p.intro , p.mainCategory.mainCateName) " +
-            "FROM Member m " +
-            "LEFT JOIN Pro p ON p.member = m " +
-            "WHERE m.memberStatus = :status " +
-            "GROUP BY m.memberNo, m.name, m.memberStatus, p.oneIntro, p.mainCategory.mainCateName")
-    List<MemberSummaryDTO> findMemberSummaryByStatus(Pageable pageable , @Param("status") MemberStatus status);
+    	       "m.memberNo, m.name, m.memberStatus, p.oneIntro, p.intro, mc.mainCateName) " +
+    	       "FROM Member m " +
+    	       "JOIN Pro p ON p.member = m " +
+    	       "JOIN p.mainCategory mc " +
+    	       "WHERE m.memberStatus = :status")
+    	List<MemberSummaryDTO> findMemberSummaryByStatus(@Param("pageable") Pageable pageable, @Param("status") MemberStatus status);
+
+
+
+
     
     // 일주일 치 회원 가입 수
     List<Member> findByJoinDateBetween(LocalDateTime startDate, LocalDateTime endDate);
