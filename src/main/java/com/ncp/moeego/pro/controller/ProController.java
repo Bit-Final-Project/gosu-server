@@ -184,6 +184,13 @@ public class ProController {
 
     }
 
+    // 메인 화면 지도
+    @GetMapping("/item/main")
+    public ResponseEntity<?> getMainItem(@RequestParam(value = "subCateNo", required = false) Long subCateNo, @RequestParam(value = "location", required = false) String location, @RequestParam(value = "value", required = false) String value, @RequestParam(value = "pg", required = false, defaultValue = "1") int pg) {
+        log.info(location + subCateNo + value);
+        return ResponseEntity.ok(ApiResponse.success("조회 성공", proService.getMainItem(subCateNo, location, value, pg)));
+
+    }
     // 달인 서비스 상세보기
     // 위에 리스트 반환시 상세정보 다 넣어서 반환했기때문에 해당 서비스의 리뷰만 리턴
     @GetMapping("/item/detail")
