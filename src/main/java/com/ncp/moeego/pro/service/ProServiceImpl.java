@@ -265,6 +265,36 @@ public class ProServiceImpl implements ProService {
     }
 
     @Override
+    public Map<String, Object> getMainItem(Long subCateNo, String location, String value, int pg) {
+        Pageable pageable = PageRequest.of(pg - 1, 30);
+        Page<Pro> proPage = proRepository.findFilteredPros(MemberStatus.ROLE_PRO, pageable, subCateNo, location, value);
+
+        List<ItemResponse> proList = proPage.stream().map(pro -> new ItemResponse(
+                pro.getProNo(),
+                pro.getMember().getName(),
+                pro.getMember().getProfileImage(),
+                pro.getIntro(), pro.getOneIntro(),
+                pro.getMainCategory().getMainCateNo(),
+                pro.getMainCategory().getMainCateName(),
+                pro.getStar(),
+                pro.getReviewCount(),
+                pro.getMember().getAddress(),
+                pro.getProItems(),
+                pro.getMember().getEmail(),
+                pro.getMember().getPhone()
+        )).toList();
+
+        // 응답 데이터 구성
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", proList); // 실제 데이터 리스트
+        response.put("currentPage", proPage.getNumber()); // 현재 페이지
+        response.put("totalPages", proPage.getTotalPages()); // 전체 페이지 수
+        response.put("totalElements", proPage.getTotalElements()); // 전체 요소 수
+
+        return response;
+    }
+
+    @Override
     public ProItem getProItemById(Long proItemNo) {
         return proItemRepository.findById(proItemNo).orElseThrow(() -> new IllegalArgumentException("예약하려는 서비스가 없습니다 : " + proItemNo + "번 서비스"));
 

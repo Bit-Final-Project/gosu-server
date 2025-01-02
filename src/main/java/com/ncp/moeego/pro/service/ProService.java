@@ -36,4 +36,5 @@ public interface ProService {
 
     Pro getProByMemberNo(Long memberNo);
 
+    Object getMainItem(Long subCateNo, String location, String value, int pg);
 }
